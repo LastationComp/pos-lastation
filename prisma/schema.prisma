@@ -40,7 +40,7 @@ model Admins {
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
   client_id String @unique
-  client Clients @relation(fields: [client_id], references: [id])
+  client Clients @relation(fields: [client_id], references: [id], onDelete: Cascade)
   setting Settings?
   employees Employees[]
 }
@@ -54,7 +54,7 @@ model Settings {
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
   admin_id String @unique
-  admin Admins @relation(fields: [admin_id], references: [id])
+  admin Admins @relation(fields: [admin_id], references: [id], onDelete: Cascade)
 }
 
 model Employees {
@@ -66,7 +66,7 @@ model Employees {
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
   admin_id String
-  admin Admins @relation(fields: [admin_id], references: [id])
+  admin Admins @relation(fields: [admin_id], references: [id], onDelete: Cascade)
   customers Customers[]
   products Products[]
   transactions Transactions[]
