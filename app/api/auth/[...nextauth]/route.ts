@@ -33,6 +33,7 @@ export const authOptions: NextAuthOptions = {
           name: selectUser[0].name,
           image: selectUser[0].role
         }
+        await prisma.$disconnect()
         return user;
       },
     }),
@@ -42,24 +43,22 @@ export const authOptions: NextAuthOptions = {
     maxAge: 2 * 60 * 60,
   },
   pages: {
-    signIn: '/superadmin/login',
+    signIn: '/login',
   },
   callbacks: {
+    async redirect({url, baseUrl}) {
+      
+      const realURL = new URL(url)
+      if (realURL.pathname.startsWith('/superadmin'))  baseUrl += realURL.pathname
+      return baseUrl
+    },
     async jwt({ token, user, session }) {
-      // const prisma = new PrismaClient()
-      // const userLogin = await prisma.superAdmin.findFirst({
-      //   where: {
-      //       id: token.sub
-      //   }
-      // })
       token.role = token.picture
-      console.log('jwt callback', { token, user, session });
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
       session.user.id = token.sub;
       session.user.role = token.role
-      console.log('session callbacks', { session, token });
       return session;
     },
   },

@@ -23,24 +23,24 @@ model Clients {
   license_key String @unique
   client_name String 
   client_code String @unique
-  is_active Boolean @default(false)
+  is_active Boolean @default(true)
   expired_at DateTime @db.Timestamp
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
   super_admin_id String
-  superAdmin SuperAdmin @relation(fields: [super_admin_id], references: [id])
+  superAdmin SuperAdmin @relation(fields: [super_admin_id], references: [id], onUpdate: Cascade)
   admin Admins?
 }
 
 model Admins {
   id String @id @default(uuid())
-  pin Int @db.Int()
+  pin String
   name String
   username String @unique
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
   client_id String @unique
-  client Clients @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  client Clients @relation(fields: [client_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   setting Settings?
   employees Employees[]
 }
@@ -54,19 +54,20 @@ model Settings {
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
   admin_id String @unique
-  admin Admins @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+  admin Admins @relation(fields: [admin_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Employees {
   id String @id @default(uuid())
   name String
-  pin Int
+  pin String
   employee_code String @db.Char(10) @unique
   avatar_url String?
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
+  is_active Boolean @default(true)
   admin_id String
-  admin Admins @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+  admin Admins @relation(fields: [admin_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   customers Customers[]
   products Products[]
   transactions Transactions[]
@@ -81,8 +82,8 @@ model Customers {
   point Int @default(0)
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
-  created_by String
-  employee Employees @relation(fields: [created_by], references: [id])
+  created_by String?
+  employee Employees? @relation(fields: [created_by], references: [id], onUpdate: Cascade, onDelete: SetNull)
   transactions Transactions[]
 }
 
@@ -93,8 +94,8 @@ model Products {
   smallest_selling_unit String?
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
-  created_by String
-  employee Employees @relation(fields: [created_by], references: [id])
+  created_by String?
+  employee Employees? @relation(fields: [created_by], references: [id], onUpdate: Cascade, onDelete: SetNull)
   sellingUnits SellingUnits[]
 }
 
@@ -114,9 +115,9 @@ model SellingUnits {
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
   product_id String 
-  product Products @relation(fields: [product_id], references: [id])
-  unit_id Int
-  unit Units @relation(fields: [unit_id], references: [id])
+  product Products @relation(fields: [product_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  unit_id Int?
+  unit Units? @relation(fields: [unit_id], references: [id], onUpdate: Cascade, onDelete: SetNull)
   transactionLists TransactionLists[]
   @@map("selling_units")
 }
@@ -127,10 +128,10 @@ model Transactions {
   total_price Decimal
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
-  employee_id String
-  employee Employees @relation(fields: [employee_id], references: [id])
+  employee_id String?
+  employee Employees? @relation(fields: [employee_id], references: [id], onUpdate: Cascade, onDelete: SetNull)
   customer_id String?
-  customer Customers? @relation(fields: [customer_id], references: [id])
+  customer Customers? @relation(fields: [customer_id], references: [id], onUpdate: Cascade, onDelete: SetNull)
   transactionLists TransactionLists[]
 }
 
@@ -141,8 +142,8 @@ model TransactionLists {
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
   selling_unit_id String
-  sellingUnit SellingUnits @relation(fields: [selling_unit_id], references: [id])
+  sellingUnit SellingUnits @relation(fields: [selling_unit_id], references: [id], onUpdate: Cascade)
   transaction_id String
-  transaction Transactions @relation(fields: [transaction_id], references: [id])
+  transaction Transactions @relation(fields: [transaction_id], references: [id], onUpdate: Cascade)
   @@map("transaction_lists")
 }
