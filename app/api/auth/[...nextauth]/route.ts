@@ -3,8 +3,10 @@ import type { NextAuthOptions } from 'next-auth';
 import NextAuth from 'next-auth/next';
 import bcrypt from 'bcrypt';
 import Credentials from 'next-auth/providers/credentials';
-
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+const prisma = new PrismaClient();
 export const authOptions: NextAuthOptions = {
+  // adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({
       name: 'Super Admin',
@@ -19,21 +21,26 @@ export const authOptions: NextAuthOptions = {
           type: 'password',
           placeholder: 'Enter your Password',
         },
+        role: {
+          label: 'Role',
+          type: 'text',
+          placeholder: 'Enter your role',
+        },
       },
       async authorize(credentials, req) {
-        const username = credentials?.username
-        const password = credentials?.password ?? ''
-        const prisma = new PrismaClient();
-        const selectUser: any = await prisma.$queryRaw`SELECT * FROM pos_users WHERE username = ${username}`;
+        const username = credentials?.username;
+        const password = credentials?.password ?? '';
+
+        const selectUser: any = await prisma.$queryRaw`SELECT * FROM pos_users WHERE username = ${username} AND role = ${credentials?.role}`;
         if (!selectUser[0].username) return null;
         const match = await bcrypt.compare(password, selectUser[0].password);
         if (!match) return null;
         const user = {
           id: selectUser[0].id,
           name: selectUser[0].name,
-          image: selectUser[0].role
-        }
-        await prisma.$disconnect()
+          role: selectUser[0].role,
+        };
+        await prisma.$disconnect();
         return user;
       },
     }),
@@ -46,19 +53,25 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login',
   },
   callbacks: {
-    async redirect({url, baseUrl}) {
-      
-      const realURL = new URL(url)
-      if (realURL.pathname.startsWith('/superadmin'))  baseUrl += realURL.pathname
-      return baseUrl
+    async redirect({ url, baseUrl }) {
+      const realURL = new URL(url);
+      if (realURL.pathname.startsWith('/superadmin')) baseUrl += realURL.pathname;
+      return baseUrl;
     },
-    async jwt({ token, user, session }) {
-      token.role = token.picture
+    jwt({ token, user }) {
+      if (user) {
+        const u = user as unknown as any;
+        return {
+          ...token,
+          role: u.role,
+        };
+      }
+
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
       session.user.id = token.sub;
-      session.user.role = token.role
+      session.user.role = token.role;
       return session;
     },
   },
