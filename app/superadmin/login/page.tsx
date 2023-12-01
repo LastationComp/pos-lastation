@@ -30,6 +30,7 @@ export default function HomeSuperAdmin() {
         action=""
         onSubmit={(e) => {
           setIsLoading(true);
+          setWrong(false)
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
           setTimeout(() => {
@@ -40,9 +41,9 @@ export default function HomeSuperAdmin() {
         <div className="flex flex-col rounded shadow-md mt-[200px] w-[350px] p-3 bg-gray-600 my-auto gap-3 rounded">
           <h1 className="text-center">Super Admin Page</h1>
           {wrong && <span className="bg-red-600 w-full text-center p-3 rounded">Username or Password is Wrong</span>}
-          <label htmlFor="#username">Username</label>
+          <label htmlFor="username">Username</label>
           <input id="username" name="username" type="text" className="rounded px-3 outline outline-0 shadow-md text-black py-1 " placeholder="Input your Username" required autoFocus />
-          <label htmlFor="#password">Password</label>
+          <label htmlFor="password">Password</label>
           <input id="password" name="password" type="password" className="rounded px-3 outline outline-0 shadow-md text-black py-1 " placeholder="Input your Username" required />
           <button className="justify-center bg-green-600 rounded p-3 hover:bg-green-700 transition disabled:bg-green-700" disabled={isLoading}>
             {isLoading ? 'Signing...' : 'Sign In'}
