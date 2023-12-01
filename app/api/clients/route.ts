@@ -4,7 +4,24 @@ import bcrypt from 'bcrypt';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
 export async function GET() {
-  const prisma = new PrismaClient();
+  const prisma = new PrismaClient().$extends({
+    result: {
+      clients: {
+        expires_left: {
+          needs: {expired_at: true},
+          compute(user) {
+            const minute = 1000 * 60;
+            const hour = minute * 60;
+            const day = hour * 24;
+            const dated = new Date(user.expired_at)
+            const minus = dated.getTime() - new Date().getTime()
+            const result = Math.round(minus / day)
+            return `${result} Day${result == 1 ? '': 's'}`
+          },
+        }
+      }
+    }
+  })
   const getClient = await prisma.clients.findMany({
     include: {
       admin: {
@@ -34,30 +51,37 @@ export async function POST(req: Request) {
     const firstLetter: any[] = data.split('');
     client_code_final += firstLetter[0];
   });
-
-  const clients = await prisma.clients.findMany({
+  // +firstLetter[Math.abs(Math.round(Math.random() * (firstLetter.length - 1)))];
+  const clients = await prisma.clients.findFirst({
     where: {
-      client_code: {
-        startsWith: client_code_final,
-      },
+      client_name: client_name,
     },
     select: {
       client_name: true,
       client_code: true,
     },
+    orderBy: {
+      created_at: 'desc',
+    },
   });
-  const checkClient1 = clients.filter((data) => data.client_name === client_name)[0];
-  if (checkClient1?.client_name === client_name)
+
+  if (clients)
     return Response.json(
       {
         message: 'Client already exists',
       },
-      { status: 404 }
+      { status: 409 }
     );
 
-  if (checkClient1?.client_name !== client_name && clients.length !== 0) {
-    firstLetterBackup = client_code_first[0].split('');
-    client_code_final += firstLetterBackup[Math.abs(Math.round(Math.random() * (firstLetterBackup.length - 1)))];
+  const checkClients: any[] = await prisma.$queryRaw`SELECT 
+    client_name,
+    client_code
+   FROM clients WHERE client_code REGEXP ${client_code_final + '[0-9]+|' + client_code_final} 
+   ORDER BY client_code DESC LIMIT 1`;
+
+  if (checkClients.length !== 0) {
+    const clients_code_final_ova: string = checkClients[0].client_code.replace(/[a-zA-Z]/g, '');
+    client_code_final += Number(clients_code_final_ova) + 1;
   }
 
   let session: any;
@@ -70,7 +94,7 @@ export async function POST(req: Request) {
   const license_key = randomUUID() + Math.abs(Math.floor(Math.random() * 10101010));
   const service_days_number: number = service_days;
   const expired_at = new Date();
-  expired_at.setDate(expired_at.getDate() + service_days_number);
+  expired_at.setDate(expired_at.getDate() + Number(service_days_number));
   const hashedPin = await bcrypt.hash('12345678', 10);
   const createClient = await prisma.clients.create({
     data: {
