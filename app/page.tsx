@@ -1,78 +1,137 @@
-import Image from 'next/image'
+'use client';
+import Image from 'next/image';
+import { FormEvent, useEffect, useState } from 'react';
+import { signIn, useSession, signOut } from 'next-auth/react';
 
 export default function Home() {
+  const [role, setRole] = useState('employee');
+  const [wrong, setWrong] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasLicense, setHasLicense] = useState(true);
+  const [errMsg, setErrMsg] = useState('');
+  const [licenseKey, setLicenseKey] = useState('');
+  const handleSelectRole = (string: string) => {
+    if (role === string) return;
+    return setRole(string);
+  };
+
+  const handleSubmit = async (data: FormData) => {
+    const res = await signIn('credentials', {
+      username: data.get('username'),
+      password: data.get('password'),
+      role: role,
+      redirect: false,
+    });
+    setWrong(!res?.ok ?? false);
+    setIsLoading(false);
+  };
+
+  const handleLicenseKey = async () => {
+    const key = localStorage.getItem('license_key') ?? licenseKey
+    const res = await fetch('/api/license', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        license_key: key,
+      }),
+    });
+    setIsLoading(false);
+    setIsLogin(true);
+    const result = await res.json();
+    if (!res.ok && res.status !== 200) {
+      return setErrMsg(result?.message ?? 'Internal Server Error');
+    }
+    
+    localStorage.setItem('license_key', result?.license_key)
+    localStorage.setItem('client_code', result?.client_code);
+    setHasLicense(true)
+    return 
+  };
+
+  const checkLicenseKey = () => {
+    if (!localStorage.getItem('license_key')) return setHasLicense(false);
+    
+  }
+  useEffect(() => {
+    checkLicenseKey()
+  }, []);
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+      <main className="bg-blue-600 flex justify-center w-screen h-screen static">
+        {!hasLicense && (
+          <div className="absolute top-0 left-0 w-screen h-screen z-999 bg-gray-900/40 rounded p-3 backdrop-blur-sm ">
+            <div className="flex flex-col justify-center items-center h-full gap-5">
+              <span className="font-bold text-white">I think you has a first time use this web app. to Confirm your identity, please insert your license key</span>
+              <form
+                action=""
+                method="post"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setErrMsg('');
+                  setIsLogin(false);
+                  setIsLoading(true);
+                  setTimeout(() => {
+                    return handleLicenseKey();
+                  }, 500);
+                }}
+              >
+                {errMsg && <span className="bg-red-600 text-white rounded">{errMsg}</span>}
+                <div className="flex">
+                  <input
+                    type="text"
+                    required
+                    name="license_key"
+                    value={licenseKey}
+                    onChange={(e) => setLicenseKey(e.target.value)}
+                    className="bg-white w-[500px] shadow-md rounded-l px-3 p-3 outline  outline-blue-600 focus:outline-gray-600 transition outline-1"
+                    placeholder="Input your License Key"
+                    autoFocus
+                  />
+                  <button className="justify-center bg-green-600 rounded-r p-3 hover:bg-green-700 transition disabled:bg-green-700 text-white" disabled={isLoading && !isLogin}>
+                    {isLoading && !isLogin ? 'Submitting...' : 'Submit'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+        <section className="flex items-center text-white inline-block">
+          <form
+            action=""
+            onSubmit={(e) => {
+              e.preventDefault();
+              setIsLoading(true);
+              const formdata = new FormData(e.currentTarget);
+              return handleSubmit(formdata);
+            }}
           >
-            By <Image src="/Seishun9.png" alt="Vercel Logo" className="dark:invert" width={100} height={24} priority />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert" src="/next.svg" alt="Next.js Logo" width={180} height={37} priority />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">-&gt;</span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">-&gt;</span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">-&gt;</span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">-&gt;</span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Instantly deploy your Next.js site to a shareable URL with Vercel.</p>
-        </a>
-      </div>
-    </main>
+            <div className="flex flex-col rounded shadow-md w-[350px] p-3 bg-gray-600 gap-3 rounded">
+              <h1 className="text-center">Login Page</h1>
+              {wrong && <span className="bg-red-600 w-full text-center p-3 rounded">Username or Password is Wrong</span>}
+              <label htmlFor="username">Username</label>
+              <input id="username" name="username" type="text" className="rounded px-3 outline outline-0 shadow-md text-black py-1 " placeholder="Input your Username" required />
+              <label htmlFor="password">Password</label>
+              <input id="password" name="password" type="password" className="rounded px-3 outline outline-0 shadow-md text-black py-1 " placeholder="Input your Password" required />
+              <div className="flex gap-3">
+                <div className="flex gap-2 cursor-pointer" onClick={(e) => handleSelectRole('employee')}>
+                  <input type="checkbox" name="employee" id="chk-emp" checked={role === 'employee'} readOnly />
+                  <label htmlFor="chk-emp">As Employee</label>
+                </div>
+                <div className="flex gap-2 cursor-pointer" onClick={(e) => handleSelectRole('admin')}>
+                  <input type="checkbox" name="admin" id="chk-adm" checked={role === 'admin'} readOnly />
+                  <label htmlFor="chk-adm">As Admin</label>
+                </div>
+              </div>
+              <button className="justify-center bg-green-600 rounded p-3 hover:bg-green-700 transition disabled:bg-green-700" disabled={isLoading && isLogin}>
+                {isLoading && isLogin ? 'Signing...' : 'Sign In'}
+              </button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </>
   );
 }

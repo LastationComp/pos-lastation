@@ -11,13 +11,13 @@ export default function HomeSuperAdmin() {
     const res = await signIn('credentials', {
       username: data.get('username'),
       password: data.get('password'),
+      role: 'super_admin',
       redirect: false,
     });
     setWrong(!res?.ok ?? false);
     setIsLoading(false);
   };
   console.log(status);
-  if (data?.user && data.user.role === 'super_admin') return redirect('/superadmin/dashboard');
   if (status == '')
     return (
       <>
