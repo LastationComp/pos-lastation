@@ -53,7 +53,7 @@ export const authOptions: NextAuthOptions = {
       return baseUrl
     },
     async jwt({ token, user, session }) {
-      token.role = token.picture
+      token.role = user.image
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
