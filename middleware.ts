@@ -27,17 +27,10 @@ export async function middleware(req: NextRequest) {
   }
 
 
-    
-
-  
   if (pathname.startsWith(pathAdmin)) {
     if (pathname.startsWith(pathAdmin + '/dashboard') && token?.role !== 'admin') return redirect(req.cookies.get('next-auth.callback-url')?.value ?? '/')
   }
 
-  if (pathname.startsWith(pathAdmin)) {
-    if (pathname === '/' && token && token?.role === 'admin') return Response.redirect(new URL('/admins/dashboard', req.url));
-    if (pathname.startsWith(pathAdmin + '/dashboard') && !token && token?.role !== 'admin') return Response.redirect(new URL('/', req.url));
-  }
 }
 
 export const config = { matcher: ['/superadmin/:path*', '/admins/:path*', '/'] };
