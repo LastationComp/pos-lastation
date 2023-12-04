@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import { FormEvent, useEffect, useState } from 'react';
 import { signIn, useSession, signOut } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 
 export default function Home() {
   const [role, setRole] = useState('employee');
@@ -15,7 +16,6 @@ export default function Home() {
     if (role === string) return;
     return setRole(string);
   };
-
   const handleSubmit = async (data: FormData) => {
     const res = await signIn('credentials', {
       username: data.get('username'),
@@ -28,7 +28,7 @@ export default function Home() {
   };
 
   const handleLicenseKey = async () => {
-    const key = localStorage.getItem('license_key') ?? licenseKey
+    const key = !licenseKey ? localStorage.getItem('license_key') : licenseKey
     const res = await fetch('/api/license', {
       method: 'POST',
       headers: {
@@ -42,18 +42,19 @@ export default function Home() {
     setIsLogin(true);
     const result = await res.json();
     if (!res.ok && res.status !== 200) {
+      setHasLicense(false)
       return setErrMsg(result?.message ?? 'Internal Server Error');
     }
     
-    localStorage.setItem('license_key', result?.license_key)
-    localStorage.setItem('client_code', result?.client_code);
+    localStorage.setItem('license_key', result?.client.license_key)
+    localStorage.setItem('client_code', result?.client.client_code);
     setHasLicense(true)
     return 
   };
 
   const checkLicenseKey = () => {
     if (!localStorage.getItem('license_key')) return setHasLicense(false);
-    
+    return handleLicenseKey()
   }
   useEffect(() => {
     checkLicenseKey()
@@ -64,7 +65,7 @@ export default function Home() {
         {!hasLicense && (
           <div className="absolute top-0 left-0 w-screen h-screen z-999 bg-gray-900/40 rounded p-3 backdrop-blur-sm ">
             <div className="flex flex-col justify-center items-center h-full gap-5">
-              <span className="font-bold text-white">I think you has a first time use this web app. to Confirm your identity, please insert your license key</span>
+              {!localStorage.getItem('license_key') && <span className="font-bold text-white">I think you has a first time use this web app. to Confirm your identity, please insert your license key</span>}
               <form
                 action=""
                 method="post"
