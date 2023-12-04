@@ -16,7 +16,7 @@ export async function GET() {
             const dated = new Date(user.expired_at)
             const minus = dated.getTime() - new Date().getTime()
             const result = Math.round(minus / day)
-            return `${result} Day${result == 1 ? '': 's'}`
+            return `${result} Day${result == 1 ? '': 's' + (result < 0 ? '(expired)' : '')}`
           },
         }
       }

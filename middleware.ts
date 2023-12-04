@@ -2,9 +2,9 @@
 import { getToken } from 'next-auth/jwt';
 import { signOut } from 'next-auth/react';
 import { NextRequest } from 'next/server';
+
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
-  req
   const pathSuperAdmin = '/superadmin'
   const pathAdmin = '/admins'
   const pathEmployee = '/employees'

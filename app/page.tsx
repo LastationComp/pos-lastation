@@ -26,8 +26,8 @@ export default function Home() {
       redirect: false,
     });
     setWrong(!res?.ok ?? false);
-    setIsLoading(false);
     if (res?.ok && res.status === 200) return router.push('admins/dashboard')
+    setIsLoading(false);
     return checkLicenseKey()
   };
 
