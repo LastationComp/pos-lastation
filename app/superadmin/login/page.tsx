@@ -17,11 +17,11 @@ export default function HomeSuperAdmin() {
       redirect: false,
     });
     setWrong(!res?.ok ?? false);
+    if (res?.ok && res.status == 200) return router.push('/superadmin/dashboard') 
     setIsLoading(false);
     if (res?.ok) return router.push('dashboard')
     
   };
-  console.log(status);
   if (status == '')
     return (
       <>
