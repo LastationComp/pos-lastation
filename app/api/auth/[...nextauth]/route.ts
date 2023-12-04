@@ -21,25 +21,37 @@ export const authOptions: NextAuthOptions = {
           type: 'password',
           placeholder: 'Enter your Password',
         },
+        license_key: {
+          label: 'License Key',
+          type: 'text',
+          placeholder: 'Enter your License Key',
+        },
         role: {
           label: 'Role',
           type: 'text',
           placeholder: 'Enter your role',
         },
       },
+
       async authorize(credentials, req) {
         const username = credentials?.username;
         const password = credentials?.password ?? '';
 
-        const selectUser: any = await prisma.$queryRaw`SELECT * FROM pos_users WHERE username = ${username} AND role = ${credentials?.role}`;
+        const selectUser: any = await prisma.$queryRaw`SELECT * FROM pos_users WHERE username = ${username} AND role = ${credentials?.role} `;
+
         if (!selectUser[0].username) return null;
+        if (selectUser[0].license_key !== credentials?.license_key && selectUser[0].role !== 'super_admin') return null
+
         const match = await bcrypt.compare(password, selectUser[0].password);
         if (!match) return null;
+
         const user = {
           id: selectUser[0].id,
           name: selectUser[0].name,
           role: selectUser[0].role,
+          license_key: selectUser[0].license_key
         };
+
         await prisma.$disconnect();
         return user;
       },
@@ -47,7 +59,7 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 2 * 60 * 60,
+    maxAge: 24 * 60 * 60,
   },
   pages: {
     signIn: '/login',
@@ -64,6 +76,7 @@ export const authOptions: NextAuthOptions = {
         return {
           ...token,
           role: u.role,
+          license_key: u.license_key
         };
       }
 
@@ -72,6 +85,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }: { session: any; token: any }) {
       session.user.id = token.sub;
       session.user.role = token.role;
+      session.user.license_key = token.license_key
       return session;
     },
   },

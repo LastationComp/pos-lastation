@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { FormEvent, useEffect, useState } from 'react';
 import { signIn, useSession, signOut } from 'next-auth/react';
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [role, setRole] = useState('employee');
@@ -12,6 +12,7 @@ export default function Home() {
   const [hasLicense, setHasLicense] = useState(true);
   const [errMsg, setErrMsg] = useState('');
   const [licenseKey, setLicenseKey] = useState('');
+  const router = useRouter()
   const handleSelectRole = (string: string) => {
     if (role === string) return;
     return setRole(string);
@@ -20,11 +21,14 @@ export default function Home() {
     const res = await signIn('credentials', {
       username: data.get('username'),
       password: data.get('password'),
+      license_key: localStorage.getItem('license_key'),
       role: role,
       redirect: false,
     });
     setWrong(!res?.ok ?? false);
     setIsLoading(false);
+    if (res?.ok && res.status === 200) return router.push('admins/dashboard')
+    return checkLicenseKey()
   };
 
   const handleLicenseKey = async () => {
@@ -42,7 +46,7 @@ export default function Home() {
     setIsLogin(true);
     const result = await res.json();
     if (!res.ok && res.status !== 200) {
-      setHasLicense(false)
+      setHasLicense(res.status === 200)
       return setErrMsg(result?.message ?? 'Internal Server Error');
     }
     
@@ -106,7 +110,9 @@ export default function Home() {
               e.preventDefault();
               setIsLoading(true);
               const formdata = new FormData(e.currentTarget);
-              return handleSubmit(formdata);
+              setTimeout(() => {
+                return handleSubmit(formdata)
+              }, 500)
             }}
           >
             <div className="flex flex-col rounded shadow-md w-[350px] p-3 bg-gray-600 gap-3 rounded">
@@ -119,7 +125,7 @@ export default function Home() {
               <div className="flex gap-3">
                 <div className="flex gap-2 cursor-pointer" onClick={(e) => handleSelectRole('employee')}>
                   <input type="checkbox" name="employee" id="chk-emp" checked={role === 'employee'} readOnly />
-                  <label htmlFor="chk-emp">As Employee</label>
+                  <label htmlFor="chk-emp ">As Employee</label>
                 </div>
                 <div className="flex gap-2 cursor-pointer" onClick={(e) => handleSelectRole('admin')}>
                   <input type="checkbox" name="admin" id="chk-adm" checked={role === 'admin'} readOnly />
