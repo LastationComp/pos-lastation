@@ -1,10 +1,7 @@
+import React from 'react'
 
-export default function DashboardAdminPage() {
-    return (
-        <>
-        <div>
-            Ini halaman Dashboard
-        </div>
-        </>
-    )
+export default function AdminDashboardPage() {
+  return (
+    <div>Ini Dashboard</div>
+  )
 }

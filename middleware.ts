@@ -27,12 +27,10 @@ export async function middleware(req: NextRequest) {
   }
 
 
-    
-
-  
   if (pathname.startsWith(pathAdmin)) {
     if (pathname.startsWith(pathAdmin + '/dashboard') && token?.role !== 'admin') return redirect(req.cookies.get('next-auth.callback-url')?.value ?? '/')
   }
+
 }
 
 export const config = { matcher: ['/superadmin/:path*', '/admins/:path*', '/'] };
