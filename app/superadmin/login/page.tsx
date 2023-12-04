@@ -2,20 +2,24 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { signIn, useSession, signOut } from 'next-auth/react';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 export default function HomeSuperAdmin() {
   const { data, status }: {data: any, status: any} = useSession();
   const [wrong, setWrong] = useState(false);
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async (data: FormData) => {
     const res = await signIn('credentials', {
       username: data.get('username'),
       password: data.get('password'),
       role: 'super_admin',
+      license_key: null,
       redirect: false,
     });
     setWrong(!res?.ok ?? false);
     setIsLoading(false);
+    if (res?.ok) return router.push('dashboard')
+    
   };
   console.log(status);
   if (status == '')
