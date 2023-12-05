@@ -32,19 +32,22 @@ export async function DELETE(req: Request, route:{params:{id:any}})
 {
     const prisma = new PrismaClient()
     const id = route.params.id
-    const deleteData = await prisma.employees.delete({
+    const deleteData = await prisma.employees.update({
         where: {
             id: id
+        },
+        data: {
+            is_active: false
         }
     })
 
     await prisma.$disconnect()
 
     if(!deleteData) return Response.json({
-        message:"Delete Employee Failed"
+        message:"Failed to Deactivate Employee"
     })
 
     return Response.json({
-        message:"Employee successfully deleted!"
+        message:"Employee successfully Deactivated!"
     })
 }

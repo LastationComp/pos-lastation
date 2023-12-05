@@ -19,7 +19,7 @@ export async function POST(req: Request)
 {
     const {name} = await req.json()
     const prisma = new PrismaClient()
-    const admin_id = "501cd053-0c46-4f52-b7b9-c96cd0eeba8e"
+    const admin_id = "501cd053-0c46-4f52-b7b9-c96cd0eeba84"
     const getAllData = await prisma.admins.findFirst({
         where: {
             id: admin_id
@@ -43,12 +43,15 @@ export async function POST(req: Request)
         }
     })
 
-    const employee_code_first = getAllData?.employees[0]?.employee_code ?? getAllData?.client?.client_code ?? ''
-    const last_employee_code :any[] = employee_code_first.toString().split("_") ?? []
+    if(!getAllData?.name) return responseError("Data Not Found",404)
+
+    const employee_code_first = getAllData?.employees[0]?.employee_code ?? getAllData?.client?.client_code 
+    const last_employee_code :any[] = employee_code_first.toString().split("_")
     const number: string = last_employee_code[1] ?? 0
     const final_employee_code = Number(number)+1
     const employee_code = last_employee_code[0] + '_' + final_employee_code.toString().padStart(4,"0")
     const pin = await bcrypt.hash('12345678', 10)
+    
     const createEmployee = await prisma.employees.create({
         data: {
             name: name,
