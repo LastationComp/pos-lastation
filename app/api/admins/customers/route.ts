@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { disconnect } from "process";
+import { responseError } from "../employees/route";
 
 export async function GET()
 {
@@ -26,6 +27,7 @@ export async function POST(req: Request)
     })
 
     await prisma.$disconnect()
+    if(!createCustomers) return responseError("Failed to Create Customers")
     return Response.json({
         success:true,
         message:"Customers succesfully created!"
