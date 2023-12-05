@@ -12,7 +12,6 @@ export default function NavbarMenu({ session }: { session: any }) {
           </Link>
         );
     }
-    console.log(session)
   if (session?.user?.role === 'admin')
     return (
       <nav className="w-screen bg-blue-600 flex justify-start p-3 text-white">
