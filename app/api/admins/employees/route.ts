@@ -24,7 +24,7 @@ export async function POST(req: Request)
     const final_employee_code = Number(number)+1
     const employee_code = client_code + final_employee_code.toString().padStart(4,"0")
     const pin = await bcrypt.hash('12345678', 10)
-    const admin_id = "18cf3c3f-fb35-496f-a862-bac3987bb689"
+    const admin_id = "01bf78b0-860e-4164-9601-033a37ae912d"
     const createEmployee = await prisma.employees.create({
         data: {
             name: name,
