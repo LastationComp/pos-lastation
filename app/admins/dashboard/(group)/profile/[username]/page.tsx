@@ -21,7 +21,9 @@ export default function ProfilePage({
   const [success, setSuccess] = useState(false);
   const { data } = useSWR(
     `/api/admins/${params.username}?license=${session.data?.user?.license_key}`,
-    fetcher
+    fetcher, {
+      revalidateOnFocus: false,
+    }
   );
 
   const handleSubmit = async (e: BaseSyntheticEvent) => {

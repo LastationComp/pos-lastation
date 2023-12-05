@@ -67,7 +67,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async redirect({ url, baseUrl }) {
       const realURL = new URL(url);
-      if (realURL.pathname.startsWith('/superadmin')) baseUrl += realURL.pathname;
+      if (realURL.pathname === '/superadmin/login') baseUrl += realURL.pathname;
       return baseUrl;
     },
     jwt({ token, user }) {

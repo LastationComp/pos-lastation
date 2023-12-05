@@ -84,7 +84,7 @@ export default function Home() {
                 }}
               >
                 {errMsg && <span className="bg-red-600 text-white rounded">{errMsg}</span>}
-                <div className="flex">
+                <div className="flex justify-center">
                   <input
                     type="text"
                     required

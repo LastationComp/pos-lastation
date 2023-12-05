@@ -1,5 +1,5 @@
 import NextAuthProvider from '@/app/_components/NextAuthProvider';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { getServerSession } from 'next-auth/next';
 
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
@@ -29,7 +29,9 @@ export default async function DashboardAdminLayout({ children }: { children: Rea
       <NavbarMenu session={session} />
 
       <div className="container mx-auto">
-        <Provider session={session}>{children}</Provider>
+        <Provider session={session}>
+          <Suspense fallback={<h1>Loading...</h1>}>{children}</Suspense>
+        </Provider>
       </div>
     </>
   );

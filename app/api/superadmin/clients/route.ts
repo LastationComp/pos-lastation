@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import bcrypt from 'bcrypt';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from '../../auth/[...nextauth]/route'; 
 export async function GET() {
   const prisma = new PrismaClient().$extends({
     result: {

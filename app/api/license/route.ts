@@ -1,3 +1,4 @@
+import { responseError } from '@/app/_lib/PosResponse';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -8,8 +9,9 @@ export async function POST(req: Request) {
     where: {
       license_key: license_key,
       created_at: {
-        lte: new Date()
-      }
+        lte: new Date(),
+      },
+      is_active: true,
     },
     select: {
       license_key: true,
@@ -18,26 +20,32 @@ export async function POST(req: Request) {
       expired_at: true,
     },
   });
-  if (!checkLicenseKey)
+  if (!checkLicenseKey) return responseError('Incorrect License Key, Please input the correct License Key');
+
+  if (!checkLicenseKey.is_active || checkLicenseKey.expired_at < new Date()) {
+    await prisma.clients.update({
+      where: {
+        license_key: checkLicenseKey.license_key,
+        expired_at: {
+          lt: new Date(),
+        },
+      },
+      data: {
+        is_active: false,
+      },
+    });
     return Response.json(
       {
-        message: 'Incorrect License Key, Please input the correct License Key',
+        message: 'Looks like the License Key is expired, Please contact the Web Owner',
       },
       { status: 400 }
     );
+  }
 
-  if (!checkLicenseKey.is_active || checkLicenseKey.expired_at < new Date())
-    return Response.json(
-      {
-        message: 'Looks like the License Key is expired or not been activated, Please contact the Web Owner',
-        
-      },
-      { status: 400 }
-    );
+  await prisma.$disconnect();
 
-    
   return Response.json({
     message: 'License Key correct',
-    client: checkLicenseKey
+    client: checkLicenseKey,
   });
 }
