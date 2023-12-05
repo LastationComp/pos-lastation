@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import bcrypt from 'bcrypt';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from '../../auth/[...nextauth]/route'; 
 export async function GET() {
   const prisma = new PrismaClient().$extends({
     result: {
@@ -16,7 +16,7 @@ export async function GET() {
             const dated = new Date(user.expired_at)
             const minus = dated.getTime() - new Date().getTime()
             const result = Math.round(minus / day)
-            return `${result} Day${result == 1 ? '': 's'}`
+            return `${result} Day${result == 1 ? '': 's' + (result < 0 ? '(expired)' : '')}`
           },
         }
       }

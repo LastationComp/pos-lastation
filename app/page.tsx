@@ -26,8 +26,8 @@ export default function Home() {
       redirect: false,
     });
     setWrong(!res?.ok ?? false);
-    setIsLoading(false);
     if (res?.ok && res.status === 200) return router.push('admins/dashboard')
+    setIsLoading(false);
     return checkLicenseKey()
   };
 
@@ -84,7 +84,7 @@ export default function Home() {
                 }}
               >
                 {errMsg && <span className="bg-red-600 text-white rounded">{errMsg}</span>}
-                <div className="flex">
+                <div className="flex justify-center">
                   <input
                     type="text"
                     required

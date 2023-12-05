@@ -24,9 +24,9 @@ model Clients {
   client_name String 
   client_code String @unique
   is_active Boolean @default(true)
-  expired_at DateTime @db.Timestamp
-  created_at DateTime @default(now())
-  updated_at DateTime? @updatedAt
+  expired_at DateTime @db.Timestamp()
+  created_at DateTime @db.Timestamp() @default(now())
+  updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   super_admin_id String
   superAdmin SuperAdmin @relation(fields: [super_admin_id], references: [id], onUpdate: Cascade)
   admin Admins?
@@ -37,7 +37,7 @@ model Admins {
   pin String
   name String
   username String @unique
-  created_at DateTime @default(now())
+  created_at DateTime @db.Timestamp() @default(now())
   updated_at DateTime? @updatedAt
   client_id String @unique
   client Clients @relation(fields: [client_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -51,8 +51,8 @@ model Settings {
   emp_can_create Boolean @default(true)
   emp_can_update Boolean @default(true)
   emp_can_delete Boolean @default(true)
-  created_at DateTime @default(now())
-  updated_at DateTime? @updatedAt
+  created_at DateTime @db.Timestamp() @default(now())
+  updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   admin_id String @unique
   admin Admins @relation(fields: [admin_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
@@ -63,8 +63,8 @@ model Employees {
   pin String
   employee_code String @db.Char(10) @unique
   avatar_url String?
-  created_at DateTime @default(now())
-  updated_at DateTime? @updatedAt
+  created_at DateTime @db.Timestamp() @default(now())
+  updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   is_active Boolean @default(true)
   admin_id String
   admin Admins @relation(fields: [admin_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -80,8 +80,8 @@ model Customers {
   email String @unique
   phone String @db.VarChar(15)
   point Int @default(0)
-  created_at DateTime @default(now())
-  updated_at DateTime? @updatedAt
+  created_at DateTime @db.Timestamp() @default(now())
+  updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   created_by String?
   employee Employees? @relation(fields: [created_by], references: [id], onUpdate: Cascade, onDelete: SetNull)
   transactions Transactions[]
@@ -92,8 +92,8 @@ model Products {
   barcode String @db.VarChar(12) @unique
   product_name String
   smallest_selling_unit String?
-  created_at DateTime @default(now())
-  updated_at DateTime? @updatedAt
+  created_at DateTime @db.Timestamp() @default(now())
+  updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   created_by String?
   employee Employees? @relation(fields: [created_by], references: [id], onUpdate: Cascade, onDelete: SetNull)
   sellingUnits SellingUnits[]
@@ -102,8 +102,8 @@ model Products {
 model Units {
   id Int @id @default(autoincrement())
   name String
-  created_at DateTime @default(now())
-  updated_at DateTime? @updatedAt
+  created_at DateTime @db.Timestamp() @default(now())
+  updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   sellingUnits SellingUnits[]
 }
 
@@ -112,8 +112,8 @@ model SellingUnits {
   is_smallest Boolean @default(false)
   stock Int @default(0)
   price Decimal @default(0)
-  created_at DateTime @default(now())
-  updated_at DateTime? @updatedAt
+  created_at DateTime @db.Timestamp() @default(now())
+  updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   product_id String 
   product Products @relation(fields: [product_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   unit_id Int?
@@ -126,8 +126,8 @@ model Transactions {
   id String @id @default(uuid())
   no_ref String @unique @db.VarChar(21)
   total_price Decimal
-  created_at DateTime @default(now())
-  updated_at DateTime? @updatedAt
+  created_at DateTime @db.Timestamp() @default(now())
+  updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   employee_id String?
   employee Employees? @relation(fields: [employee_id], references: [id], onUpdate: Cascade, onDelete: SetNull)
   customer_id String?
@@ -139,8 +139,8 @@ model TransactionLists {
   id String @id @default(uuid())
   qty Int 
   total_price Decimal
-  created_at DateTime @default(now())
-  updated_at DateTime? @updatedAt
+  created_at DateTime @db.Timestamp() @default(now())
+  updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   selling_unit_id String
   sellingUnit SellingUnits @relation(fields: [selling_unit_id], references: [id], onUpdate: Cascade)
   transaction_id String

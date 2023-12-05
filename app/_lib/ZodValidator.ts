@@ -8,4 +8,3 @@ export const SuperAdminCreateInput = z.object({
     .regex(new RegExp(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]+$/, 'igm'), 'Username not Validated'),
   password: z.string().min(8).max(100),
 }) satisfies z.Schema<Prisma.SuperAdminUncheckedCreateInput>;
-

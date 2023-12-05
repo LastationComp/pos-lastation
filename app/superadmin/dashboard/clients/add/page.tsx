@@ -10,7 +10,7 @@ export default function ClientAdd() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const res = await fetch('/api/clients', {
+    const res = await fetch('/api/superadmin/clients', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

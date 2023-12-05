@@ -36,7 +36,7 @@ export const authOptions: NextAuthOptions = {
         const username = credentials?.username;
         const password = credentials?.password ?? '';
 
-        const selectUser: any = await prisma.$queryRaw`SELECT * FROM pos_users WHERE username = ${username} AND role = ${credentials?.role} `;
+        const selectUser: any = await prisma.$queryRaw`SELECT * FROM pos_users WHERE username = BINARY ${username} AND role = ${credentials?.role} `;
 
         if (!selectUser[0].username) return null;
         if (selectUser[0].license_key !== credentials?.license_key && selectUser[0].role !== 'super_admin') return null
@@ -48,7 +48,8 @@ export const authOptions: NextAuthOptions = {
           id: selectUser[0].id,
           name: selectUser[0].name,
           role: selectUser[0].role,
-          license_key: selectUser[0].license_key
+          license_key: selectUser[0].license_key,
+          username: selectUser[0].username
         };
 
         await prisma.$disconnect();
@@ -66,7 +67,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async redirect({ url, baseUrl }) {
       const realURL = new URL(url);
-      if (realURL.pathname.startsWith('/superadmin')) baseUrl += realURL.pathname;
+      if (realURL.pathname === '/superadmin/login') baseUrl += realURL.pathname;
       return baseUrl;
     },
     jwt({ token, user }) {
@@ -75,7 +76,8 @@ export const authOptions: NextAuthOptions = {
         return {
           ...token,
           role: u.role,
-          license_key: u.license_key
+          license_key: u.license_key,
+          username: u.username
         };
       }
 
@@ -85,6 +87,7 @@ export const authOptions: NextAuthOptions = {
       session.user.id = token.sub;
       session.user.role = token.role;
       session.user.license_key = token.license_key
+      session.user.username = token.username
       return session;
     },
   },
