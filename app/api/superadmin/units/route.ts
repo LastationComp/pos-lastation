@@ -10,3 +10,22 @@ export async function GET()
     if(getUnits.length == 0) return responseError("There is no units")
     return Response.json(getUnits)
 }
+
+export async function POST(req: Request)
+{
+    const {name} = await req.json()
+    const prisma = new PrismaClient()
+    const createUnit = await prisma.units.create({
+        data:{
+            name:name
+        }
+    })
+
+    await prisma.$disconnect()
+    
+    if(!createUnit) return responseError("Failed to create unit")
+    return Response.json({
+        success:true,
+        message:"Unit Successfully Created!"
+    })
+}
