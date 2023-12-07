@@ -8,7 +8,7 @@ export default function ButtonLogout() {
 
   }
   return (
-    <button className="bg-red-700 rounded px-3 py-1" onClick={() => handleLogout()}>
+    <button className="bg-red-700 rounded px-3 py-1 text-white" onClick={() => handleLogout()}>
       Logout
     </button>
   );

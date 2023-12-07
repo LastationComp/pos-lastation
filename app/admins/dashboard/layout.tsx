@@ -11,7 +11,7 @@ export default async function DashboardAdminLayout({ children }: { children: Rea
   const session: any = await getServerSession(authOptions);
   return (
     <>
-      <nav className="w-screen bg-blue-600 flex justify-between p-3 text-white">
+      <nav className="w-screen bg-posgray flex justify-between p-3 text-white">
         <ul className="flex items-center gap-5">
           <li>
             <h1 className="text-lg font-bold">Dashboard</h1>
