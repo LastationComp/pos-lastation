@@ -19,7 +19,7 @@ export async function POST(req: Request)
 {
     const {name} = await req.json()
     const prisma = new PrismaClient()
-    const admin_id = "501cd053-0c46-4f52-b7b9-c96cd0eeba84"
+    const admin_id = "c0abd6cf-e259-4cbc-82e5-cc55749f9afa"
     const getAllData = await prisma.admins.findFirst({
         where: {
             id: admin_id
