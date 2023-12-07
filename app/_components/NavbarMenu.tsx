@@ -17,6 +17,7 @@ export default function NavbarMenu({ session }: { session: any }) {
       <nav className="w-screen bg-blue-600 flex justify-start p-3 text-white">
         <ul className="flex items-center gap-3">
           <li className="">{generateLink(pathAdmin, 'Home')}</li>
+          <li className="">{generateLink(pathAdmin + '/employees', 'Employees')}</li>
           <li className="">{generateLink(pathAdmin + '/settings', 'Settings')}</li>
           <li className="">{generateLink(pathAdmin + '/profile/' + session?.user?.username ?? '', 'Profile')}</li>
         </ul>

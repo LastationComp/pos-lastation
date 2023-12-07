@@ -3,7 +3,26 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 
-export const prisma = new PrismaClient()
+export const prisma = new PrismaClient().$extends({
+    result: {
+        settings: {
+            openHours: {
+                needs: {shop_open_hours: true},
+                compute(data) {
+                    const openHours = new Date(data.shop_open_hours);
+                    return openHours.toTimeString().slice(0,8)
+                },
+            },
+            closeHours: {
+                needs: {shop_close_hours: true},
+                compute(data) {
+                   const closeHours = new Date(data.shop_close_hours);
+                   return closeHours.toTimeString().slice(0, 8);
+                },
+            }
+        }
+    }
+})
 export async function GET(req: Request, route: {params: {username: string}}) {
 
     const url = new URL(req.url);
@@ -21,7 +40,9 @@ export async function GET(req: Request, route: {params: {username: string}}) {
                     emp_can_create: true,
                     emp_can_delete: true,
                     emp_can_login: true,
-                    emp_can_update: true
+                    emp_can_update: true,
+                    openHours: true,
+                    closeHours: true
                 }
             }
         }
@@ -38,7 +59,20 @@ export async function GET(req: Request, route: {params: {username: string}}) {
 
 export async function POST(req: Request, route: {params: {username: string}}) {
     const url = new URL(req.url)
-    const {canCreate, canLogin, canUpdate, canDelete} = await req.json()
+    const {canCreate, canLogin, canUpdate, canDelete, openHours, closeHours} = await req.json()
+
+    const splitOpenHours = openHours.toString().split(':')
+    const splitCloseHours = closeHours.toString().split(':');
+
+    const dateOpenHours = new Date()
+    const dateCloseHours = new Date()
+    dateOpenHours.setHours(splitOpenHours[0] ?? '0')
+    dateOpenHours.setMinutes(splitOpenHours[1] ?? '0')
+    dateOpenHours.setSeconds(0)
+    dateCloseHours.setHours(splitCloseHours[0] ?? '0')
+    dateCloseHours.setMinutes(splitCloseHours[1] ?? '0')
+    dateCloseHours.setSeconds(0)
+    
     try {
     await prisma.admins.update({
         where: {
@@ -53,7 +87,9 @@ export async function POST(req: Request, route: {params: {username: string}}) {
                     emp_can_create: canCreate ?? false,
                     emp_can_delete: canDelete ?? false,
                     emp_can_login: canLogin ?? false,
-                    emp_can_update: canUpdate ?? false
+                    emp_can_update: canUpdate ?? false,
+                    shop_open_hours: dateOpenHours,
+                    shop_close_hours: dateCloseHours
                 }
             }
         },

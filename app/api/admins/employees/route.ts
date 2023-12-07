@@ -1,12 +1,11 @@
+import { responseError, responseSuccess } from "@/app/_lib/PosResponse";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 
-export const responseError = (message: any, code: number = 400) => {
-    return Response.json({
-        message: message
-    }, {status: code})
-}
+
 export async function GET()
 {
     const prisma = new PrismaClient()
@@ -17,9 +16,9 @@ export async function GET()
 
 export async function POST(req: Request)
 {
-    const {name} = await req.json()
+    const {name, id, } = await req.json()
     const prisma = new PrismaClient()
-    const admin_id = "501cd053-0c46-4f52-b7b9-c96cd0eeba84"
+    const admin_id = id
     const getAllData = await prisma.admins.findFirst({
         where: {
             id: admin_id
@@ -65,12 +64,8 @@ export async function POST(req: Request)
 
     
 
-    if(!createEmployee) return Response.json({
-        message: "Create Employee Failed"
-    })
+    if(!createEmployee) return responseError('Create Employee Failed');
 
-    return Response.json({
-        message: "Employee successfully created"
-    })
+    return responseSuccess('Employee successfully created');
 
 }

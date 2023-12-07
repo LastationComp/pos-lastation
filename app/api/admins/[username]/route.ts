@@ -78,9 +78,13 @@ export async function POST(req: Request, route: { params: { username: string } }
       },
     });
     if (!updatePassword) return responseError('Update Failed');
+
+    return responseSuccess('Update Successfully');
   } catch (err: any) {
     return responseError('Internal Server Error');
+  } finally {
+    await prisma.$disconnect()
   }
 
-  return responseSuccess('Update Successfully');
+  
 }
