@@ -7,7 +7,7 @@ const config: Config = {
       colors: {
         posgray: '#292F36',
         posblue: '#4ECDC4',
-        poslight: '#F7FFF7'
+        poslight: '#F7FFF7',
       },
     },
   },

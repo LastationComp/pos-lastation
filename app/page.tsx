@@ -111,8 +111,8 @@ export default function Home() {
               setIsLoading(true);
               const formdata = new FormData(e.currentTarget);
               setTimeout(() => {
-                return handleSubmit(formdata)
-              }, 500)
+                return handleSubmit(formdata);
+              }, 500);
             }}
           >
             <div className="flex flex-col rounded shadow-md w-[350px] p-3 bg-gray-600 gap-3 rounded">
@@ -122,13 +122,13 @@ export default function Home() {
               <input id="username" name="username" type="text" className="rounded px-3 outline outline-0 shadow-md text-black py-1 " placeholder="Input your Username" required />
               <label htmlFor="password">Password</label>
               <input id="password" name="password" type="password" className="rounded px-3 outline outline-0 shadow-md text-black py-1 " placeholder="Input your Password" required />
-              <div className="flex gap-3">
-                <div className="flex gap-2 cursor-pointer" onClick={(e) => handleSelectRole('employee')}>
-                  <input type="checkbox" name="employee" id="chk-emp" checked={role === 'employee'} readOnly />
-                  <label htmlFor="chk-emp ">As Employee</label>
+              <div className="flex gap-3 ">
+                <div className="flex gap-2 items-center cursor-pointer" onClick={(e) => handleSelectRole('employee')}>
+                  <input type="checkbox" name="employee" className="focus:ring-0" id="chk-emp" checked={role === 'employee'} readOnly />
+                  <label htmlFor="chk-emp">As Employee</label>
                 </div>
-                <div className="flex gap-2 cursor-pointer" onClick={(e) => handleSelectRole('admin')}>
-                  <input type="checkbox" name="admin" id="chk-adm" checked={role === 'admin'} readOnly />
+                <div className="flex gap-2 items-center  cursor-pointer" onClick={(e) => handleSelectRole('admin')}>
+                  <input type="checkbox" name="admin" className="focus:ring-0" id="chk-adm" checked={role === 'admin'} readOnly />
                   <label htmlFor="chk-adm">As Admin</label>
                 </div>
               </div>

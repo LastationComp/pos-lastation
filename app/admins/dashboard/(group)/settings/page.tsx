@@ -138,9 +138,9 @@ export default function AdminSettingPage() {
           </div>
           <div className="col-span-2 flex flex-col w-[40%]">
             <div className="flex items-center gap-5">
-              <input type="time" name="shop-open-time" value={openHours} onChange={(e) => setOpenHours(e.target.value)} className="outline outline-1 outline-gray-600 rounded" id="" />
+              <input type="time" name="shop-open-time" value={openHours} onChange={(e) => setOpenHours(e.target.value)} className="outline outline-1 outline-gray-600 rounded p-3" id="" />
               <span>Shop Open Time</span>
-              <input type="time" name="close-open-time" value={closeHours} onChange={(e) => setCloseHours(e.target.value)} className="outline outline-1 outline-gray-600 rounded" id="" />
+              <input type="time" name="close-open-time" value={closeHours} onChange={(e) => setCloseHours(e.target.value)} className="outline outline-1 outline-gray-600 rounded p-3" id="" />
               <span>Close Open Time</span>
             </div>
             <span>

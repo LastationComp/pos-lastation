@@ -28,7 +28,7 @@ export default async function DashboardAdminLayout({ children }: { children: Rea
       </nav>
       <NavbarMenu session={session} />
 
-      <div className="container mx-auto">
+      <div className="container mx-auto p-5">
         <Provider session={session}>
           <Suspense fallback={<h1>Loading...</h1>}>{children}</Suspense>
         </Provider>
