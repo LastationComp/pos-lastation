@@ -3,6 +3,7 @@ import React from 'react';
 import { signOut } from 'next-auth/react';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
+import PosTable from '@/app/_components/PosTable';
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function Dashboard() {
   const router = useRouter();
@@ -40,10 +41,10 @@ export default function Dashboard() {
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
                 <tr>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 w-[20px]">
                     NO
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 w-[500px]">
                     License Key
                   </th>
                   <th scope="col" className="px-6 py-3">
@@ -68,7 +69,7 @@ export default function Dashboard() {
                 {data &&
                   data.map((data: any, i: number) => (
                     <tr key={data.license_key} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 text-center">
-                      <td>{i + 1}</td>
+                      <td className='text-center'>{i + 1}</td>
                       <td className="px-6 py-4">
                         <span>{data.license_key}</span>
                         <button onClick={() => handleCopy(data.license_key)} id={data.license_key} className="rounded bg-gray-600  mx-1 p-1">
