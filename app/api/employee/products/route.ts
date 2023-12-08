@@ -19,7 +19,7 @@ export async function POST(req:Request)
         data: {
             barcode: "ABC-abc-1234",
             product_name: product_name,
-            created_by:"70623d4a-0581-4bb0-ba3f-42f355737422",
+            created_by:"cac712a5-6be0-4992-8fd0-ebe157fed397",
         }
     })
 

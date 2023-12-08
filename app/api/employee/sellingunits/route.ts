@@ -20,8 +20,8 @@ export async function POST(req:Request)
         data: {
             stock:stock,
             price:price,
-            product_id: "258fa908-b3a7-448e-b57f-254b3178d509",
-            unit_id: 2
+            product_id: "0e446d78-f38e-46cd-9236-691619acff29",
+            unit_id: 1
         }
     })
 

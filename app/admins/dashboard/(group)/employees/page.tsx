@@ -6,6 +6,7 @@ import PosButton from '@/app/_components/PosButton';
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 import Swal from 'sweetalert2';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -63,7 +64,7 @@ export default function AdminEmployeesPage() {
             <span className="ms-3 text-sm text-posgray">Show Inactive Employee Only</span>
           </label>
         </div>
-        <PosButton icon={faUserPlus} onClick={() => router.push('employees/add')}>
+        <PosButton icon={faPlus} onClick={() => router.push('employees/add')}>
           Add Employee
         </PosButton>
       </div>

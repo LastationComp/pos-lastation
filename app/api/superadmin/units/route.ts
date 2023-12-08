@@ -1,4 +1,4 @@
-import { responseError } from "@/app/_lib/PosResponse";
+import { responseError, responseSuccess } from "@/app/_lib/PosResponse";
 import { PrismaClient } from "@prisma/client";
 
 export async function GET()
@@ -8,7 +8,9 @@ export async function GET()
     
     await prisma.$disconnect()
     if(getUnits.length == 0) return responseError("There is no units")
-    return Response.json(getUnits)
+    return responseSuccess({
+    units:getUnits
+    })
 }
 
 export async function POST(req: Request)
