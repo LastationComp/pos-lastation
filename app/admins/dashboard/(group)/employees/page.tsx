@@ -69,7 +69,7 @@ export default function AdminEmployeesPage() {
         </PosButton>
       </div>
 
-      <PosTable auto={false} headers={['Employee Code', 'Name', 'Status', 'Action']}>
+      <PosTable fixed headers={['Employee Code', 'Name', 'Status', 'Action']}>
         {data &&
           data.employees
             .filter((emp: any) => {

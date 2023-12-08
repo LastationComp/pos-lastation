@@ -1,6 +1,22 @@
 import { responseError } from "@/app/_lib/PosResponse"
 import { Prisma, PrismaClient } from "@prisma/client"
 
+export async function GET(req: Request, route:{params:{id:any}})
+{
+    const prisma = new PrismaClient()
+    const id = Number(route.params.id)
+    const getUnit = await prisma.units.findFirst({
+        where:{
+            id:id
+        }
+    })
+
+    await prisma.$disconnect()
+    return Response.json({
+        unit: getUnit
+    })
+}
+
 export async function POST(req: Request, route:{params:{id:any}})
 {
     const {name} = await req.json()

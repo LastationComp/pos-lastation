@@ -56,7 +56,7 @@ export default function ClientAdd() {
               className="outline outline-1 outline-gray-800 py-1 px-3 focus:outline-1 focus:outline-blue-600 transition rounded"
               placeholder="Input your Client Name"
             />
-            <button type="submit" className="bg-green-600 my-3 p-2 text-white rounded hover:bg-green-700 transition">
+            <button type="submit" className="bg-posblue my-3 p-2 text-black rounded hover:bg-teal-700 transition">
               Add
             </button>
           </div>

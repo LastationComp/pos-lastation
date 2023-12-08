@@ -18,6 +18,7 @@ export default function NavbarMenu({ session }: { session: any }) {
       <nav className="w-screen bg-posblue flex justify-start p-3 text-white">
         <ul className="flex items-center gap-3">
           <li className="">{generateLink('', 'Home')}</li>
+          <li className="">{generateLink('/clients', 'Clients')}</li>
           <li className="">{generateLink('/units', 'Units')}</li>
         </ul>
       </nav>

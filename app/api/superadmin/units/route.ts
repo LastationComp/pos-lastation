@@ -7,7 +7,6 @@ export async function GET()
     const getUnits = await prisma.units.findMany()
     
     await prisma.$disconnect()
-    if(getUnits.length == 0) return responseError("There is no units")
     return responseSuccess({
     units:getUnits
     })

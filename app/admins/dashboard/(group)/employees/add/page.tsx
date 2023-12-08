@@ -62,7 +62,7 @@ export default function AddEmployeePage() {
               <FontAwesomeIcon icon={isLoading ? faSpinner : faPlus} spin={isLoading} />
               Add
             </button>
-            <button className="rounded bg-posgray p-2 flex justify-center text-white items-center focus:text-white hover:bg-gray-500 focus:bg-gray-500 transition hover:text-white" onClick={() => router.back()}>
+            <button type='reset' className="rounded bg-posgray p-2 flex justify-center text-white items-center focus:text-white hover:bg-gray-500 focus:bg-gray-500 transition hover:text-white" onClick={() => router.back()}>
               <FontAwesomeIcon icon={faCaretLeft} />
               Back
             </button>
