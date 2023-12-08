@@ -80,7 +80,7 @@ export default function ProfilePage({
   }, [data]);
   return (
     <>
-      <div>Ini Profile {params.username}</div>
+      <div className="text-lg font-semibold">Profile</div>
       {data?.neverChangePassword && (
         <div className="flex w-full bg-orange-400 rounded p-3 text-white">
           Kami sangat menyarankan anda untuk ganti password di awal

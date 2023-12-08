@@ -51,6 +51,8 @@ model Settings {
   emp_can_create Boolean @default(true)
   emp_can_update Boolean @default(true)
   emp_can_delete Boolean @default(true)
+  shop_open_hours DateTime @db.Time() @default(now())
+  shop_close_hours DateTime @db.Time() @default(now())
   created_at DateTime @db.Timestamp() @default(now())
   updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   admin_id String @unique

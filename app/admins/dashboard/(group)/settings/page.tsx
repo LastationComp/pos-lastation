@@ -13,6 +13,8 @@ export default function AdminSettingPage() {
   const [canUpdate, setCanUpdate] = useState(false);
   const [canDelete, setCanDelete] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [openHours, setOpenHours] = useState("00:00:00")
+  const [closeHours, setCloseHours] = useState("00:00:00")
   const [success, setSuccess] = useState(false);
   const [errMsg, setErrMsg] = useState('');
 
@@ -31,6 +33,8 @@ export default function AdminSettingPage() {
         canLogin: canLogin,
         canUpdate: canUpdate,
         canDelete: canDelete,
+        openHours: openHours,
+        closeHours: closeHours
       }),
     });
     const result = await res.json();
@@ -76,6 +80,8 @@ export default function AdminSettingPage() {
     setCanCreate(data?.settings?.emp_can_create ?? false);
     setCanUpdate(data?.settings?.emp_can_update ?? false);
     setCanDelete(data?.settings?.emp_can_delete ?? false);
+    setOpenHours(data?.settings?.openHours ?? "00:00:00")
+    setCloseHours(data?.settings?.closeHours ?? '00:00:00');
   };
 
   useEffect(() => {
@@ -129,6 +135,17 @@ export default function AdminSettingPage() {
                 </span>
               </p>
             </div>
+          </div>
+          <div className="col-span-2 flex flex-col w-[40%]">
+            <div className="flex items-center gap-5">
+              <input type="time" name="shop-open-time" value={openHours} onChange={(e) => setOpenHours(e.target.value)} className="outline outline-1 outline-gray-600 rounded p-3" id="" />
+              <span>Shop Open Time</span>
+              <input type="time" name="close-open-time" value={closeHours} onChange={(e) => setCloseHours(e.target.value)} className="outline outline-1 outline-gray-600 rounded p-3" id="" />
+              <span>Close Open Time</span>
+            </div>
+            <span>
+              This option make your shop open time configured, <span className="text-red-600">to restrict employee has login outside open time</span>
+            </span>
           </div>
           <div>
             <button disabled={isLoading} className="rounded disabled:bg-green-700 bg-green-600 hover:bg-green-700 px-3 py-1 text-white transition" type="submit">
