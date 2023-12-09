@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import bcrypt from 'bcrypt';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/route'; 
+import { responseError } from '@/app/_lib/PosResponse';
 export async function GET() {
   const prisma = new PrismaClient().$extends({
     result: {
@@ -120,7 +121,7 @@ export async function POST(req: Request) {
 
   await prisma.$disconnect();
 
-  if (!createClient) return false;
+  if (!createClient) return responseError("Failed to Add Client");
 
   return Response.json({
     success: true,

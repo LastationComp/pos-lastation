@@ -1,29 +1,26 @@
 'use client';
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSession } from 'next-auth/react';
-import {useRouter} from 'next/navigation'
-import PosButton from '@/app/_components/PosButton';
-import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react'
 
-export default function AddEmployeePage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const session: any = useSession();
+export default function SuperAdminUnitCreate() {
+const [isLoading, setIsLoading] = useState(false);
   const router = useRouter()
   const [name, setName] = useState('');
   const [errMsg, setErrMsg] = useState('');
 
   const handleSubmit = async () => {
-    const res = await fetch('/api/admins/employees', {
+    const res = await fetch('/api/superadmin/units', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name: name ?? '',
-        id: session?.data?.user?.id,
+        name: name,
       }),
     });
 
@@ -38,7 +35,7 @@ export default function AddEmployeePage() {
   };
   return (
     <div className="flex flex-col  items-center">
-      <h1 className="text-[24px] font-semibold">Add Employee</h1>
+      <h1 className="text-[24px] font-semibold">Add Unit</h1>
       {errMsg && <div className="bg-red-500 rounded text-white p-3">{errMsg}</div>}
       <div className="flex">
         <form
@@ -70,5 +67,5 @@ export default function AddEmployeePage() {
         </form>
       </div>
     </div>
-  );
+  )
 }
