@@ -24,7 +24,7 @@ export default function ClientAdd() {
     console.log(result);
     if (res.status == 409) return setStatus(409);
     if (res.ok && res.status == 200) {
-      return router.push('/superadmin/dashboard');
+      return router.push('/superadmin/dashboard/clients');
     }
   };
   return (
