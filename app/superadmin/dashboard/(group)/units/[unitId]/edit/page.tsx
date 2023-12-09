@@ -9,17 +9,18 @@ import React, { useEffect, useState } from 'react'
 import useSWR from 'swr';
 
 export default function SuperAdminUnitCreate({params} :{params:{unitId:any}}) {
-const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter()
-  const [name, setName] = useState('');
-  const [errMsg, setErrMsg] = useState('');
-  const id = params.unitId
+    const fetcher = (url:string) => fetch(url).then(res => res.json())
+    const id = params.unitId
+    const {data, mutate} = useSWR("/api/superadmin/units/" +id, fetcher)
 
-  const fetcher = (url:string) => fetch(url).then(res => res.json())
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter()
+    const [name, setName] = useState(data?.unit.name);
+    const [errMsg, setErrMsg] = useState('');
+    
 
-  const {data, mutate} = useSWR("/api/superadmin/units/" +id, fetcher)
-
-  const handleSubmit = async (id:any) => {
+    
+    const handleSubmit = async (id:any) => {
     const res = await fetch('/api/superadmin/units/' + id, {
       method: 'POST',
       headers: {
@@ -33,9 +34,9 @@ const [isLoading, setIsLoading] = useState(false);
     const result = await res.json();
     setIsLoading(false)
     if (!res.ok && res.status !== 200) {
-    
       return setErrMsg(result?.message);
     }
+    mutate(data)
 
     return router.back()
   };
