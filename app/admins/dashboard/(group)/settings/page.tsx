@@ -92,7 +92,7 @@ export default function AdminSettingPage() {
       <div className="text-xl font-semibold">Settings</div>
       <form action="" method="post" onSubmit={(e) => ShowConfirm(e)}>
         <div className="grid grid-cols-2 gap-5">
-          {errMsg && <div className="col-span-2 rounded bg-red-600">{errMsg}</div>}
+          {errMsg && <div className="col-span-2 rounded bg-red-600 p-3 text-white">{errMsg}</div>}
           <div className="col-span-2 flex flex-col">
             <div className="flex items-center gap-3">
               <input type="checkbox" name="chk_emp_can_login" className="rounded p-3 w-5 h-5" onChange={(e) => setCanLogin(e.target.checked)} checked={canLogin} id="chk_emp_can_login" />

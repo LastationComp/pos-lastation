@@ -6,13 +6,17 @@ import PosButton from '@/app/_components/PosButton';
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 import Swal from 'sweetalert2';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faPlus } from '@fortawesome/free-solid-svg-icons';
+
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function AdminEmployeesPage() {
   const router = useRouter();
   const [showDeactive, setShowDeactive] = useState(false);
+  const [query, setQuery] = useState('');
   const { data, mutate } = useSWR('/api/admins/employees', fetcher);
   const handleDeactive = async (id: string) => {
     const res = await fetch(`/api/admins/employees/${id}`, {
@@ -64,6 +68,12 @@ export default function AdminEmployeesPage() {
             <span className="ms-3 text-sm text-posgray">Show Inactive Employee Only</span>
           </label>
         </div>
+
+        <div className="relative">
+          <input type="text" className="rounded-full px-3 py-1 pr-8   outline outline-1 outline-posblue shadow-md " onChange={(e) => setQuery(e.target.value)} />
+          <FontAwesomeIcon icon={faSearch} className="absolute right-2 top-2 " />
+        </div>
+        
         <PosButton icon={faPlus} onClick={() => router.push('employees/add')}>
           Add Employee
         </PosButton>
@@ -73,14 +83,21 @@ export default function AdminEmployeesPage() {
         {data &&
           data.employees
             .filter((emp: any) => {
-              if (showDeactive) return !emp.is_active
-              return emp.is_active === true;
+              let filterActive = true;
+              let filterQuery = true
+              if (query !== '') {
+                const regex = new RegExp(`${query.toLocaleLowerCase()}`, 'gi');
+                filterQuery = regex.test(emp.name.toLocaleLowerCase());
+              }
+              filterActive = emp.is_active === true
+              if (showDeactive) filterActive = !emp.is_active;
+              return filterActive && filterQuery
             })
             .map((emp: any, i: number) => (
               <tr key={i} className="odd:bg-poslight even:bg-slate-200 ">
                 <td className="p-3">{emp.employee_code}</td>
                 <td className="p-3">{emp.name}</td>
-                <td className="p-3">{emp.is_active ? 'Active' : <span className='text-red-500'>Inactive</span>}</td>
+                <td className="p-3">{emp.is_active ? 'Active' : <span className="text-red-500">Inactive</span>}</td>
                 <td className="p-3 flex gap-3">
                   {emp.is_active ? (
                     <button className="underline underline-1 underline-red-500 text-red-500" onClick={() => handleWarning(emp.name, emp.id)}>

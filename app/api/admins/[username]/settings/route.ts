@@ -10,14 +10,14 @@ export const prisma = new PrismaClient().$extends({
                 needs: {shop_open_hours: true},
                 compute(data) {
                     const openHours = new Date(data.shop_open_hours);
-                    return openHours.toTimeString().slice(0,8)
+                    return openHours.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
                 },
             },
             closeHours: {
                 needs: {shop_close_hours: true},
                 compute(data) {
                    const closeHours = new Date(data.shop_close_hours);
-                   return closeHours.toTimeString().slice(0, 8);
+                   return closeHours.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: false});
                 },
             }
         }
@@ -61,6 +61,9 @@ export async function POST(req: Request, route: {params: {username: string}}) {
     const url = new URL(req.url)
     const {canCreate, canLogin, canUpdate, canDelete, openHours, closeHours} = await req.json()
 
+
+    if (closeHours < openHours) return responseError('Shop Close Time cant be below Shop Open Time')
+    
     const splitOpenHours = openHours.toString().split(':')
     const splitCloseHours = closeHours.toString().split(':');
 
