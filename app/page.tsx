@@ -6,18 +6,35 @@ import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [role, setRole] = useState('employee');
-  const [wrong, setWrong] = useState(false);
+  const [wrong, setWrong] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLicense, setHasLicense] = useState(true);
   const [errMsg, setErrMsg] = useState('');
   const [licenseKey, setLicenseKey] = useState('');
-  const router = useRouter()
+  const router = useRouter();
   const handleSelectRole = (string: string) => {
     if (role === string) return;
     return setRole(string);
   };
   const handleSubmit = async (data: FormData) => {
+    if (role === 'employee') {
+      const promise = await fetch('/api/license/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          license_key: localStorage.getItem('license_key') ?? '',
+        }),
+      });
+      const result = await promise.json();
+
+      if (!promise.ok && promise?.status !== 200) {
+        setIsLoading(false)
+        return setWrong(result?.message);
+      }
+    }
     const res = await signIn('credentials', {
       username: data.get('username'),
       password: data.get('password'),
@@ -25,14 +42,17 @@ export default function Home() {
       role: role,
       redirect: false,
     });
-    setWrong(!res?.ok ?? false);
-    if (res?.ok && res.status === 200) return router.push('admins/dashboard')
+    if (res?.ok && res.status === 200) {
+      if (role === 'admin') return router.push('admins/dashboard');
+      if (role === 'employee') return router.push('employees/dashboard');
+    }
+    setWrong('Username or Password is Wrong');
     setIsLoading(false);
-    return checkLicenseKey()
+    return checkLicenseKey();
   };
 
   const handleLicenseKey = async () => {
-    const key = !licenseKey ? localStorage.getItem('license_key') : licenseKey
+    const key = !licenseKey ? localStorage.getItem('license_key') : licenseKey;
     const res = await fetch('/api/license', {
       method: 'POST',
       headers: {
@@ -46,22 +66,22 @@ export default function Home() {
     setIsLogin(true);
     const result = await res.json();
     if (!res.ok && res.status !== 200) {
-      setHasLicense(res.status === 200)
+      setHasLicense(res.status === 200);
       return setErrMsg(result?.message ?? 'Internal Server Error');
     }
-    
-    localStorage.setItem('license_key', result?.client.license_key)
+
+    localStorage.setItem('license_key', result?.client.license_key);
     localStorage.setItem('client_code', result?.client.client_code);
-    setHasLicense(true)
-    return 
+    setHasLicense(true);
+    return;
   };
 
   const checkLicenseKey = () => {
     if (!localStorage.getItem('license_key')) return setHasLicense(false);
-    return handleLicenseKey()
-  }
+    return handleLicenseKey();
+  };
   useEffect(() => {
-    checkLicenseKey()
+    checkLicenseKey();
   }, []);
   return (
     <>
@@ -117,7 +137,7 @@ export default function Home() {
           >
             <div className="flex flex-col rounded shadow-md w-[350px] p-3 bg-gray-600 gap-3 rounded">
               <h1 className="text-center">Login Page</h1>
-              {wrong && <span className="bg-red-600 w-full text-center p-3 rounded">Username or Password is Wrong</span>}
+              {wrong && <span className="bg-red-600 w-full text-center p-3 rounded">{wrong}</span>}
               <label htmlFor="username">Username</label>
               <input id="username" name="username" type="text" className="rounded px-3 outline outline-0 shadow-md text-black py-1 " placeholder="Input your Username" required />
               <label htmlFor="password">Password</label>

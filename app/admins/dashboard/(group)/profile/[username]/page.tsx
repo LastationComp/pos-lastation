@@ -82,13 +82,13 @@ export default function ProfilePage({
     <>
       <div className="text-lg font-semibold">Profile</div>
       {data?.neverChangePassword && (
-        <div className="flex w-full bg-orange-400 rounded p-3 text-white">
+        <div className="flex w-full bg-orange-400 rounded p-3 text-white w-1/2">
           Kami sangat menyarankan anda untuk ganti password di awal
         </div>
       )}
 
       {!data && (
-        <div className="flex flex-col justify-center w-1/2 mt-5">
+        <div className="flex flex-col justify-center mt-5">
           <div className="flex flex-col animate-pulse">
             <label
               htmlFor="client-name-loading"
@@ -169,7 +169,7 @@ export default function ProfilePage({
         </div>
       )}
       {data && (
-        <div className="flex flex-col justify-center w-1/2 gap-5 mt-5">
+        <div className="flex flex-col justify-center gap-5 mt-5">
           <div className="flex flex-col">
             <label htmlFor="client-name">Client Name</label>
             <input
