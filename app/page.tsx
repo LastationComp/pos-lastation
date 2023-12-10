@@ -43,8 +43,8 @@ export default function Home() {
       redirect: false,
     });
     if (res?.ok && res.status === 200) {
-      if (role === 'admin') return router.push('admins/dashboard');
-      if (role === 'employee') return router.push('employees/dashboard');
+      if (role === 'admin') return router.push('/admins/dashboard');
+      if (role === 'employee') return router.push('/employees/dashboard');
     }
     setWrong('Username or Password is Wrong');
     setIsLoading(false);
