@@ -104,8 +104,8 @@ export default function EmployeeProfilePage() {
                 onClick={() => {
                   profileRef.current.click();
                 }}
-                loading="eager"
-                className="rounded-full border border-1 cursor-pointer border-posgray object-cover max-w-[200px] max-h-[200px] "
+                loading="lazy"
+                className="rounded-full border border-1 cursor-pointer border-posgray object-cover max-w-[200px] h-[200px] "
                 width={200}
                 height={200}
                 alt={data?.data?.name ?? 'Employee'}
@@ -123,15 +123,15 @@ export default function EmployeeProfilePage() {
             </div>
             <div className="flex flex-col ">
               <label htmlFor="new-password">Set New Password</label>
-              <input type="text" id="new-password" name="new-password" className="rounded px-3 py-1 shadow-md outline outline-1 outline-posblue" placeholder="Input to change password" />
+              <input type="password" id="new-password" name="new-password" className="rounded px-3 py-1 shadow-md outline outline-1 outline-posblue" placeholder="Input to change password" />
             </div>
             <div className="flex flex-col ">
               <label htmlFor="re-password">Re-Password</label>
-              <input type="text" id="re-password" name="re-password" className="rounded px-3 py-1 shadow-md outline outline-1 outline-posblue" placeholder="Input to change password" />
+              <input type="password" id="re-password" name="re-password" className="rounded px-3 py-1 shadow-md outline outline-1 outline-posblue" placeholder="Input to change password" />
             </div>
             <div className="flex flex-col ">
               <label htmlFor="old-password">Old Password</label>
-              <input type="text" id="old-password" name="old-password" className="rounded px-3 py-1 shadow-md outline outline-1 outline-posblue" placeholder="Input to change password" />
+              <input type="password" id="old-password" name="old-password" className="rounded px-3 py-1 shadow-md outline outline-1 outline-posblue" placeholder="Input to change password" />
             </div>
             <button disabled={isLoading} className={'rounded bg-posblue hover:bg-teal-500 hover:text-white p-2 my-3 transition ' + (isLoading ? 'bg-teal-500 text-white' : '')} type="submit">
               {isLoading ? 'Saving...' : 'Save'}

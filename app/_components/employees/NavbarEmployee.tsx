@@ -37,11 +37,9 @@ export default function NavbarEmployee({session}: {session: any}) {
         </div>
         <div className="">
           <ul className="inline-flex text-sm font-medium text-center rounded-full bg-white text-black border-b border-black ">
-            <li className="mx-2 my-1 ">{generateLink('', 'Transaksi')}</li>
+            <li className="mx-2 my-1 ">{generateLink('', 'Transaction')}</li>
             <li className="mx-2 my-1">
-              <a href="#" className="inline-block py-3 px-5 rounded-full hover:text-black hover:bg-green-100 ">
-                Produk
-              </a>
+              {generateLink('/products', 'Products')}
             </li>
             <li className="mx-2 my-1">
               <Link href="#" className="inline-block py-3 px-5 rounded-full hover:text-black hover:bg-green-100 ">
@@ -70,7 +68,7 @@ export default function NavbarEmployee({session}: {session: any}) {
             </div>
           </div> */}
           <div className="rounded-full bg-white flex items-center">
-            <Image className="object-cover max-w-[40px] max-h-[40px] rounded-full mx-2" loading="lazy" src={generateImage(session?.user?.avatar_url ?? 'default.png')} alt={session?.data?.user?.name ?? 'Employee'} width={40} height={40} />
+            <Image className="object-cover max-w-[40px] h-[40px] rounded-full mx-2" loading="eager" src={generateImage(session?.user?.avatar_url ?? 'default.png')} alt={session?.data?.user?.name ?? 'Employee'} width={40} height={40} />
             <div className="flex flex-col text-black mr-2">
               <span className="font-semibold">{session?.user?.name}</span>
               <span className="text-black/60">Employee</span>

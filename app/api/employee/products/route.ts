@@ -1,12 +1,26 @@
 import { PrismaClient } from "@prisma/client";
 import { responseError } from "@/app/_lib/PosResponse";
-export async function GET()
+export async function GET(req: Request)
 {
+    const {license_key} = await req.json()
     const prisma = new PrismaClient()
-    const getAllProduct = await prisma.products.findMany()
+    const getAllProduct = await prisma.products.findMany({
+        where: {
+            employee: {
+                admin: {
+                    client: {
+                        license_key: license_key ?? ''
+                    }
+                }
+            }
+        },
+        select: {
+            product_name: true,
+            smallest_selling_unit: true,
+        }
+    })
 
     await prisma.$disconnect()
-    if(getAllProduct.length === 0) return responseError("Tidak ada data Product", )
 
     return Response.json(getAllProduct)
 }
