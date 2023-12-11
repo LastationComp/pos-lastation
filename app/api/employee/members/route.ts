@@ -10,14 +10,16 @@ export async function GET(req: Request)
             employee:{
                 admin:{
                     client:{
-                        license_key:"76cc1621-1a2f-4fa9-8060-b392032f27288860558"
+                        license_key:"a89352bb-3509-49bf-9d78-aec66d186dbc2785408"
                     }
                 }
             }
         },
         select:{
+            id:true,
             customer_code:true,
             name:true,
+            email:true,
             phone:true,
             point:true,
             employee:{

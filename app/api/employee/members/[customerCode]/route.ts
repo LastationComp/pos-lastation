@@ -1,15 +1,32 @@
 import { responseError, responseSuccess } from "@/app/_lib/PosResponse";
 import { PrismaClient } from "@prisma/client";
 
+export async function GET(req:Request, route:{params:{customerCode:string}})
+{
+    const prisma = new PrismaClient()
+    const customer_code = route.params.customerCode
+    const getMember = await prisma.customers.findFirst({
+        where:{
+            customer_code:customer_code
+        }
+    })
 
-export async function POST(req: Request, route:{params:{id:string}})
+    await prisma.$disconnect()
+    if(!getMember) return false
+    return Response.json({
+        member:getMember
+    })
+}
+
+
+export async function POST(req: Request, route:{params:{customerCode:string}})
 {
     const {name, email, phone, point} = await req.json()
     const prisma = new PrismaClient()
-    const id = route.params.id
+    const customer_code = route.params.customerCode
     const  updateMembers = await prisma.customers.update({
         where:{
-            id:id
+            customer_code:customer_code
         },
         data:{
             name:name,
@@ -26,13 +43,13 @@ export async function POST(req: Request, route:{params:{id:string}})
     return responseSuccess("Members Successfully Deleted!")
 }
 
-export async function DELETE(req: Request, route:{params:{id:string}})
+export async function DELETE(req: Request, route:{params:{customerCode:string}})
 {
     const prisma = new PrismaClient()
-    const id = route.params.id
+    const customer_code = route.params.customerCode
     const deleteMembers = await prisma.customers.delete({
         where:{
-            id:id
+            customer_code:customer_code
         }
     })
 
