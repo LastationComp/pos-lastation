@@ -10,7 +10,7 @@ export async function GET(req: Request)
             employee:{
                 admin:{
                     client:{
-                        license_key:"a89352bb-3509-49bf-9d78-aec66d186dbc2785408"
+                        license_key:"76cc1621-1a2f-4fa9-8060-b392032f27288860558"
                     }
                 }
             }
@@ -30,7 +30,10 @@ export async function GET(req: Request)
 
 
     await prisma.$disconnect()
-    return responseSuccess({
+    if(!getMembers) return Response.json({
+        members:getMembers
+    })
+    return Response.json({
         members: getMembers
     })
 }

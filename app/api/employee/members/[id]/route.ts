@@ -4,7 +4,26 @@ import { PrismaClient } from "@prisma/client";
 
 export async function POST(req: Request, route:{params:{id:string}})
 {
-    
+    const {name, email, phone, point} = await req.json()
+    const prisma = new PrismaClient()
+    const id = route.params.id
+    const  updateMembers = await prisma.customers.update({
+        where:{
+            id:id
+        },
+        data:{
+            name:name,
+            email:email,
+            phone:phone,
+            point:point
+        }
+    })
+
+    await prisma.$disconnect()
+
+    if(!updateMembers) return responseError("Failed to Update Member")
+
+    return responseSuccess("Members Successfully Deleted!")
 }
 
 export async function DELETE(req: Request, route:{params:{id:string}})
