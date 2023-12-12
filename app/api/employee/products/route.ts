@@ -1,33 +1,118 @@
-import { PrismaClient } from "@prisma/client";
-import { responseError } from "@/app/_lib/PosResponse";
-export async function GET()
-{
-    const prisma = new PrismaClient()
-    const getAllProduct = await prisma.products.findMany()
+import { PrismaClient } from '@prisma/client';
+import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const license_key = url.searchParams.get('license') ?? ''
+  const prisma = new PrismaClient();
+  const getAllProduct = await prisma.products.findMany({
+    where: {
+      employee: {
+        admin: {
+          client: {
+            license_key: license_key,
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+      barcode: true,
+      product_name: true,
+      smallest_selling_unit: true,
+      employee: {
+        select: {
+            name: true
+        }
+      }
+    },
+  });
 
-    await prisma.$disconnect()
-    if(getAllProduct.length === 0) return responseError("Tidak ada data Product", )
+  await prisma.$disconnect();
 
-    return Response.json(getAllProduct)
+  return responseSuccess({
+    products: getAllProduct,
+  });
 }
 
-export async function POST(req:Request)
-{
-    const {product_name} = await req.json()
-    const prisma = new PrismaClient()
+export async function POST(req: Request) {
+  const { product_name, barcode, selling_units, dump_unit, id, license_key } = await req.json();
+  const prisma = new PrismaClient();
+
+  try {
+    const selUnits: any[] = selling_units;
+    const existsIsSmallest = selUnits.filter((data) => data.is_smallest == true)[0];
+    if (!existsIsSmallest) return responseError('Please check "Is Smallest" at least one');
+
+    let checkUnit = {
+      duplicated: false,
+      name: '',
+    };
+    dump_unit.forEach((data: any) => {
+      const checkSameUnit = selUnits.filter((unit) => {
+        return Number(unit.unit_id) === data.id;
+      });
+      if (checkSameUnit.length == 2) {
+        checkUnit.duplicated = true;
+        checkUnit.name = data.name;
+        return false;
+      }
+    });
+
+    if (checkUnit.duplicated) return responseError(`Unit "${checkUnit.name}" has duplicated, please select different Unit`);
+    const findEmployee = await prisma.employees.findFirst({
+      where: {
+        id: id,
+        admin: {
+          client: {
+            license_key: license_key ?? '',
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!findEmployee?.id) return responseError("Employee Can't Found");
+
+    const findProductsExists = await prisma.products.findFirst({
+      where: {
+        barcode: barcode,
+        employee: {
+          admin: {
+            client: {
+              license_key: license_key ?? '',
+            },
+          },
+        },
+      },
+      select: {
+        barcode: true,
+      },
+    });
+
+    if (findProductsExists?.barcode) return responseError('Products with this barcode already exists.');
+
     const createProduct = await prisma.products.create({
-        data: {
-            barcode: "ABC-abc-1234",
-            product_name: product_name,
-            created_by:"cac712a5-6be0-4992-8fd0-ebe157fed397",
-        }
-    })
+      data: {
+        barcode: barcode,
+        product_name: product_name,
+        created_by: findEmployee.id,
+        sellingUnits: {
+          create: selling_units,
+        },
+      },
+    });
 
-    await prisma.$disconnect()
-
-    if(!createProduct) return responseError("Failed to create product")
+    if (!createProduct) return responseError('Failed to create product');
     return Response.json({
-        success:true,
-        message:"Product Successfully created!"
-    })
+      success: true,
+      message: 'Product Successfully created!',
+    });
+  } catch (e: any) {
+    console.log(e);
+    return responseError('Create Failed');
+  } finally {
+    await prisma.$disconnect();
+  }
 }

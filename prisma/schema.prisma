@@ -89,7 +89,7 @@ model Customers {
 
 model Products {
   id String @id @default(uuid())
-  barcode String @db.VarChar(12) @unique
+  barcode String @db.VarChar(100)
   product_name String
   smallest_selling_unit String?
   created_at DateTime @db.Timestamp() @default(now())
@@ -111,7 +111,7 @@ model SellingUnits {
   id String @id @default(uuid())
   is_smallest Boolean @default(false)
   stock Int @default(0)
-  price Decimal @default(0)
+  price Decimal @db.Decimal(8,2) @default(0)
   created_at DateTime @db.Timestamp() @default(now())
   updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   product_id String 
@@ -125,7 +125,7 @@ model SellingUnits {
 model Transactions {
   id String @id @default(uuid())
   no_ref String @unique @db.VarChar(21)
-  total_price Decimal
+  total_price Decimal @db.Decimal(8,2)
   created_at DateTime @db.Timestamp() @default(now())
   updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   employee_id String?
@@ -138,7 +138,7 @@ model Transactions {
 model TransactionLists {
   id String @id @default(uuid())
   qty Int 
-  total_price Decimal
+  total_price Decimal @db.Decimal(8,2)
   created_at DateTime @db.Timestamp() @default(now())
   updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   selling_unit_id String

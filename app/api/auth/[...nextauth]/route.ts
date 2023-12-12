@@ -53,6 +53,7 @@ export const authOptions: NextAuthOptions = {
           },
           select: {
             client_name: true,
+            client_code: true,
             admin: {
               select: {
                 name: true,
@@ -61,6 +62,8 @@ export const authOptions: NextAuthOptions = {
                     emp_can_create: true,
                     emp_can_delete: true,
                     emp_can_update: true,
+                    shop_close_hours: true,
+                    shop_open_hours: true
                   },
                 },
               },
@@ -71,6 +74,7 @@ export const authOptions: NextAuthOptions = {
 
         let employee_data = {
           avatar_url: selectUser[0].avatar,
+          client_code: getSettings?.client_code,
           permissions: { ...permission },
         };
 
@@ -123,6 +127,7 @@ export const authOptions: NextAuthOptions = {
         return {
           ...token,
           role: u.role,
+          client_code: u.client_code,
           avatar_url: u.avatar_url,
           license_key: u.license_key,
           username: u.username,
@@ -141,6 +146,7 @@ export const authOptions: NextAuthOptions = {
       session.user.username = token.username;
       session.user.permissions = token.permissions;
       session.user.client_name = token.client_name;
+      session.user.client_code = token.client_code
       return session;
     },
   },
