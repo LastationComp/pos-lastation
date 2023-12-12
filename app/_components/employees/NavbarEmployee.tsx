@@ -39,15 +39,11 @@ export default function NavbarEmployee({session}: {session: any}) {
           <ul className="inline-flex text-sm font-medium text-center rounded-full bg-white text-black border-b border-black ">
             <li className="mx-2 my-1 ">{generateLink('', 'Transaksi')}</li>
             <li className="mx-2 my-1">
-              <a href="#" className="inline-block py-3 px-5 rounded-full hover:text-black hover:bg-green-100 ">
+              <a href="#" className="inline-block py-3 px-5 rounded-full hover:text-black hover:bg-green-100">
                 Produk
               </a>
             </li>
-            <li className="mx-2 my-1">
-              <Link href="#" className="inline-block py-3 px-5 rounded-full hover:text-black hover:bg-green-100 ">
-                Member
-              </Link>
-            </li>
+            <li className='mx-2 my-1'>{generateLink('/member','Member')}</li>
             <li className="mx-2 my-1">{generateLink('/profile', 'Profile')}</li>
           </ul>
         </div>
