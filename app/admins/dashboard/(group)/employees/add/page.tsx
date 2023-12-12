@@ -5,7 +5,6 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import { useSession } from 'next-auth/react';
 import {useRouter} from 'next/navigation'
-import PosButton from '@/app/_components/PosButton';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft';
 
 export default function AddEmployeePage() {

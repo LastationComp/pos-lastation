@@ -1,14 +1,14 @@
 'use client';
 
+import LoadingComponent from "@/app/_components/LoadingComponent";
 import PosButton from "@/app/_components/PosButton";
 import PosTable from "@/app/_components/PosTable";
+import { fetcher } from "@/app/_lib/Fetcher";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 
-
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function SuperAdminUnitsPage()
 {
@@ -24,6 +24,10 @@ export default function SuperAdminUnitsPage()
         mutate(data);
       }
     }
+
+    if(!data) return (
+      <LoadingComponent></LoadingComponent>
+    )
 
     return (
         <>

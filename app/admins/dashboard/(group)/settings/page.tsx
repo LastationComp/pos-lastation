@@ -1,10 +1,10 @@
 'use client';
+import LoadingComponent from '@/app/_components/LoadingComponent';
+import { fetcher } from '@/app/_lib/Fetcher';
 import { useSession } from 'next-auth/react';
 import React, { BaseSyntheticEvent, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import useSWR from 'swr';
-
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function AdminSettingPage() {
   const session: any = useSession();
@@ -87,6 +87,10 @@ export default function AdminSettingPage() {
   useEffect(() => {
     setSettings();
   }, [data]);
+  
+  if(!data) return (
+    <LoadingComponent></LoadingComponent>
+  )
   return (
     <>
       <div className="text-xl font-semibold">Settings</div>

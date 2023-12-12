@@ -6,7 +6,10 @@ import { useRouter } from 'next/navigation';
 import PosTable from '@/app/_components/PosTable';
 import PosButton from '@/app/_components/PosButton';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import LoadingComponent from '@/app/_components/LoadingComponent';
+import { fetcher } from '@/app/_lib/Fetcher';
+
+
 export default function Dashboard() {
   const router = useRouter();
   const { data, mutate } = useSWR('/api/superadmin/clients', fetcher, {
@@ -32,6 +35,10 @@ export default function Dashboard() {
       mutate(data);
     }
   };
+
+  if(!data) return (
+    <LoadingComponent></LoadingComponent>
+  )
   return (
     <>
      <div className="text-xl font-semibold">Clients</div>
