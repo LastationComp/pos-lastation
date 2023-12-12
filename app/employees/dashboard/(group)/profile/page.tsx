@@ -1,4 +1,5 @@
 'use client';
+import LoadingComponent from '@/app/_components/LoadingComponent';
 import { signOut, useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -13,7 +14,7 @@ export default function EmployeeProfilePage() {
   const {data: session, update}: any = useSession();
   const { data, mutate } = useSWR('/api/employee/profile/' + session?.user?.id, fetcher);
   const router = useRouter()
-  const [image, setImage] = useState();
+  const [image, setImage] = useState(null);
   const [success, setSuccess] = useState(false);
   const [errMsg, setErrMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -81,6 +82,8 @@ export default function EmployeeProfilePage() {
     setName(data?.data?.name ?? '');
     console.log(data?.data?.name);
   }, [data]);
+
+  if (!data) return <LoadingComponent />
   return (
     <>
       <div className="flex justify-center">

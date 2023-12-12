@@ -1,4 +1,4 @@
-import { responseError } from "@/app/_lib/PosResponse";
+import { responseError, responseSuccess } from "@/app/_lib/PosResponse";
 import { PrismaClient } from "@prisma/client";
 
 export async function GET(req: Request, route:{params:{id:string}})
@@ -8,12 +8,49 @@ export async function GET(req: Request, route:{params:{id:string}})
     const getSellingUnits = await prisma.sellingUnits.findFirst({
         where:{
             id:id
+        },
+        select: {
+            id: true,
+            stock: true,
+            unit_id: true,
+            product_id: true,
+            price: true
         }
     })
 
+    const getUnits = await prisma.units.findMany({
+      where: {
+        OR: [
+          {
+            sellingUnits: {
+              none: {
+                product: {
+                  id: getSellingUnits?.product_id,
+                },
+              },
+            },
+          },
+          {
+            sellingUnits: {
+                some: {
+                    id: getSellingUnits?.id
+                }
+            }
+          }
+        ],
+      },
+      select: {
+        id: true,
+        name: true
+      }
+    });
+
     await prisma.$disconnect()
-    if(!getSellingUnits) return responseError("There is no Selling Units")
-    return Response.json(getSellingUnits)
+
+    return responseSuccess({
+        selling_unit: getSellingUnits,
+        units: getUnits
+    })
 }
 
 export async function POST(req:Request, route:{params:{id:string}})
