@@ -37,7 +37,7 @@ export default function Dashboard() {
   };
 
   if(!data) return (
-    <LoadingComponent></LoadingComponent>
+    <LoadingComponent/>
   )
   return (
     <>

@@ -60,7 +60,7 @@ export default function AdminEmployeesPage() {
   };
 
   if(!data) return (
-    <LoadingComponent></LoadingComponent>
+    <LoadingComponent/>
   )
   return (
     <>

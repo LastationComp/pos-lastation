@@ -26,7 +26,7 @@ export default function SuperAdminUnitsPage()
     }
 
     if(!data) return (
-      <LoadingComponent></LoadingComponent>
+      <LoadingComponent/>
     )
 
     return (

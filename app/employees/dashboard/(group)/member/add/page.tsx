@@ -60,11 +60,11 @@ export default function EmployeeAddMemberPage() {
                 <div className='px-5 py-2 mt-4'>
                     <div className='flex flex-col gap-2'>
                         <label htmlFor="">Name</label>
-                        <input type="text" onChange={(e) => setName(e.target.value)} className='outline outline-1 outline-posgray px-2 rounded-md w-[400px] h-[40px]' placeholder='John Doe' />
+                        <input type="text" onChange={(e) => setName(e.target.value)} className='outline outline-1 outline-posgray px-2 rounded-md w-[400px] h-[40px]' placeholder='John Doe' required />
                         <label htmlFor="">Email</label>
-                        <input type="text" onChange={(e) => setEmail(e.target.value)} className='outline outline-1 outline-posgray px-2 rounded-md w-[400px] h-[40px]' placeholder='example@gmail.com' />
+                        <input type="text" onChange={(e) => setEmail(e.target.value)} className='outline outline-1 outline-posgray px-2 rounded-md w-[400px] h-[40px]' placeholder='example@gmail.com' required />
                         <label htmlFor="">Phone</label>
-                        <input type="text" onChange={(e) => setPhone(e.target.value)} className='outline outline-1 outline-posgray px-2 rounded-md w-[400px] h-[40px]' placeholder='08**********' />
+                        <input type="text" onChange={(e) => setPhone(e.target.value)} className='outline outline-1 outline-posgray px-2 rounded-md w-[400px] h-[40px]' placeholder='08**********' required />
                     </div>
                     <div className='flex flex-row gap-[10px] mt-4'>
                         <button type='submit' className='bg-teal-300 text-black rounded-full px-3 py-2 hover:bg-teal-700 hover:text-white transition'>

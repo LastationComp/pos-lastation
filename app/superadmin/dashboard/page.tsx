@@ -13,7 +13,7 @@ export default function SuperAdminDashboard() {
   const {data} = useSWR(`/api/superadmin/dashboard/${id}`, fetcher)
 
   if(!data) return (
-    <LoadingComponent></LoadingComponent>
+    <LoadingComponent/>
   )
 
   return (

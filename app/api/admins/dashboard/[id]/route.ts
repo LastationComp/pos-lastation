@@ -11,8 +11,7 @@ export async function GET(req:Request, route:{params:{id:string}})
     })
 
     await prisma.$disconnect()
-    if(!getEmployee) return Response.json({
+    return Response.json({
         TotalEmployee:getEmployee
     })
-    return Response.json(getEmployee)
 }

@@ -81,7 +81,7 @@ export default function ProfilePage({
   }, [data]);
 
   if(!data) return (
-    <LoadingComponent></LoadingComponent>
+    <LoadingComponent/>
   )
   return (
     <>

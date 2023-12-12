@@ -13,7 +13,7 @@ export default function AdminDashboardPage() {
   const {data} = useSWR(`/api/admins/dashboard/${id}`, fetcher)
 
   if(!data) return (
-    <LoadingComponent></LoadingComponent>
+    <LoadingComponent/>
   )
   return (
     <>
@@ -23,7 +23,7 @@ export default function AdminDashboardPage() {
           <div className='flex justify-between items-center'>
             <div>
               <h1 className='text-white text-md'>Employees</h1>
-              <h1 className='text-white text-xl'>{data}</h1>
+              <h1 className='text-white text-xl'>{data?.TotalEmployee}</h1>
             </div>
             <div>
               <FontAwesomeIcon className='text-white' icon={faUsers} size={'2xl'} />

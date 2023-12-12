@@ -3,6 +3,6 @@ import React from 'react'
 
 export default function loading() {
     return (
-        <LoadingComponent></LoadingComponent>
+        <LoadingComponent/>
       )
 }
