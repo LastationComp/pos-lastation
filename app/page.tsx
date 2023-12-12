@@ -5,36 +5,59 @@ import { signIn, useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const [role, setRole] = useState("employee");
-  const [wrong, setWrong] = useState(false);
+
+  const [role, setRole] = useState('employee');
+  const [wrong, setWrong] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLicense, setHasLicense] = useState(true);
-  const [errMsg, setErrMsg] = useState("");
-  const [licenseKey, setLicenseKey] = useState("");
+  const [errMsg, setErrMsg] = useState('');
+  const [licenseKey, setLicenseKey] = useState('');
   const router = useRouter();
   const handleSelectRole = (string: string) => {
     if (role === string) return;
     return setRole(string);
   };
   const handleSubmit = async (data: FormData) => {
-    const res = await signIn("credentials", {
-      username: data.get("username"),
-      password: data.get("password"),
-      license_key: localStorage.getItem("license_key"),
+
+    if (role === 'employee') {
+      const promise = await fetch('/api/license/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          license_key: localStorage.getItem('license_key') ?? '',
+        }),
+      });
+      const result = await promise.json();
+
+      if (!promise.ok && promise?.status !== 200) {
+        setIsLoading(false)
+        return setWrong(result?.message);
+      }
+    }
+    const res = await signIn('credentials', {
+      username: data.get('username'),
+      password: data.get('password'),
+      license_key: localStorage.getItem('license_key'),
       role: role,
       redirect: false,
     });
-    setWrong(!res?.ok ?? false);
-    if (res?.ok && res.status === 200) return router.push("admins/dashboard");
+    if (res?.ok && res.status === 200) {
+      if (role === 'admin') return router.push('/admins/dashboard');
+      if (role === 'employee') return router.push('/employees/dashboard');
+    }
+    setWrong('Username or Password is Wrong');
     setIsLoading(false);
     return checkLicenseKey();
   };
 
   const handleLicenseKey = async () => {
-    const key = !licenseKey ? localStorage.getItem("license_key") : licenseKey;
-    const res = await fetch("/api/license", {
-      method: "POST",
+
+    const key = !licenseKey ? localStorage.getItem('license_key') : licenseKey;
+    const res = await fetch('/api/license', {
+      method: 'POST',
       headers: {
         "Content-Type": "application/json",
       },
@@ -47,23 +70,22 @@ export default function Home() {
     const result = await res.json();
     if (!res.ok && res.status !== 200) {
       setHasLicense(res.status === 200);
-      return setErrMsg(result?.message ?? "Internal Server Error");
+      return setErrMsg(result?.message ?? 'Internal Server Error');
     }
 
-    localStorage.setItem("license_key", result?.client.license_key);
-    localStorage.setItem("client_code", result?.client.client_code);
+    localStorage.setItem('license_key', result?.client.license_key);
+    localStorage.setItem('client_code', result?.client.client_code);
     setHasLicense(true);
     return;
   };
 
   const checkLicenseKey = () => {
-    if (!localStorage.getItem("license_key")) return setHasLicense(false);
+    if (!localStorage.getItem('license_key')) return setHasLicense(false);
     return handleLicenseKey();
   };
   useEffect(() => {
     checkLicenseKey();
-  });
-
+  }, []);
   return (
     <>
       <main className="bg-poslight flex justify-center w-screen h-screen static">

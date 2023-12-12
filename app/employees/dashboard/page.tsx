@@ -1,7 +1,15 @@
+
+'use client'
+import { useSession } from "next-auth/react"
+
 export default function DashboardEmployeePage() {
-  return (
-    <>
-       <div>ini halaman dashboard</div>
-    </>
-  );
+    const session: any = useSession()
+    return (
+        <>
+        <div>
+            Ini halaman Dashboard Transaksi
+        </div>
+        </>
+    )
 }
+

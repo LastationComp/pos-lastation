@@ -36,23 +36,61 @@ export const authOptions: NextAuthOptions = {
         const username = credentials?.username;
         const password = credentials?.password ?? '';
 
+        let permission = {};
         const selectUser: any = await prisma.$queryRaw`SELECT * FROM pos_users WHERE username = BINARY ${username} AND role = ${credentials?.role} `;
 
         if (!selectUser[0].username) return null;
-        if (selectUser[0].license_key !== credentials?.license_key && selectUser[0].role !== 'super_admin') return null
+
+        if (!selectUser[0].is_active) return null;
+        if (selectUser[0].license_key !== credentials?.license_key && selectUser[0].role !== 'super_admin') return null;
 
         const match = await bcrypt.compare(password, selectUser[0].password);
         if (!match) return null;
 
-        const user = {
-          id: selectUser[0].id,
-          name: selectUser[0].name,
-          role: selectUser[0].role,
-          license_key: selectUser[0].license_key,
-          username: selectUser[0].username
+        const getSettings = await prisma.clients.findFirst({
+          where: {
+            license_key: credentials?.license_key,
+          },
+          select: {
+            client_name: true,
+            admin: {
+              select: {
+                name: true,
+                setting: {
+                  select: {
+                    emp_can_create: true,
+                    emp_can_delete: true,
+                    emp_can_update: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+        permission = getSettings?.admin?.setting ?? {};
+
+        let employee_data = {
+          avatar_url: selectUser[0].avatar,
+          permissions: { ...permission },
         };
 
+        let user = {
+          id: selectUser[0].id,
+          name: selectUser[0].name,
+          username: selectUser[0].username,
+          role: selectUser[0].role,
+          client_name: getSettings?.client_name,
+          license_key: selectUser[0].license_key,
+        };
+
+        if (selectUser[0].role === 'employee') {
+          user = {
+            ...user,
+            ...employee_data,
+          };
+        }
         await prisma.$disconnect();
+
         return user;
       },
     }),
@@ -62,7 +100,8 @@ export const authOptions: NextAuthOptions = {
     maxAge: 24 * 60 * 60,
   },
   pages: {
-    signIn: '/login',
+    signIn: '/',
+    error: '/',
   },
   callbacks: {
     async redirect({ url, baseUrl }) {
@@ -70,14 +109,25 @@ export const authOptions: NextAuthOptions = {
       if (realURL.pathname === '/superadmin/login') baseUrl += realURL.pathname;
       return baseUrl;
     },
-    jwt({ token, user }) {
+    jwt({ token, user, trigger, session }) {
+      if (trigger === 'update' && session?.user?.avatar_url && session?.user?.name) {
+        return {
+          ...token,
+          avatar_url: session?.user?.avatar_url,
+          name: session?.user?.name,
+        };
+      }
       if (user) {
         const u = user as unknown as any;
+
         return {
           ...token,
           role: u.role,
+          avatar_url: u.avatar_url,
           license_key: u.license_key,
-          username: u.username
+          username: u.username,
+          permissions: u.permissions,
+          client_name: u.client_name,
         };
       }
 
@@ -86,8 +136,11 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }: { session: any; token: any }) {
       session.user.id = token.sub;
       session.user.role = token.role;
-      session.user.license_key = token.license_key
-      session.user.username = token.username
+      session.user.avatar_url = token.avatar_url;
+      session.user.license_key = token.license_key;
+      session.user.username = token.username;
+      session.user.permissions = token.permissions;
+      session.user.client_name = token.client_name;
       return session;
     },
   },
