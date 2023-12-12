@@ -3,14 +3,15 @@ import { PrismaClient } from "@prisma/client";
 
 export async function GET(req: Request)
 {
-
+    const url = new URL(req.url)
+    const license_key = url.searchParams.get("license") ?? ""
     const prisma = new PrismaClient()
     const getMembers = await prisma.customers.findMany({
         where:{
             employee:{
                 admin:{
                     client:{
-                        license_key:"a89352bb-3509-49bf-9d78-aec66d186dbc2785408"
+                        license_key:license_key
                     }
                 }
             }

@@ -5,6 +5,7 @@ import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil'
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import Swal from 'sweetalert2'
@@ -14,7 +15,8 @@ export const fetcher = (url:string) => fetch(url).then(res => res.json())
 
 export default function EmployeeMemberPage() {
 
-  const {data, mutate} = useSWR("/api/employee/members", fetcher)
+  const session : any = useSession()
+  const {data, mutate} = useSWR(`/api/employee/members?license=${session?.data?.user?.license_key}`, fetcher)
 
   const router = useRouter()
 
