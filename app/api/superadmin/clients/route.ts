@@ -36,7 +36,6 @@ export async function GET() {
 
   await prisma.$disconnect();
 
-  //   if (!getClient) return false;
   return Response.json(getClient);
 }
 
