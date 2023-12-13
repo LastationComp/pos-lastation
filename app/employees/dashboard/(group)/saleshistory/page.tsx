@@ -58,7 +58,7 @@ export default function AdminSalesHistoryPage() {
             <div className='flex flex-col'>
               <h1 className='text-2xl font-bold flex justify-center'>Transaction Details</h1>
                 <div className='flex flex-col gap-2'>
-                <div className="border-t-[2px] border-solid border-black ..."></div>
+                <div className="border-t-[2px] border-solid border-black"></div>
                   <div className='wrapper w-[400px] h-[450px] bg-gray-200'>
                     <div className='flex flex-col'>
                       <div className='flex justify-center mt-5'>
@@ -73,7 +73,7 @@ export default function AdminSalesHistoryPage() {
                           <div className='text-xs font-semibold'>Kasir : SK2_0001</div>
                           <div className='text-xs font-semibold'>Waktu : 09 /12/2023</div>
                           <div className='text-xs font-semibold'>Member : Bagus</div>
-                          <div className='text-xs font-semibold'>08:45:40</div>
+                          <div className='text-xs font-semibold flex justify-center'>08:45:40</div>
                         </div>
                       </div>
                       <div className='p-5'>
@@ -87,26 +87,30 @@ export default function AdminSalesHistoryPage() {
                           </tr>
                         </thead>
                         <tbody className='border border-x-0 border-y-2 border-dashed border-black'>
-                          <tr >
-                            <td className='text-xs font-semibold'>Minyak Sanco 1 Liter </td>
-                            <td className='text-center text-xs font-semibold'>1</td>
-                            <td className='text-center text-xs font-semibold'>10.000</td>
-                            <td className='text-center text-xs font-semibold'>10.000</td>
+                          <tr>
+                            <td className='text-xs font-semibold py-2'>Minyak Sanco 1 Liter </td>
+                            <td className='text-center text-xs font-semibold py-2'>1</td>
+                            <td className='text-center text-xs font-semibold py-2'>10.000</td>
+                            <td className='text-center text-xs font-semibold py-2'>10.000</td>
                           </tr>
                           <tr>
-                            <td className='text-xs font-semibold'>Indomie Goreng Mie Rendang Lusin </td>
-                            <td className='text-center text-xs font-semibold'>1</td>
-                            <td className='text-center text-xs font-semibold'>48.000</td>
-                            <td className='text-center text-xs font-semibold'>48.000</td>
-                          </tr>
-                          <tr>
-                            <td className='text-xs font-semibold'>Paseo Tissue Kering </td>
-                            <td className='text-center text-xs font-semibold'>2</td>
-                            <td className='text-center text-xs font-semibold'>12.000</td>
-                            <td className='text-center text-xs font-semibold'>24.000</td>
+                            <td className='text-xs font-semibold py-2'>Mie Rendang </td>
+                            <td className='text-center text-xs font-semibold py-2'>1</td>
+                            <td className='text-center text-xs font-semibold py-2'>10.000</td>
+                            <td className='text-center text-xs font-semibold py-2'>10.000</td>
                           </tr>
                         </tbody>
                       </table>
+                      <div className='pt-2'>
+                          <h1 className='text-xs font-semibold py-1'>Total : Rp. 42.000,</h1>
+                          <h1 className='text-xs font-semibold py-1'>Tunai : Rp. 50.000,</h1>
+                          <h1 className='text-xs font-semibold py-1'>Kembali : Rp. 8.000</h1>
+                      </div>
+                      <div className="border border-x-0 border-y-[1px] border-dashed border-black"></div>                    
+                        <div className='flex justify-center'>
+                          <h1 className='text-xs font-semibold text-center py-2'>Terima Kasih Atas Kunjungan Anda <br /> Periksa Barang sebelum dibeli <br /> note : Barang yang suda
+h dibeli tidak bisa ditukar</h1>
+                        </div>
                       </div>
                     </div>
                   </div>
