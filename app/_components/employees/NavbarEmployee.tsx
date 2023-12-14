@@ -26,11 +26,11 @@ export default function NavbarEmployee({session}: {session: any}) {
   };
   return (
     <nav className="bg-posgray border-gray-900 dark:bg-gray-900">
-      <div className="h-10vh flex justify-between z-50 text-white lg:py-4 px-20">
+      <div className="h-10vh flex justify-between items-center z-50 gap-3 text-white lg:py-4 px-20">
         <div className="flex items-center flex-1">
           <span className="text-3xl font-bold">
             <Link href="/" className="flex items-center gap-5">
-              <Image src={'/iconLastation.png'} className="object-cover max-w-[40px] max-h-[40px]" width={40} height={40} alt="Icon Lastation" />
+              <Image src={'/iconLastation.png'} blurDataURL={'/iconLastation.png'} className="object-cover max-w-[40px] max-h-[40px]" width={40} height={40} alt="Icon Lastation" />
               {session?.user?.client_name ?? 'Loading...'}
             </Link>
           </span>
@@ -38,14 +38,12 @@ export default function NavbarEmployee({session}: {session: any}) {
         <div className="">
           <ul className="inline-flex text-sm font-medium text-center rounded-full bg-white text-black border-b border-black ">
             <li className="mx-2 my-1 ">{generateLink('', 'Transaction')}</li>
-            <li className="mx-2 my-1">
-              {generateLink('/products', 'Products')}
-            </li>
-            <li className='mx-2 my-1'>{generateLink('/member','Member')}</li>
+            <li className="mx-2 my-1">{generateLink('/products', 'Products')}</li>
+            <li className="mx-2 my-1">{generateLink('/member', 'Member')}</li>
             <li className="mx-2 my-1">{generateLink('/profile', 'Profile')}</li>
           </ul>
         </div>
-        <div className="lg:flex md:flex lg: flex-1 items center justify-end font-normal hidden">
+        <div className="lg:flex md:flex lg:flex-1 items center justify-end font-normal hidden">
           {/* <div className="w-[157px] h-[50px] flex-col justify-start items-start gap-2.5 inline-flex">
             <div className="w-[194px] h-[50px] relative">
               <div className="w-[194px] h-[50px] left-0 top-0 absolute bg-stone-50 rounded-[30px]" />
@@ -64,7 +62,15 @@ export default function NavbarEmployee({session}: {session: any}) {
             </div>
           </div> */}
           <div className="rounded-full bg-white flex items-center">
-            <Image className="object-cover max-w-[40px] h-[40px] rounded-full mx-2" loading="eager" src={generateImage(session?.user?.avatar_url ?? 'default.png')} alt={session?.data?.user?.name ?? 'Employee'} width={40} height={40} />
+            <Image
+              className="object-cover max-w-auto w-[40px] max-h-auto h-[40px] rounded-full mx-2"
+              loading="eager"
+              blurDataURL={generateImage(session?.user?.avatar_url ?? 'default.png')}
+              src={generateImage(session?.user?.avatar_url ?? 'default.png')}
+              alt={session?.data?.user?.name ?? 'Employee'}
+              width={40}
+              height={40}
+            />
             <div className="flex flex-col text-black mr-2">
               <span className="font-semibold">{session?.user?.name}</span>
               <span className="text-black/60">Employee</span>

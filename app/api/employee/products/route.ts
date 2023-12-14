@@ -2,10 +2,23 @@ import { PrismaClient } from '@prisma/client';
 import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
 export async function GET(req: Request) {
   const url = new URL(req.url);
-  const license_key = url.searchParams.get('license') ?? ''
+  const license_key = url.searchParams.get('license') ?? '';
+  const query = url.searchParams.get('q') ?? '';
   const prisma = new PrismaClient();
   const getAllProduct = await prisma.products.findMany({
     where: {
+      OR: [
+        {
+          barcode: {
+            contains: query,
+          },
+        },
+        {
+          product_name: {
+            contains: query
+          }
+        }
+      ],
       employee: {
         admin: {
           client: {
@@ -21,9 +34,9 @@ export async function GET(req: Request) {
       smallest_selling_unit: true,
       employee: {
         select: {
-            name: true
-        }
-      }
+          name: true,
+        },
+      },
     },
   });
 

@@ -155,7 +155,7 @@ export default function AddProductPage() {
               </div>
             </div>
           ))}
-          <div className="col-span-2 flex gap-3">
+          <div className="col-span-2 flex max-lg:flex-col gap-3 border-dashed border-2 border-slate-600 rounded p-5 h-full items-center justify-center">
             {sellingUnits.length !== units.length && (
               <button
                 className="flex items-center gap-3 p-3 max-h-10 hover:bg-teal-500 transition hover:text-white rounded-full bg-teal-300"
@@ -179,12 +179,12 @@ export default function AddProductPage() {
                 }}
               >
                 <FontAwesomeIcon icon={faXmark} size="lg" />
-                Remove Selling Unit
+                Remove Previous Selling Unit
               </button>
             )}
           </div>
         </div>
-        <div className="gap-5 flex justify-end items-center">
+        <div className="gap-5 flex justify-end items-center my-3">
           <button type="submit" className={'rounded-full px-3 py-2 max-h-[40px] flex gap-3 items-center bg-posblue hover:bg-teal-600 hover:text-white transition '} disabled={isLoading}>
             <FontAwesomeIcon icon={isLoading ? faSpinner : faBox} spin={isLoading} size="lg" />
             Create Product

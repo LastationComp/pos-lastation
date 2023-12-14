@@ -17,7 +17,9 @@ import useSWR from 'swr';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function ProductsPage() {
   const session: any = useSession();
-  const { data, mutate } = useSWR('/api/employee/products?license=' + session?.data?.user?.license_key, fetcher);
+  const [query, setQuery] = useState('');
+  const [finalQuery, setFinalQuery] = useState('')
+  const { data, mutate } = useSWR(`/api/employee/products?license=${session?.data?.user?.license_key}&q=${finalQuery}`, fetcher);
   const router = useRouter();
 
   const handleDelete = async (id: string) => {
@@ -27,7 +29,7 @@ export default function ProductsPage() {
 
     const result = await res.json();
     if (res.ok && res.status === 200) {
-      mutate(data)
+      mutate(data);
       return Swal.fire({
         icon: 'success',
         title: '<span class="font-normal text-md">Product Successfully Deleted</span>',
@@ -57,16 +59,17 @@ export default function ProductsPage() {
 
   const handleAddProduct = () => {
     const checkCanCreate = session?.data?.user?.permissions.emp_can_create;
-    if (!checkCanCreate) return Swal.fire({
-      icon: 'error',
-      title: 'Permission Denied!',
-      text: 'Please contact your Admin for more information.'
-    })
+    if (!checkCanCreate)
+      return Swal.fire({
+        icon: 'error',
+        title: 'Permission Denied!',
+        text: 'Please contact your Admin for more information.',
+      });
 
-    router.push('products/add')
-  }
+    router.push('products/add');
+  };
 
-  const handleEditProduct = (id:string) => {
+  const handleEditProduct = (id: string) => {
     const checkCanUpdate = session?.data?.user?.permissions.emp_can_update;
     if (!checkCanUpdate)
       return Swal.fire({
@@ -75,10 +78,10 @@ export default function ProductsPage() {
         text: 'Please contact your Admin for more information.',
       });
 
-    router.push('products/' + id + '/edit')
+    router.push('products/' + id + '/edit');
   };
 
-  const handleDeleteProduct = (id:string, name: string) => {
+  const handleDeleteProduct = (id: string, name: string) => {
     const checkCanDelete = session?.data?.user?.permissions.emp_can_delete;
     if (!checkCanDelete)
       return Swal.fire({
@@ -87,15 +90,27 @@ export default function ProductsPage() {
         text: 'Please contact your Admin for more information.',
       });
 
-  return showWarningdelete(id, name)
-  }
+    return showWarningdelete(id, name);
+  };
 
-  if (!data) return <LoadingComponent />
+  // if (!data) return <LoadingComponent />;
   return (
     <>
-      <div>Ini Halaman Products</div>
-      <div className="flex justify-between">
-        <div></div>
+      <div className="text-xl font-semibold">Products Lists</div>
+      <div className="flex justify-between items-center">
+        <div className='flex gap-3'>
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+            }}
+            className="rounded-full outline outline-1 outline-posblue px-3 py-1 "
+          />
+          <button onClick={() => setFinalQuery(query)} className="rounded-full bg-blue-600 text-white px-3 py-1">
+            Search 
+          </button>
+        </div>
         <div>
           <PosButton icon={faPlusCircle} onClick={() => handleAddProduct()}>
             Add Product
