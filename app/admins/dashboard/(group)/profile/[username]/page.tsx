@@ -8,12 +8,13 @@ import React, {
 import useSWR from "swr";
 import { useSession, signOut } from "next-auth/react";
 import Swal from "sweetalert2";
+import { fetcher } from "@/app/_lib/Fetcher";
+import LoadingComponent from "@/app/_components/LoadingComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons/faInfo";
 import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { faFloppyDisk } from "@fortawesome/free-solid-svg-icons/faFloppyDisk";
 
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function ProfilePage({
   params,
 }: {
@@ -82,6 +83,10 @@ export default function ProfilePage({
   useEffect(() => {
     // setClientName(data?.client ?? '')
   }, [data]);
+
+  if(!data) return (
+    <LoadingComponent/>
+  )
   return (
     <>
       <div className="flex flex-col justify-center bg-white mt-2 p-4 rounded-md shadow-xl">

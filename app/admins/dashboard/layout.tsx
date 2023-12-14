@@ -17,7 +17,7 @@ export default async function DashboardAdminLayout({ children }: { children: Rea
             <h1 className="text-lg font-bold">Dashboard</h1>
           </li>
           <li>
-            <h1>Selamat Datang, {session?.user?.name}</h1>
+            <h1>Welcome, {session?.user?.name}</h1>
           </li>
         </ul>
         <ul className="items-center">

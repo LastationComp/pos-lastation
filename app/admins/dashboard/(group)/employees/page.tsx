@@ -8,9 +8,10 @@ import Swal from 'sweetalert2';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { fetcher } from '@/app/_lib/Fetcher';
+import LoadingComponent from '@/app/_components/LoadingComponent';
 
 
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function AdminEmployeesPage() {
   const router = useRouter();
@@ -56,6 +57,10 @@ export default function AdminEmployeesPage() {
       if (res.isConfirmed) return handleActivate(id);
     });
   };
+
+  if(!data) return (
+    <LoadingComponent/>
+  )
   return (
     <>
     <div className="flex flex-col justify-center mt-4 p-4 bg-white rounded-md shadow-lg">

@@ -10,6 +10,7 @@ import { faEye } from "@fortawesome/free-solid-svg-icons/faEye";
 import PosTable from "@/app/_components/PosTable";
 import useSWR from "swr";
 import { faSearch } from "@fortawesome/free-solid-svg-icons/faSearch";
+import LoadingComponent from "@/app/_components/LoadingComponent";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -20,6 +21,13 @@ export default function AdminDashboardPage() {
     fetcher
   );
 
+  // const session : any = useSession()
+  // const id = session?.data?.user?.id
+  // const {data} = useSWR(`/api/admins/dashboard/${id}`, fetcher)
+
+  if(!data) return (
+    <LoadingComponent/>
+  )
   return (
     <>
       <div className="flex flex-row">

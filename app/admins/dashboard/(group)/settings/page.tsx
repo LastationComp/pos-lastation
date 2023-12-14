@@ -1,14 +1,10 @@
-"use client";
-import { useSession } from "next-auth/react";
-import React, { BaseSyntheticEvent, useEffect, useState } from "react";
-import Swal from "sweetalert2";
-import useSWR from "swr";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
-import { faExclamation } from "@fortawesome/free-solid-svg-icons/faExclamation";
-import { faFloppyDisk } from "@fortawesome/free-solid-svg-icons/faFloppyDisk";
-
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+'use client';
+import LoadingComponent from '@/app/_components/LoadingComponent';
+import { fetcher } from '@/app/_lib/Fetcher';
+import { useSession } from 'next-auth/react';
+import React, { BaseSyntheticEvent, useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
+import useSWR from 'swr';
 
 export default function AdminSettingPage() {
   const session: any = useSession();
@@ -98,6 +94,10 @@ export default function AdminSettingPage() {
   useEffect(() => {
     setSettings();
   }, [data]);
+  
+  if(!data) return (
+    <LoadingComponent />
+  )
   return (
     <>
       <div className="flex flex-col justify-center mt-2 p-4 bg-white rounded-md shadow-lg">

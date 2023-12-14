@@ -1,4 +1,5 @@
 'use client';
+import LoadingComponent from '@/app/_components/LoadingComponent';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
@@ -40,6 +41,10 @@ export default function SuperAdminUnitCreate({params} :{params:{unitId:any}}) {
 
     return router.back()
   };
+
+  if(!data) return (
+    <LoadingComponent/>
+  )
 
   return (
     <div className="flex flex-col  items-center">
