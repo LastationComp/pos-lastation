@@ -27,10 +27,9 @@ export async function POST(req: Request) {
   const shopOpen = checkSetting?.admin?.setting?.shop_open_hours.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
   const shopClose = checkSetting?.admin?.setting?.shop_close_hours.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
   const dateNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00');
-  console.log('shop open', {shopOpen,shopClose,dateNow})
   const notWorkTime = shopOpen <= dateNow && dateNow < shopClose
 
-  if (!notWorkTime) return responseError("Yout can't login outside work time");
+  if (!notWorkTime) return responseError("You can't login outside work time");
   if (!checkSetting?.admin?.setting?.emp_can_login) return responseError("You can't login for now, please contact your Admin");
 
 

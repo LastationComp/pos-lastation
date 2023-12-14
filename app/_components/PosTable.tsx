@@ -7,7 +7,7 @@ export default function PosTable({ headers, children, fixed = true }: { headers:
         <thead className="bg-posgray font-semibold text-white">
           <tr>
             {headers.map((head, i) => (
-              <th key={i} className="text-start p-3">
+              <th key={i} className={`text-start p-3 ${i === 0 ? 'rounded-tl-lg' : ''} ${i === headers.length - 1 ? 'rounded-tr-lg' : ''}`}>
                 {head}
               </th>
             ))}
