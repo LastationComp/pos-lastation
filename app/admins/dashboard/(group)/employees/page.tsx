@@ -1,7 +1,6 @@
 'use client';
 import PosTable from '@/app/_components/PosTable';
 import React, { useState } from 'react';
-import { faUserPlus } from '@fortawesome/free-solid-svg-icons/faUserPlus';
 import PosButton from '@/app/_components/PosButton';
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
@@ -9,9 +8,10 @@ import Swal from 'sweetalert2';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { fetcher } from '@/app/_lib/Fetcher';
+import LoadingComponent from '@/app/_components/LoadingComponent';
 
 
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function AdminEmployeesPage() {
   const router = useRouter();
@@ -57,9 +57,14 @@ export default function AdminEmployeesPage() {
       if (res.isConfirmed) return handleActivate(id);
     });
   };
+
+  if(!data) return (
+    <LoadingComponent/>
+  )
   return (
     <>
-      <div className="text-lg font-semibold">Employees</div>
+    <div className="flex flex-col justify-center mt-4 p-4 bg-white rounded-md shadow-lg">
+      <div className="text-2xl font-semibold">List Employee</div>
       <div className="flex justify-between items-center">
         <div className="rtl">
           <label className="relative inline-flex items-center me-5 cursor-pointer">
@@ -69,14 +74,15 @@ export default function AdminEmployeesPage() {
           </label>
         </div>
 
-        <div className="relative">
-          <input type="text" className="rounded-full px-3 py-1 pr-8   outline outline-1 outline-posblue shadow-md " onChange={(e) => setQuery(e.target.value)} />
-          <FontAwesomeIcon icon={faSearch} className="absolute right-2 top-2 " />
+      <div className='flex justify-end items-center space-x-4'>
+        <div className="relative flex items-center">
+          <input type="text" className="rounded-full h-[45px] px-3 py-2 pr-8   outline outline-1 outline-posblue shadow-md " onChange={(e) => setQuery(e.target.value)} placeholder='Input name member'/>
+          <FontAwesomeIcon icon={faSearch} className="absolute right-5 top-4 " />
         </div>
-        
         <PosButton icon={faPlus} onClick={() => router.push('employees/add')}>
-          Add Employee
+        <p className='font-semibold'>Add Employee</p>
         </PosButton>
+        </div>
       </div>
 
       <PosTable fixed headers={['Employee Code', 'Name', 'Status', 'Action']}>
@@ -112,6 +118,7 @@ export default function AdminEmployeesPage() {
               </tr>
             ))}
       </PosTable>
+      </div>
     </>
   );
 }

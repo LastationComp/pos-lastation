@@ -59,12 +59,12 @@ export default function EmployeeMemberPage() {
           <h1 className='text-2xl font-bold'>List Members</h1>
           <PosButton icon={faPlus} onClick={() => router.push('/employees/dashboard/member/add')}>Add Member</PosButton>
         </div>
-        <div className='flex justify-between items-center'>
+        {/* <div className='flex justify-between items-center'>
           <h3>Show
             <div className=''></div>
           </h3>
           <input type="text" className='outline outline-1 outline-posgray px-3 rounded-md w-[200px] h-[35px]' placeholder='Search Member' />
-        </div>
+        </div> */}
         <div className='mt-3'>
         <PosTable fixed headers={['Customer Code', 'Name', 'Email', 'Phone', 'Point', "Action"]}>
           {data && data.members.map((member : any, index:number) => (

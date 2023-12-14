@@ -165,7 +165,7 @@ export default function Home() {
                   className=" w-[420px] h-[35px] relative flex items-center px-4 py-2 text-sm font-bold text-white bg-red-500 rounded"
                   role="alert"
                 >
-                  <p>Username or Password is Wrong</p>
+                  <p>{wrong}</p>
                 </div>
               )}
               <div className="flex flex-col w-[400px] h-[160px] gap-6">

@@ -39,6 +39,7 @@ export const authOptions: NextAuthOptions = {
         let permission = {};
         const selectUser: any = await prisma.$queryRaw`SELECT * FROM pos_users WHERE username = BINARY ${username} AND role = ${credentials?.role} `;
 
+        console.log('dapatkah?',credentials)
         if (!selectUser[0].username) return null;
 
         if (!selectUser[0].is_active) return null;

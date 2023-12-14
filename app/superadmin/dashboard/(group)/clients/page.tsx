@@ -10,6 +10,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faServer } from '@fortawesome/free-solid-svg-icons/faServer';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+import LoadingComponent from '@/app/_components/LoadingComponent';
+import { fetcher } from '@/app/_lib/Fetcher';
+import Swal from 'sweetalert2';
 export default function Dashboard() {
   const router = useRouter();
   const { data, mutate } = useSWR('/api/superadmin/clients', fetcher, {
@@ -30,10 +34,6 @@ export default function Dashboard() {
       }, 3000);
     }
   };
-  const handleDelete = async (client_code: string) => {
-    const res = await fetch('/api/superadmin/clients/' + client_code, {
-      method: 'DELETE',
-    });
 
     if (res.ok && res.status == 200) {
       mutate(data);
@@ -67,6 +67,48 @@ export default function Dashboard() {
     setOpenUpdateExpires(false)
     return mutate(data)
   }
+  const handleWarning = async (client_code:string, client_name:string, isDeactivated:boolean) => {
+    if (isDeactivated)
+        return Swal.fire({
+          title:"Deactivate this Client?",
+          text:`${client_name}`,
+          icon:'warning',
+          showCancelButton:true,
+          showConfirmButton:true
+        }).then((res) => {
+          if(res.isConfirmed) return handleDeactivate(client_code)
+        })
+
+        return Swal.fire({
+          title:"Activate this Client",
+          text:`${client_name}`,
+          icon:'warning',
+          showCancelButton:true,
+          showConfirmButton:true
+        }).then((res) => {
+          if(res.isConfirmed) return handleActivate(client_code)
+        })
+  }
+
+  const handleDeactivate = async (client_code:string) => {
+    const res = await fetch(`/api/superadmin/clients/${client_code}`,{
+      method:"DELETE"
+    })
+
+    if(res) return mutate(data)
+  }
+
+  const handleActivate = async (client_code:string) => {
+    const res = await fetch(`/api/superadmin/clients/${client_code}`,{
+      method:"PUT"
+    })
+
+    if(res) return mutate(data)
+  }
+
+  if(!data) return (
+    <LoadingComponent/>
+  )
   return (
     <>
       <div className={"absolute inset-0 flex justify-center bg-white/30 backdrop-blur-sm items-center " + (showOpenUpdateExpires ? 'block' : 'hidden')}
@@ -96,37 +138,40 @@ export default function Dashboard() {
           Add Client
         </PosButton>
       </div>
-      <PosTable fixed headers={['No', 'License Key', 'Client Name', 'Client Code', 'Username', 'Time Expires', 'Client Status', 'Action']}>
-        {data &&
-          data.map((data: any, i: number) => (
-            <tr key={data.license_key}>
-              <td className="p-3">{i + 1}</td>
-              <td className="p-3">
-                {data.license_key}
-                <button onClick={() => handleCopy(data.license_key)} id={data.license_key} className="rounded bg-gray-600  mx-1 p-1 text-white">
-                  Copy
-                </button>
-              </td>
-              <td className="p-3">{data.client_name}</td>
-              <td className="p-3">{data.client_code}</td>
-              <td className="p-3">{data.admin.username}</td>
-              <td className="p-3">{data.expires_left}</td>
-              <td className="p-3">{data.is_active ? 'Active' : 'Non Active'}</td>
-              <td>
-                <div className="flex justify-center gap-3">
-                  <button onClick={() => handleDelete(data.client_code)} className="font-medium text-red-600 dark:text-red-500 hover:underline">
-                    Delete
-                  </button>
-                  <button className="font-medium text-blue-600 underline" onClick={() => {
+      <PosTable fixed headers={["No", "License Key", "Client Name", "Client Code", "Username", "Time Expires", "Client Status", "Action"]}>
+        {data && data.map((data: any, i: number) => (
+        <tr key={data.license_key}>
+          <td className="p-3">{i+1}</td>
+          <td className='p-3'>{data.license_key}
+          <button onClick={() => handleCopy(data.license_key)} id={data.license_key} className="rounded bg-gray-600  mx-1 p-1 text-white">
+                Copy
+          </button>
+          </td>
+          <td className="p-3">{data.client_name}</td>
+          <td className="p-3">{data.client_code}</td>
+          <td className="p-3">{data.admin.username}</td>
+          <td className="p-3">{data.expires_left}</td>
+          <td className="p-3">{data.is_active ? 'Active' : 'Non Active'}</td>
+          <td>
+            {data.is_active ? (
+          <button onClick={() => handleWarning(data.client_code, data.client_name, true)} className="font-medium text-red-600 dark:text-red-500 hover:underline">
+            Deactivate
+         </button>
+            ) : (
+          <button onClick={() => handleWarning(data.client_code, data.client_name, false)} className="font-medium text-red-600 dark:text-red-500 hover:underline">
+            Activate
+         </button>
+            ) }
+             <button className="font-medium text-blue-600 underline" onClick={() => {
                     setClientCode(data.client_code)
                     setOpenUpdateExpires(true)
                   }}>
                     Update Expires
                   </button>
-                </div>
-              </td>
-            </tr>
-          ))}
+          </td>
+        </tr>
+        ))}
+
       </PosTable>
     </>
   );

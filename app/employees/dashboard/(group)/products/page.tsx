@@ -5,7 +5,7 @@ import PosButton from '@/app/_components/PosButton';
 import PosTable from '@/app/_components/PosTable';
 import { faEye } from '@fortawesome/free-solid-svg-icons/faEye';
 import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil';
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons/faPlusCircle';
+import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSession } from 'next-auth/react';
@@ -113,11 +113,11 @@ export default function ProductsPage() {
         </div>
         <div>
           <PosButton icon={faPlusCircle} onClick={() => handleAddProduct()}>
+
             Add Product
           </PosButton>
         </div>
-      </div>
-      <PosTable fixed headers={['NO', 'Barcode', 'Name', 'Smallest Unit', 'Created By', 'Action']}>
+        <PosTable fixed headers={['NO', 'Barcode', 'Name', 'Smallest Unit', 'Created By', 'Action']}>
         {data &&
           data.products.map((product: any, i: number) => (
             <tr key={i + 1} className="odd:bg-poslight even:bg-slate-200 ">
@@ -140,6 +140,8 @@ export default function ProductsPage() {
             </tr>
           ))}
       </PosTable>
+      </div>
+    </div>
     </>
   );
 }
