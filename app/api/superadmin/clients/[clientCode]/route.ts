@@ -38,16 +38,43 @@ export async function POST(req: Request, route: { params: { clientCode: string }
 export async function DELETE(req: Request, route: { params: { clientCode: string } }) {
   const prisma = new PrismaClient();
   const client_code = route.params.clientCode;
-  const deleteData = await prisma.clients.delete({
-    where: {
-      client_code: client_code,
+  const deactivateClient = await prisma.clients.update({
+    where:{
+      client_code:client_code
     },
-  });
+    data:{
+      is_active:false
+    }
+  })
 
-  await prisma.$disconnect();
-  if (!deleteData) return false;
+  await prisma.$disconnect()
+  if(!deactivateClient) return Response.json({
+    message:"Failed to Deactivate this Client"
+  })
+
   return Response.json({
-    success: true,
-    message: 'Data Client berhasil dihapus!',
-  });
+    message:"Successfully Deactivate this Client!"
+  })
+}
+
+export async function PUT(req: Request, route:{params:{clientCode:string}})
+{
+  const prisma = new PrismaClient()
+  const client_code = route.params.clientCode
+  const activateClient = await prisma.clients.update({
+    where:{
+      client_code:client_code
+    },
+    data:{
+      is_active:true
+    }
+  })
+  await prisma.$disconnect()
+  if(!activateClient) return Response.json({
+    message:"Failed to Activate this Client"
+  })
+
+  return Response.json({
+    message:"Successfully Activate this Client!"
+  })
 }

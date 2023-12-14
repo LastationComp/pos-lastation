@@ -1,4 +1,6 @@
 "use client"
+import LoadingComponent from '@/app/_components/LoadingComponent'
+import { fetcher } from '@/app/_lib/Fetcher'
 import { faAddressCard, faUserPen, faUserTie, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useSession } from 'next-auth/react'
@@ -8,8 +10,11 @@ import useSWR from 'swr'
 export default function SuperAdminDashboard() {
   const session : any = useSession()
   const id = session?.data?.user?.id
-  const fetcher = (url:string) => fetch(url).then(res => res.json())  
   const {data} = useSWR(`/api/superadmin/dashboard/${id}`, fetcher)
+
+  if(!data) return (
+    <LoadingComponent/>
+  )
 
   return (
     <>

@@ -14,7 +14,7 @@ const generateLink = (link: string, name: string) => {
   const realPath = pathDashboard + link
   const pathname = usePathname();
   return (
-    <Link href={`${pathDashboard}${link}`} className={'inline-block py-3 px-5 rounded-full ' + (pathname === realPath ? 'bg-posblue text-white' : 'hover:bg-teal-100 hover:text-black')}>
+    <Link href={`${pathDashboard}${link}`} className={'inline-block py-3 px-5 rounded-full ' + (pathname === realPath ? 'bg-posblue text-white' : 'hover:bg-teal-100 hover:text-black transition')}>
       {name}
     </Link>
   );
@@ -38,9 +38,7 @@ export default function NavbarEmployee({session}: {session: any}) {
         <div className="">
           <ul className="inline-flex text-sm font-medium text-center rounded-full bg-white text-black border-b border-black ">
             <li className="mx-2 my-1 ">{generateLink('', 'Transaction')}</li>
-            <li className="mx-2 my-1">
-              {generateLink('/products', 'Products')}
-            </li>
+            <li className="mx-2 my-1">{generateLink('/products', 'Products')}</li>
             <li className='mx-2 my-1'>{generateLink('/member','Member')}</li>
             <li className="mx-2 my-1">{generateLink('/profile', 'Profile')}</li>
           </ul>

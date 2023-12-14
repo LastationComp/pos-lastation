@@ -6,7 +6,11 @@ import { useRouter } from 'next/navigation';
 import PosTable from '@/app/_components/PosTable';
 import PosButton from '@/app/_components/PosButton';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import LoadingComponent from '@/app/_components/LoadingComponent';
+import { fetcher } from '@/app/_lib/Fetcher';
+import Swal from 'sweetalert2';
+
+
 export default function Dashboard() {
   const router = useRouter();
   const { data, mutate } = useSWR('/api/superadmin/clients', fetcher, {
@@ -23,15 +27,49 @@ export default function Dashboard() {
       }, 1000)
     }
   };
-  const handleDelete = async (client_code: string) => {
-    const res = await fetch('/api/superadmin/clients/' + client_code, {
-      method: 'DELETE',
-    });
 
-    if (res.ok && res.status == 200) {
-      mutate(data);
-    }
-  };
+  const handleWarning = async (client_code:string, client_name:string, isDeactivated:boolean) => {
+    if (isDeactivated)
+        return Swal.fire({
+          title:"Deactivate this Client?",
+          text:`${client_name}`,
+          icon:'warning',
+          showCancelButton:true,
+          showConfirmButton:true
+        }).then((res) => {
+          if(res.isConfirmed) return handleDeactivate(client_code)
+        })
+
+        return Swal.fire({
+          title:"Activate this Client",
+          text:`${client_name}`,
+          icon:'warning',
+          showCancelButton:true,
+          showConfirmButton:true
+        }).then((res) => {
+          if(res.isConfirmed) return handleActivate(client_code)
+        })
+  }
+
+  const handleDeactivate = async (client_code:string) => {
+    const res = await fetch(`/api/superadmin/clients/${client_code}`,{
+      method:"DELETE"
+    })
+
+    if(res) return mutate(data)
+  }
+
+  const handleActivate = async (client_code:string) => {
+    const res = await fetch(`/api/superadmin/clients/${client_code}`,{
+      method:"PUT"
+    })
+
+    if(res) return mutate(data)
+  }
+
+  if(!data) return (
+    <LoadingComponent/>
+  )
   return (
     <>
      <div className="text-xl font-semibold">Clients</div>
@@ -55,9 +93,15 @@ export default function Dashboard() {
           <td className="p-3">{data.expires_left}</td>
           <td className="p-3">{data.is_active ? 'Active' : 'Non Active'}</td>
           <td>
-          <button onClick={() => handleDelete(data.client_code)} className="font-medium text-red-600 dark:text-red-500 hover:underline">
-            Delete
+            {data.is_active ? (
+          <button onClick={() => handleWarning(data.client_code, data.client_name, true)} className="font-medium text-red-600 dark:text-red-500 hover:underline">
+            Deactivate
          </button>
+            ) : (
+          <button onClick={() => handleWarning(data.client_code, data.client_name, false)} className="font-medium text-red-600 dark:text-red-500 hover:underline">
+            Activate
+         </button>
+            ) }
           </td>
         </tr>
         ))}

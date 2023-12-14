@@ -8,8 +8,9 @@ import React, {
 import useSWR from "swr";
 import { useSession, signOut } from "next-auth/react";
 import Swal from "sweetalert2";
+import { fetcher } from "@/app/_lib/Fetcher";
+import LoadingComponent from "@/app/_components/LoadingComponent";
 
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function ProfilePage({
   params,
 }: {
@@ -78,12 +79,16 @@ export default function ProfilePage({
   useEffect(() => {
     // setClientName(data?.client ?? '')
   }, [data]);
+
+  if(!data) return (
+    <LoadingComponent/>
+  )
   return (
     <>
       <div className="text-lg font-semibold">Profile</div>
       {data?.neverChangePassword && (
         <div className="flex w-full bg-orange-400 rounded p-3 text-white w-1/2">
-          Kami sangat menyarankan anda untuk ganti password di awal
+          We Recommend you to change your password for the first time
         </div>
       )}
 
