@@ -1,93 +1,86 @@
-"use client";
 
-import LoadingComponent from "@/app/_components/LoadingComponent";
-import PosButton from "@/app/_components/PosButton";
-import PosTable from "@/app/_components/PosTable";
-import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons/faArrowsRotate";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons/faCartShopping";
-import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import Swal from "sweetalert2";
-import useSWR from "swr";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+'use client';
+import LoadingComponent from '@/app/_components/LoadingComponent';
+import PosButton from '@/app/_components/PosButton';
+import PosTable from '@/app/_components/PosTable';
+import TransactionLists from '@/app/_components/employees/transactions/TransactionLists';
+import { fetcher } from '@/app/_lib/Fetcher';
+import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
+import { faClockRotateLeft } from '@fortawesome/free-solid-svg-icons/faClockRotateLeft';
+import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Products, SellingUnits } from '@prisma/client';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import useSWR from 'swr';
 
 export default function DashboardEmployeePage() {
-  const session: any = useSession();
-  const { data, mutate } = useSWR(
-    "/api/employee/products?license=" + session?.data?.user?.license_key,
-    fetcher
-  );
-  const router = useRouter();
+  const { data: session }: any = useSession();
+  const router = useRouter()
+  const {data, mutate} = useSWR(`/api/employee/transactions?license=${session?.user?.license_key}`, fetcher)
+  const [transactionLists, setTransactionLists]: any = useState([])
+  const checkSelectedProduct = (id: string) => {
+    const checkIsSelected = transactionLists.find((tsx: Products) => tsx.id === id);
+    if (!checkIsSelected) return true
+    return false
+  }
 
-  const handleAddProduct = () => {
-    const checkCanCreate = session?.data?.user?.permissions.emp_can_create;
-    if (!checkCanCreate)
-      return Swal.fire({
-        icon: "error",
-        title: "Permission Denied!",
-        text: "Please contact your Admin for more information.",
-      });
-
-    router.push("dashboard/products");
-  };
-
-  if (!data) return <LoadingComponent />;
+  const reloadMutate = () => {
+    mutate(data)
+  }
+  if (!data) return <LoadingComponent />
   return (
     <>
-      <div className="mt-5">
-        <div className="flex">
-          <div className="w-[950px] h-[565px] rounded-md shadow-xl bg-white">
-            <div className="flex justify-between items-center px-5 py-3">
-              <h1 className="text-2xl font-bold">List Products</h1>
-              <PosButton icon={faPlus} onClick={() => handleAddProduct()}>
-                Add Product
-              </PosButton>
-            </div>
-            <div className="W-full justify-between items-center px-5">
-              <PosTable
-                fixed
-                headers={[
-                  "NO",
-                  "Barcode",
-                  "Name",
-                  "Smallest Unit",
-                  "Created By",
-                  "Action",
-                ]}
-              >
-                {data &&
-                  data.products.map((product: any, i: number) => (
-                    <tr
-                      key={i + 1}
-                      className="odd:bg-poslight even:bg-slate-200 "
-                    >
-                      <td className="p-3">{i + 1}</td>
-                      <td className="p-3">{product.barcode}</td>
-                      <td className="p-3">{product.product_name}</td>
-                      <td className="p-3">{product.smallest_selling_unit}</td>
-                      <td className="p-3">{product.employee.name}</td>
-                      <td className="p-3 flex justify-start gap-3">
-                        <button className="bg-posblue text-white px-2 py-1 rounded">
-                          <FontAwesomeIcon icon={faCartShopping} /> Pilih
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-              </PosTable>
-            </div>
+      <div id='bodywithoutprint' className="grid grid-cols-6 place-content-stretch h-max gap-5 my-5">
+        <div className="bg-white drop-shadow-xl rounded-lg p-5 col-span-3">
+          <div className="flex justify-between items-center">
+            <h1 className="text-lg font-semibold">Transactions</h1>
+            <PosButton icon={faClockRotateLeft} onClick={() => router.push('/')}>
+                Transactions History
+            </PosButton>
           </div>
-          <div className="flex flex-col w-[350px] h-[565px] rounded-md shadow-xl bg-white">
-            <div className="flex justify-between items-center p-5">
-              <p className="text-2xl font-bold">Detail Pesanan</p>
-              <button type="button" className="text-black bg-gray-400 px-2 py-1 rounded-lg">
-                <FontAwesomeIcon icon={faArrowsRotate} />
-              </button>
-            </div>
-          </div>
+          <PosTable fixed headers={['Barcode', 'Product Name', 'Action']}>
+            {data &&
+              data?.list_products.map((product: any, i: number) => (
+                <tr key={product.id} className="odd:bg-poslight even:bg-slate-200">
+                  <td className="p-3">{product.barcode}</td>
+                  <td className="p-3">{product.product_name}</td>
+                  <td className="p-3">
+                    {checkSelectedProduct(product.id) && (
+                      <button
+                        onClick={() => {
+                          let transactions = [...transactionLists];
+
+                          transactions.push(product);
+
+                          setTransactionLists(transactions);
+                        }}
+                        className="bg-posblue rounded px-2"
+                      >
+                        <FontAwesomeIcon icon={faCheck} />
+                      </button>
+                    )}
+                    {/* {!checkSelectedProduct(product.id) && (
+                      <button
+                        onClick={() => {
+                          let result = transactionLists.findIndex((res: Products) => res.id === product.id);
+                          let transactions = [...transactionLists];
+                          transactions.splice(result, 1);
+                          setTransactionLists(transactions);
+                        }}
+                        className="bg-red-600 rounded px-2 py-1 text-white"
+                      >
+                        <FontAwesomeIcon icon={faXmark} />
+                      </button>
+                    )} */}
+                  </td>
+                </tr>
+              ))}
+          </PosTable>
+        </div>
+        <div className="bg-white shadow-md rounded-lg p-3 col-span-3 ">
+          <TransactionLists mutate={reloadMutate} session={session} transactions={transactionLists} setTransaction={setTransactionLists} />
         </div>
       </div>
     </>

@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -22,7 +23,7 @@ model Clients {
   client_name String 
   client_code String @unique
   is_active Boolean @default(true)
-  expired_at DateTime @db.Timestamp()
+  expired_at DateTime?
   created_at DateTime @db.Timestamp() @default(now())
   updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   super_admin_id String
@@ -97,6 +98,8 @@ model Products {
   created_by String?
   employee Employees? @relation(fields: [created_by], references: [id], onUpdate: Cascade, onDelete: SetNull)
   sellingUnits SellingUnits[]
+  
+  @@fulltext([barcode, product_name])
 }
 
 model Units {
@@ -126,6 +129,8 @@ model Transactions {
   id String @id @default(uuid())
   no_ref String @unique @db.VarChar(21)
   total_price Decimal @db.Decimal(8,2)
+  pay Decimal @db.Decimal(8,2)
+  change Decimal @db.Decimal(8,2)
   created_at DateTime @db.Timestamp() @default(now())
   updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   employee_id String?

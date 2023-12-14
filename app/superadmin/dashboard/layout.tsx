@@ -17,7 +17,7 @@ const session: any = await getServerSession(authOptions)
             <h1 className='text-lg font-bold'>Dashboard</h1>
         </li>
         <li>
-            <h1>Selamat Datang, {session?.user?.name} dan login sebagai {session?.user?.role}</h1>
+            <h1>Selamat Datang, {session?.user?.name}</h1>
         </li>
     </ul>
     <ul className='items-center'>

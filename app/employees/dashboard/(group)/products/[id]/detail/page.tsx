@@ -10,12 +10,45 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import Swal from 'sweetalert2';
 import useSWR from 'swr';
 
 export default function PageProductDetail({ params }: { params: { id: string } }) {
   const session: any = useSession();
   const router = useRouter();
-  const { data } = useSWR(`/api/employee/products/${params.id}/detail?license=${session?.data?.user?.license_key}`, fetcher);
+  const { data, mutate } = useSWR(`/api/employee/products/${params.id}/detail?license=${session?.data?.user?.license_key}`, fetcher);
+  
+  const handleDelete = async(id: string) => {
+    const res = await fetch(`/api/employee/sellingunits/${id}?pid=${params.id}`, {
+      method: 'DELETE',
+    })
+
+    const result = await res.json()
+
+    if (!res.ok && res.status !== 200) return Swal.fire({
+      icon: 'error',
+      title: result?.message
+    })
+
+    mutate(data)
+    return Swal.fire({
+      icon: 'success',
+      title: result?.message
+    })
+  }
+
+  const showWarningDelete = (id: string, name: string) => {
+    Swal.fire({
+      icon: 'warning',
+      title: `<span class="text-md font-normal">Are you sure to delete unit <b>${name}</b>?</span>`,
+      showCancelButton: true,
+      width: 600,
+      showConfirmButton: true,
+      confirmButtonText: 'Yes'
+    }).then(res => {
+      if (res.isConfirmed) return handleDelete(id)
+    })
+  }
   if (!data) return <LoadingComponent />;
   return (
     <>
@@ -57,9 +90,9 @@ export default function PageProductDetail({ params }: { params: { id: string } }
                           Edit
                         </Link>
                         {!su.is_smallest && (
-                          <Link href={''} className="text-red-600 underline font-semibold">
+                          <button onClick={() => showWarningDelete(su.id, su.unit?.name)} className="text-red-600 underline font-semibold">
                             Delete
-                          </Link>
+                          </button>
                         )}
                       </td>
                     </tr>

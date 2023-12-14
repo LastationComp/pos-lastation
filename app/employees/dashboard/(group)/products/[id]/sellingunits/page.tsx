@@ -55,15 +55,15 @@ export default function AddSellingUnitsPage({ params }: { params: { id: string }
     });
 
     const result = await res.json();
-    setIsLoading(false)
+    setIsLoading(false);
     if (!res.ok && res.status !== 200) {
-      return setErrMsg(result?.message)
+      return setErrMsg(result?.message);
     }
 
-    return router.back()
+    return router.back();
   };
 
-  if (!data) return <LoadingComponent />
+  if (!data) return <LoadingComponent />;
   return (
     <>
       <h1 className="text-lg font-semibold">Add Selling Units</h1>
@@ -94,7 +94,7 @@ export default function AddSellingUnitsPage({ params }: { params: { id: string }
               </div>
             </div>
           ))}
-          <div className="col-span-2 flex gap-3">
+          <div className="col-span-2 flex gap-3 border-dashed border-2 border-slate-600 justify-center items-center p-5">
             {sellingUnits.length !== data?.units.length && (
               <button
                 className="flex items-center gap-3 p-3 max-h-10 hover:bg-teal-500 transition hover:text-white rounded-full bg-teal-300"
@@ -118,12 +118,13 @@ export default function AddSellingUnitsPage({ params }: { params: { id: string }
                 }}
               >
                 <FontAwesomeIcon icon={faXmark} size="lg" />
-                Remove Selling Unit
+                Remove Previous Selling Unit
               </button>
             )}
+            {data?.units?.length === 1 && <span>Can't add because this product reach max unit.</span>}
           </div>
         </div>
-        <div className="gap-5 flex justify-end items-center">
+        <div className="gap-5 flex justify-end items-center my-3">
           <button type="submit" className={'rounded-full px-3 py-2 max-h-[40px] flex gap-3 items-center bg-posblue hover:bg-teal-600 hover:text-white transition '} disabled={isLoading}>
             <FontAwesomeIcon icon={isLoading ? faSpinner : faBox} spin={isLoading} size="lg" />
             Create Product

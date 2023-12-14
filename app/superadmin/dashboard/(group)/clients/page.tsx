@@ -1,21 +1,28 @@
 'use client';
-import React from 'react';
-import { signOut } from 'next-auth/react';
+import React, { BaseSyntheticEvent, useState } from 'react';
+import { signOut, useSession } from 'next-auth/react';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
 import PosTable from '@/app/_components/PosTable';
 import PosButton from '@/app/_components/PosButton';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faServer } from '@fortawesome/free-solid-svg-icons/faServer';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
+export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 import LoadingComponent from '@/app/_components/LoadingComponent';
 import { fetcher } from '@/app/_lib/Fetcher';
 import Swal from 'sweetalert2';
-
-
 export default function Dashboard() {
   const router = useRouter();
   const { data, mutate } = useSWR('/api/superadmin/clients', fetcher, {
     revalidateOnMount: true,
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState('')
+  const [clientCode, setClientCode] = useState('')
+  const [showOpenUpdateExpires, setOpenUpdateExpires] = useState(false)
 
   const handleCopy = (value: string) => {
     navigator.clipboard.writeText(value);
@@ -23,11 +30,43 @@ export default function Dashboard() {
     if (clipboard) {
       clipboard.innerHTML = 'Copied';
       setTimeout(() => {
-        clipboard.innerHTML = 'Copy'
-      }, 1000)
+        clipboard.innerHTML = 'Copy';
+      }, 3000);
     }
   };
 
+    if (res.ok && res.status == 200) {
+      mutate(data);
+    }
+  };
+
+  const handleUpdateExpires = async(e: BaseSyntheticEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setErrMsg('')
+    const formData = new FormData(e.target)
+    const res = await fetch(`/api/superadmin/clients/expires`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        client_code: clientCode,
+        service_days: formData.get('expires_days') ?? 0,
+      })
+    })
+
+    const result = await res.json()
+
+    setIsLoading(false)
+
+    if (!res.ok && res.status !== 200) {
+      return setErrMsg(result?.message)
+    }
+
+    setOpenUpdateExpires(false)
+    return mutate(data)
+  }
   const handleWarning = async (client_code:string, client_name:string, isDeactivated:boolean) => {
     if (isDeactivated)
         return Swal.fire({
@@ -72,7 +111,28 @@ export default function Dashboard() {
   )
   return (
     <>
-     <div className="text-xl font-semibold">Clients</div>
+      <div className={"absolute inset-0 flex justify-center bg-white/30 backdrop-blur-sm items-center " + (showOpenUpdateExpires ? 'block' : 'hidden')}
+      onClick={(e) => {
+        const popExpires = document.getElementById('popup-expires') as HTMLDivElement
+
+        if (!popExpires.contains(e.target as HTMLElement)) return setOpenUpdateExpires(false)
+      }}
+      >
+        <form action="" method="post" onSubmit={handleUpdateExpires}>
+          <div id='popup-expires' className="bg-white rounded p-3 flex flex-col">
+            {errMsg && <div className="bg-red-500 p-3 rounded text-white">
+              {errMsg}
+            </div>}
+            <label htmlFor="expires_days">Service Days</label>
+            <input type="text" id="expires_days" name='expires_days' placeholder="Service Days..." className="rounded outline outline-1 outline-posblue shadow-md px-3 py-1" />
+            <button type='submit' disabled={isLoading} className="bg-posblue rounded px-3 py-2 my-1 hover:text-white hover:bg-teal-500 transition flex justify-center items-center gap-3">
+              <FontAwesomeIcon icon={isLoading ? faSpinner : faServer} spin={isLoading} />
+              {isLoading ? 'Updating...' : 'Update'}
+            </button>
+          </div>
+        </form>
+      </div>
+      <div className="text-xl font-semibold">Clients</div>
       <div className="flex justify-end items-center">
         <PosButton icon={faPlus} onClick={() => router.push('clients/add')}>
           Add Client
@@ -102,9 +162,16 @@ export default function Dashboard() {
             Activate
          </button>
             ) }
+             <button className="font-medium text-blue-600 underline" onClick={() => {
+                    setClientCode(data.client_code)
+                    setOpenUpdateExpires(true)
+                  }}>
+                    Update Expires
+                  </button>
           </td>
         </tr>
         ))}
+
       </PosTable>
     </>
   );

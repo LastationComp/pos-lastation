@@ -13,6 +13,9 @@
 /.next/
 /out/
 
+# public employee images
+/public/employees
+
 # production
 /build
 
