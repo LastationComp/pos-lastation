@@ -15,6 +15,7 @@ import { faInfo } from "@fortawesome/free-solid-svg-icons/faInfo";
 import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { faFloppyDisk } from "@fortawesome/free-solid-svg-icons/faFloppyDisk";
 
+
 export default function ProfilePage({
   params,
 }: {
@@ -84,9 +85,6 @@ export default function ProfilePage({
     // setClientName(data?.client ?? '')
   }, [data]);
 
-  if(!data) return (
-    <LoadingComponent/>
-  )
   return (
     <>
       <div className="flex flex-col justify-center bg-white mt-2 p-4 rounded-md shadow-xl">

@@ -49,35 +49,57 @@ export default function EmployeeAddMemberPage() {
     }
   return (
     <>
-    <form 
-    action=""
-    method='post'
-    onSubmit={(e) => handleAddMember(e)}>
-        <div className='flex flex-col w-[600px] mt-4 p-4 bg-white rounded-md shadow-lg'>
-            <p className="text-2xl font-semibold p-4">Add Member</p>
-                <div className='flex flex-col gap-3 px-6'>
-                    <div className='flex flex-col'>
-                        <label htmlFor="" className='text-base font-semibold mb-2'>Name</label>
-                        <input type="text" onChange={(e) => setName(e.target.value)} className='w-[500px] h-[35px] rounded-md outline outline-posblue outline-1 px-3 py-1 hover:outline-posgray focus:outline-posgray transition duration-400' placeholder='name member' />
-                    </div>
-                    <div className='flex flex-col'>
-                        <label htmlFor="" className='text-base font-semibold mb-2'>Email</label>
-                        <input type="text" onChange={(e) => setEmail(e.target.value)} className='w-[500px] h-[35px] rounded-md outline outline-posblue outline-1 px-3 py-1 hover:outline-posgray focus:outline-posgray transition duration-400' placeholder='example@gmail.com' />
-                    </div>
-                    <div className='flex flex-col'>
-                        <label htmlFor="" className='text-base font-semibold mb-2'>Phone</label>
-                        <input type="text" onChange={(e) => setPhone(e.target.value)} className='w-[500px] h-[35px] rounded-md outline outline-posblue outline-1 px-3 py-1 hover:outline-posgray focus:outline-posgray transition duration-400' placeholder='08**********' />
-                    </div>
-                    <div className='flex flex-row justify-end py-2 px-4'>
-                        <button type="reset" className='w-[80px] h-[45px] bg-red-500 rounded-full hover:bg-red600 hover:text-white transition' onClick={() => router.back()}>
-                            <FontAwesomeIcon icon={faCaretLeft} /> Back
-                        </button>
-                        <button type='submit' className='w-[80px] h-[45px] ml-2 bg-teal-300 text-black rounded-full hover:bg-teal-700 hover:text-white transition'>
-                            <FontAwesomeIcon icon={isLoading ? faSpinner : faPlus} /> Add</button>
-                    </div>
-                </div>
+      <form action="" method="post" onSubmit={(e) => handleAddMember(e)}>
+        <div className="flex flex-col w-[600px] mt-4 p-4 bg-white rounded-md shadow-lg">
+          <p className="text-2xl font-semibold p-4">Add Member</p>
+          <div className="flex flex-col gap-3 px-6">
+            <div className="flex flex-col">
+              <label htmlFor="" className="text-base font-semibold mb-2">
+                Name
+              </label>
+              <input
+                type="text"
+                onChange={(e) => setName(e.target.value)}
+                className="w-[500px] h-[35px] rounded-md outline outline-posblue outline-1 px-3 py-1 hover:outline-posgray focus:outline-posgray transition duration-400"
+                placeholder="name member"
+                required
+              />
+            </div>
+            <div className="flex flex-col">
+              <label htmlFor="" className="text-base font-semibold mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-[500px] h-[35px] rounded-md outline outline-posblue outline-1 px-3 py-1 hover:outline-posgray focus:outline-posgray transition duration-400"
+                placeholder="example@gmail.com"
+                required
+              />
+            </div>
+            <div className="flex flex-col">
+              <label htmlFor="" className="text-base font-semibold mb-2">
+                Phone
+              </label>
+              <input
+                type="text"
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-[500px] h-[35px] rounded-md outline outline-posblue outline-1 px-3 py-1 hover:outline-posgray focus:outline-posgray transition duration-400"
+                placeholder="08**********"
+                required
+              />
+            </div>
+            <div className="flex flex-row gap-3 justify-end py-2 px-4">
+              <button type="submit" className="w-[80px] h-[45px] ml-2 bg-teal-300 text-black rounded-full hover:bg-teal-700 hover:text-white transition">
+                <FontAwesomeIcon icon={isLoading ? faSpinner : faPlus} /> Add
+              </button>
+              <button type="reset" className="w-[80px] h-[45px] bg-red-500 rounded-full hover:bg-red600 hover:text-white transition" onClick={() => router.back()}>
+                <FontAwesomeIcon icon={faCaretLeft} /> Back
+              </button>
+            </div>
+          </div>
         </div>
-    </form>
+      </form>
     </>
-  )
+  );
 }

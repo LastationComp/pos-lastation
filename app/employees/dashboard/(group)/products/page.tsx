@@ -5,7 +5,7 @@ import PosButton from '@/app/_components/PosButton';
 import PosTable from '@/app/_components/PosTable';
 import { faEye } from '@fortawesome/free-solid-svg-icons/faEye';
 import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil';
-import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons/faPlusCircle';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSession } from 'next-auth/react';
@@ -18,8 +18,10 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function ProductsPage() {
   const session: any = useSession();
   const [query, setQuery] = useState('');
-  const [finalQuery, setFinalQuery] = useState('')
-  const { data, mutate } = useSWR(`/api/employee/products?license=${session?.data?.user?.license_key}&q=${finalQuery}`, fetcher);
+  const [finalQuery, setFinalQuery] = useState('');
+  const { data, mutate } = useSWR(`/api/employee/products?license=${session?.data?.user?.license_key}&q=${query}`, fetcher, {
+    keepPreviousData: true
+  });
   const router = useRouter();
 
   const handleDelete = async (id: string) => {
@@ -98,7 +100,7 @@ export default function ProductsPage() {
     <>
       <div className="text-xl font-semibold">Products Lists</div>
       <div className="flex justify-between items-center">
-        <div className='flex gap-3'>
+        <div className="flex gap-3">
           <input
             type="text"
             value={query}
@@ -107,17 +109,14 @@ export default function ProductsPage() {
             }}
             className="rounded-full outline outline-1 outline-posblue px-3 py-1 "
           />
-          <button onClick={() => setFinalQuery(query)} className="rounded-full bg-blue-600 text-white px-3 py-1">
-            Search 
-          </button>
         </div>
         <div>
           <PosButton icon={faPlusCircle} onClick={() => handleAddProduct()}>
-
             Add Product
           </PosButton>
         </div>
-        <PosTable fixed headers={['NO', 'Barcode', 'Name', 'Smallest Unit', 'Created By', 'Action']}>
+      </div>
+      <PosTable fixed headers={['NO', 'Barcode', 'Name', 'Smallest Unit', 'Created By', 'Action']}>
         {data &&
           data.products.map((product: any, i: number) => (
             <tr key={i + 1} className="odd:bg-poslight even:bg-slate-200 ">
@@ -140,8 +139,6 @@ export default function ProductsPage() {
             </tr>
           ))}
       </PosTable>
-      </div>
-    </div>
     </>
   );
 }

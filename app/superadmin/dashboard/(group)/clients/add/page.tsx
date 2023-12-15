@@ -1,4 +1,6 @@
 'use client';
+import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -58,6 +60,10 @@ export default function ClientAdd() {
             />
             <button type="submit" className="bg-posblue my-3 p-2 text-black rounded hover:bg-teal-700 transition">
               Add
+            </button>
+            <button type="reset" className="rounded bg-posgray p-2 flex justify-center text-white items-center focus:text-white hover:bg-gray-500 focus:bg-gray-500 transition hover:text-white" onClick={() => router.back()}>
+              <FontAwesomeIcon icon={faCaretLeft} />
+              Back
             </button>
           </div>
         </form>

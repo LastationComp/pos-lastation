@@ -48,7 +48,7 @@ export default function AdminEmployeesPage() {
 
     return Swal.fire({
       title: `<span>Are you sure to Activate ${name}?</span>`,
-      html: 'This option not make your employe <span class="text-blue-500">Activated</span> and can login to your bussiness',
+      html: 'This option make your employe <span class="text-blue-500">Activated</span> and can login to your bussiness',
       width: 800,
       icon: 'warning',
       showCancelButton: true,

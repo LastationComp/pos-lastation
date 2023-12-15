@@ -62,9 +62,9 @@ export async function POST(req: Request, route: {params: {username: string}}) {
     const {canCreate, canLogin, canUpdate, canDelete, openHours, closeHours} = await req.json()
 
 
-    if (closeHours < openHours) return responseError('Shop Close Time cant be below Shop Open Time')
+    if (closeHours <= openHours) return responseError('Shop Close Time cant be below Shop Open Time')
     
-    const splitOpenHours = openHours.toString().split(':')
+    const splitOpenHours = openHours.toString().replace('24', '00').split(':')
     const splitCloseHours = closeHours.toString().split(':');
 
     const dateOpenHours = new Date()
