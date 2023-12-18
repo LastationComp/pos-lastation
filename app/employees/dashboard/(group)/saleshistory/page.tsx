@@ -40,7 +40,7 @@ export default function AdminSalesHistoryPage() {
               </PosButton>
             </div>
             <div className="mt-3">
-              <PosTable fixed headers={['Nomor Referensi', 'Tanggal', 'Employee', 'Total', 'Action']}>
+              <PosTable fixed headers={['No Reference', 'Date', 'Employee', 'Total', 'Action']}>
                 {data &&
                   data.salesHistory.map((sales: any, index: number) => (
                     <tr key={index + 1}>

@@ -6,11 +6,13 @@ const prisma = new PrismaClient()
 export async function POST(req: Request, route:{params: {id:string}}) {
   const {selling_units, dump_unit, id, license_key } = await req.json();
 try {
+
   const selUnits: any[] = selling_units;
   let checkUnit = {
     duplicated: false,
     name: '',
   };
+
   dump_unit.forEach((data: any) => {
     const checkSameUnit = selUnits.filter((unit) => {
       return Number(unit.unit_id) === data.id;
@@ -64,7 +66,7 @@ try {
     data: {
         sellingUnits: {
             create: selling_units
-        }
+        },
     }
   })
 

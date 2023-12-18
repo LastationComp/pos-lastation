@@ -29,8 +29,9 @@ export default function EmployeeAddMemberPage() {
                 name: name,
                 phone: phone,
                 email: email,
-                client_code: localStorage.getItem("client_code"),
-                idEmployee: session?.data?.user?.id
+                client_code: session?.data?.user?.client_code,
+                idEmployee: session?.data?.user?.id,
+                license_key: session?.data?.user?.license_key
             })
 
         })

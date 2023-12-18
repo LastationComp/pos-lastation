@@ -13,13 +13,15 @@ const generateLink = (link: string, name: string) => {
   const pathDashboard = '/employees/dashboard';
   const realPath = pathDashboard + link;
   const pathname = usePathname();
-
+  const router = useRouter()
   return (
-    <Link href={`${pathDashboard}${link}`} className={'inline-block py-3 px-5 rounded-full ' + (pathname === realPath ? 'bg-posblue text-white' : 'hover:bg-teal-100 hover:text-black transition')}>
+    <button onClick={() => router.push(`${realPath}`)} className={'inline-block py-3 px-5 rounded-full ' + (pathname === realPath ? 'bg-posblue text-white' : 'hover:bg-teal-100 hover:text-black transition')}>
       {name}
-    </Link>
+    </button>
   );
 };
+
+
 export default function NavbarEmployee({ session }: { session: any }) {
   const router = useRouter();
 

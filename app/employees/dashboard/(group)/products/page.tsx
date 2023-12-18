@@ -107,6 +107,7 @@ export default function ProductsPage() {
             onChange={(e) => {
               setQuery(e.target.value);
             }}
+            placeholder='Type barcode or product name'
             className="rounded-full outline outline-1 outline-posblue px-3 py-1 "
           />
         </div>

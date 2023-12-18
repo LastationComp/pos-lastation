@@ -46,7 +46,6 @@ export async function POST(req: Request) {
   const client_code_first: any[] = string_client_name.trim().toString().split(' ');
   let client_code_final: any = '';
   let super_admin: string;
-  let firstLetterBackup: any[];
   client_code_first.forEach((data: string) => {
     const firstLetter: any[] = data.split('');
     client_code_final += firstLetter[0];
