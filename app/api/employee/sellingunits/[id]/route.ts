@@ -13,8 +13,14 @@ export async function GET(req: Request, route: { params: { id: string } }) {
       id: true,
       stock: true,
       unit_id: true,
+      is_smallest: true,
       product_id: true,
       price: true,
+      unit: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 
@@ -54,18 +60,36 @@ export async function GET(req: Request, route: { params: { id: string } }) {
 }
 
 export async function POST(req: Request, route: { params: { id: string } }) {
-  const { stock, price, unit_id } = await req.json();
+  const { stock, price, unit_id, is_smallest, unit_name } = await req.json();
   const id = route.params.id;
+
   const updateSellingUnits = await prisma.sellingUnits.update({
     where: {
       id: id,
     },
     data: {
-      stock: stock,
-      price: price,
       unit_id: unit_id,
+      price: price,
+      stock: stock,
     },
   });
+
+  if (is_smallest) {
+    await prisma.sellingUnits.update({
+      where: {
+        id: id,
+      },
+      data: {
+        product: {
+          update: {
+            data: {
+              smallest_selling_unit: unit_name,
+            },
+          },
+        },
+      },
+    });
+  }
 
   await prisma.$disconnect();
   if (!updateSellingUnits) return responseError('Failed to Update Selling Unit');
@@ -77,15 +101,15 @@ export async function POST(req: Request, route: { params: { id: string } }) {
 
 export async function DELETE(req: Request, route: { params: { id: string } }) {
   try {
-    const url = new URL(req.url)
-    const productId = url.searchParams.get('pid') ?? ''
+    const url = new URL(req.url);
+    const productId = url.searchParams.get('pid') ?? '';
     const id = route.params.id;
     const deleteProduct = await prisma.sellingUnits.delete({
       where: {
         id: id,
         product: {
-            id: productId
-        }
+          id: productId,
+        },
       },
     });
 

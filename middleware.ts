@@ -1,7 +1,6 @@
 // export { default } from 'next-auth/middleware';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
-import {cookies} from 'next/headers'
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   const pathSuperAdmin = '/superadmin';

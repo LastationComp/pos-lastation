@@ -2,27 +2,27 @@ import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import bcrypt from 'bcrypt';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route'; 
+import { authOptions } from '../../auth/[...nextauth]/route';
 import { responseError } from '@/app/_lib/PosResponse';
 export async function GET() {
   const prisma = new PrismaClient().$extends({
     result: {
       clients: {
         expires_left: {
-          needs: {expired_at: true},
+          needs: { expired_at: true },
           compute(user) {
             const minute = 1000 * 60;
             const hour = minute * 60;
             const day = hour * 24;
-            const dated = new Date(user.expired_at)
-            const minus = dated.getTime() - new Date().getTime()
-            const result = Math.round(minus / day)
-            return `${result} Day${result == 1 ? '': 's' + (result < 0 ? '(expired)' : '')}`
+            const dated = new Date(user.expired_at ?? new Date());
+            const minus = dated.getTime() - new Date().getTime();
+            const result = Math.round(minus / day);
+            return `${result} Day${result == 1 ? '' : 's' + (result < 0 ? '(expired)' : '')}`;
           },
-        }
-      }
-    }
-  })
+        },
+      },
+    },
+  });
   const getClient = await prisma.clients.findMany({
     include: {
       admin: {
@@ -46,7 +46,6 @@ export async function POST(req: Request) {
   const client_code_first: any[] = string_client_name.trim().toString().split(' ');
   let client_code_final: any = '';
   let super_admin: string;
-  let firstLetterBackup: any[];
   client_code_first.forEach((data: string) => {
     const firstLetter: any[] = data.split('');
     client_code_final += firstLetter[0];
@@ -96,6 +95,15 @@ export async function POST(req: Request) {
   const expired_at = new Date();
   expired_at.setDate(expired_at.getDate() + Number(service_days_number));
   const hashedPin = await bcrypt.hash('12345678', 10);
+  const date = new Date();
+  date.setHours(7);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  const openShop = new Date(date);
+  date.setHours(17);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  const closeShop = new Date(date);
   const createClient = await prisma.clients.create({
     data: {
       license_key: license_key,
@@ -111,6 +119,8 @@ export async function POST(req: Request) {
           setting: {
             create: {
               emp_can_login: true,
+              shop_open_hours: new Date(openShop),
+              shop_close_hours: new Date(closeShop),
             },
           },
         },
@@ -120,7 +130,7 @@ export async function POST(req: Request) {
 
   await prisma.$disconnect();
 
-  if (!createClient) return responseError("Failed to Add Client");
+  if (!createClient) return responseError('Failed to Add Client');
 
   return Response.json({
     success: true,

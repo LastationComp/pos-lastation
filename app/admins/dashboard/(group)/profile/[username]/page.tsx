@@ -14,6 +14,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons/faInfo";
 import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { faFloppyDisk } from "@fortawesome/free-solid-svg-icons/faFloppyDisk";
+import { useRouter } from "next/navigation";
+
 
 export default function ProfilePage({
   params,
@@ -24,6 +26,7 @@ export default function ProfilePage({
   const [errMsg, setErrMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const router = useRouter()
   const { data } = useSWR(
     `/api/admins/${params.username}?license=${session.data?.user?.license_key}`,
     fetcher, {
@@ -54,7 +57,8 @@ export default function ProfilePage({
     }
     e.target.reset();
     setSuccess(res.ok && res.status === 200);
-    return signOut();
+    await signOut({redirect: false});
+    return router.push('/')
   };
 
   const showWarning = (e: BaseSyntheticEvent) => {
@@ -84,9 +88,6 @@ export default function ProfilePage({
     // setClientName(data?.client ?? '')
   }, [data]);
 
-  if(!data) return (
-    <LoadingComponent/>
-  )
   return (
     <>
       <div className="flex flex-col justify-center bg-white mt-2 p-4 rounded-md shadow-xl">

@@ -44,7 +44,7 @@ model Admins {
   employees Employees[]
 }
 
-model Settings {
+model Settings {ce
   id Int @id @default(autoincrement())
   emp_can_login Boolean @default(true)
   emp_can_create Boolean @default(true)

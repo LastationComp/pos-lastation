@@ -161,11 +161,35 @@ export async function POST(req: Request) {
         },
       });
 
+
       if (createTransaction) {
         success.isSuccess = true;
         success.message = 'Transaction Success';
+        if (customer_id) {
+          const customer = await tx.customers.findFirst({
+            where: {
+              id: customer_id
+            },
+            select: {
+              id: true,
+              point: true
+            }
+          })
+
+          if (customer?.point) {
+            await tx.customers.update({
+              where: {
+                id: customer.id
+              },
+              data: {
+                point: customer.point + (Math.round(total_price / 100)) * 0.5
+              }
+            })
+          }
+        }
       }
     });
+
 
     if (success.isSuccess) return responseSuccess(success.message);
 

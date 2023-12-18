@@ -143,9 +143,8 @@ export default function TransactionLists({ transactions, setTransaction, session
   };
 
   useEffect(() => {
-    calTotalPrice()
+    calTotalPrice();
   }, [transactions]);
-
 
   return (
     <>
@@ -251,7 +250,7 @@ export default function TransactionLists({ transactions, setTransaction, session
       </div>
       <div className="flex justify-between">
         <h1 className="text-[24px] font-bold">Order Details</h1>
-        <button className="p-2 bg-gray-300 rounded" onClick={() => clearTransactions()}>
+        <button className="p-2 bg-gray-300 rounded" onClick={() => {clearTransactions(); mutate()}}>
           <FontAwesomeIcon icon={faRotate} size="lg" />
         </button>
       </div>
@@ -284,11 +283,12 @@ export default function TransactionLists({ transactions, setTransaction, session
               <div className="w-full  flex flex-col gap-3">
                 <div className="flex justify-between items-center">
                   <label htmlFor="total_price">Total Price</label>
-                  <input type="text" name="total_price" value={formatRupiah(totalPrice)} required placeholder="Subtotal" disabled className=" w-1/2 outline outline-1 outline-posblue rounded px-3 py-2" />
+                  <input type="text" id='total_price' name="total_price" value={formatRupiah(totalPrice)} required placeholder="Subtotal" disabled className=" w-1/2 outline outline-1 outline-posblue rounded px-3 py-2" />
                 </div>
                 <div className="flex justify-between items-center">
                   <label htmlFor="pay">Pay</label>
                   <input
+                    id="pay"
                     type="text"
                     name="pay"
                     value={pay}
@@ -303,7 +303,7 @@ export default function TransactionLists({ transactions, setTransaction, session
                 </div>
                 <div className="flex justify-between items-center">
                   <label htmlFor="payback">Payback</label>
-                  <input type="text" name="payback" value={formatRupiah(payBack)} required placeholder="Result your payback" disabled className=" w-1/2 outline outline-1 outline-posblue rounded px-3 py-2" />
+                  <input type="text" id='payback' name="payback" value={formatRupiah(payBack)} required placeholder="Result your payback" disabled className=" w-1/2 outline outline-1 outline-posblue rounded px-3 py-2" />
                 </div>
               </div>
               <div className="w-full flex justify-end mx-auto my-3 gap-3">
@@ -435,7 +435,15 @@ export default function TransactionLists({ transactions, setTransaction, session
         </div>
         <div className="flex justify-between mt-auto bg-gray-300 items-center rounded">
           <span className="mx-3">Subtotal: {formatRupiah(totalPrice)}</span>
-          <button name="subpay" onClick={() => {setButtonType('subpay');  setPayBack(Number(pay) - totalPrice);}} className="bg-posblue rounded-r p-3" type="submit">
+          <button
+            name="subpay"
+            onClick={() => {
+              setButtonType('subpay');
+              setPayBack(Number(pay) - totalPrice);
+            }}
+            className="bg-posblue rounded-r p-3"
+            type="submit"
+          >
             Pay
           </button>
         </div>

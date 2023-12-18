@@ -5,6 +5,7 @@ import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft';
 import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { BaseSyntheticEvent, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
@@ -15,6 +16,7 @@ export default function SellingUnitsEditPage({ params }: { params: { id: string 
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState('');
   const [unitId, setUnitId] = useState('');
+  const [unitName, setUnitName] = useState('');
   const [stock, setStock] = useState(0);
   const [price, setPrice] = useState(0);
   const router = useRouter();
@@ -23,9 +25,11 @@ export default function SellingUnitsEditPage({ params }: { params: { id: string 
     const formData = new FormData(e.target);
 
     const form = {
-      unit_id: Number(formData.get('select_unit')),
+      unit_id: Number(unitId),
       stock: Number(formData.get('stock')) ?? 0,
       price: Number(formData.get('price')) ?? 0,
+      is_smallest: data?.selling_unit?.is_smallest ?? false,
+      unit_name: unitName
     };
 
     const res = await fetch(`/api/employee/sellingunits/${params.id}`, {
@@ -63,6 +67,7 @@ export default function SellingUnitsEditPage({ params }: { params: { id: string 
 
   useEffect(() => {
     setUnitId(data?.selling_unit?.unit_id ?? 0);
+    setUnitName(data?.selling_unit?.unit?.name ?? '')
     setStock(data?.selling_unit?.stock ?? 0);
     setPrice(data?.selling_unit?.price ?? 0);
   }, [data]);
@@ -70,15 +75,26 @@ export default function SellingUnitsEditPage({ params }: { params: { id: string 
   return (
     <>
       <h1 className="text-lg font-semibold">Edit Selling Unit</h1>
+      {'ini' + unitName}
       {errMsg && <div className="bg-red-500 p-3 rounded text-white">{errMsg}</div>}
       <form action="" method="post" onSubmit={showWarning}>
         <div className="grid grid-cols-3 gap-5">
           <div className="flex flex-col">
             <label htmlFor="select-unit">Unit</label>
-            <select name="select_unit" value={unitId} id="select-unit" onChange={(e) => setUnitId(e.target.value)} className="rounded outline outline-1 outline-posblue py-1">
+            <select
+              name="select_unit"
+              value={unitId + ',' + unitName}
+              id="select-unit"
+              onChange={(e) => {
+                const unit = e.target.value.split(',');
+                setUnitId(unit[0]);
+                setUnitName(unit[1]);
+              }}
+              className="rounded outline outline-1 outline-posblue py-1"
+            >
               {data.units &&
                 data?.units.map((unit: any) => (
-                  <option key={unit.id} value={unit.id}>
+                  <option key={unit.id + ',' + unit.name} value={unit.id + ',' + unit.name}>
                     {unit.name}
                   </option>
                 ))}

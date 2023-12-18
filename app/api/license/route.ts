@@ -20,9 +20,10 @@ export async function POST(req: Request) {
       expired_at: true,
     },
   });
+  
   if (!checkLicenseKey) return responseError('Incorrect License Key, Please input the correct License Key');
 
-  if (!checkLicenseKey.is_active || checkLicenseKey.expired_at < new Date()) {
+  if (!checkLicenseKey.is_active || (checkLicenseKey.expired_at ?? '') < new Date()) {
     await prisma.clients.update({
       where: {
         license_key: checkLicenseKey.license_key,

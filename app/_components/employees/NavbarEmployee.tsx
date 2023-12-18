@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import ButtonLogout from '../ButtonLogout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,15 +11,26 @@ import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons/faRightFro
 
 const generateLink = (link: string, name: string) => {
   const pathDashboard = '/employees/dashboard';
-  const realPath = pathDashboard + link
+  const realPath = pathDashboard + link;
   const pathname = usePathname();
+  const router = useRouter()
   return (
-    <Link href={`${pathDashboard}${link}`} className={'inline-block py-3 px-5 rounded-full ' + (pathname === realPath ? 'bg-posblue text-white' : 'hover:bg-teal-100 hover:text-black transition')}>
+    <button onClick={() => router.push(`${realPath}`)} className={'inline-block py-3 px-5 rounded-full ' + (pathname === realPath ? 'bg-posblue text-white' : 'hover:bg-teal-100 hover:text-black transition')}>
       {name}
-    </Link>
+    </button>
   );
 };
-export default function NavbarEmployee({session}: {session: any}) {
+
+
+export default function NavbarEmployee({ session }: { session: any }) {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    {
+      await signOut({ redirect: false });
+      return router.push('/');
+    }
+  };
   const generateImage = (url: string) => {
     const realPath = `/employees/${url}`;
     return realPath;
@@ -77,7 +88,7 @@ export default function NavbarEmployee({session}: {session: any}) {
               <span className="text-black/60">Employee</span>
             </div>
             <div>
-              <button className="bg-red-600 p-1 rounded mr-5" onClick={() => signOut()}>
+              <button className="bg-red-600 p-1 rounded mr-5" onClick={() => handleLogout()}>
                 <FontAwesomeIcon icon={faRightFromBracket} size={'xl'} />
               </button>
             </div>

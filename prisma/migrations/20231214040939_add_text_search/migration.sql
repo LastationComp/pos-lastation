@@ -63,3 +63,56 @@ ALTER TABLE `units` MODIFY `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMES
 
 -- CreateIndex
 CREATE FULLTEXT INDEX `Products_barcode_product_name_idx` ON `Products`(`barcode`, `product_name`);
+
+
+CREATE TRIGGER `selling_units_after_ins_tr1` AFTER INSERT ON `selling_units`
+ FOR EACH ROW BEGIN
+	IF (NEW.is_smallest = TRUE) THEN
+    UPDATE `products` a
+    INNER JOIN `selling_units` b ON (a.`id` = b.`product_id`)
+    INNER JOIN `units` c ON (b.`unit_id` = c.id)
+    SET
+    a.smallest_selling_unit = c.`name`
+    WHERE 
+    b.`id` = NEW.id;
+    
+    END IF;
+END
+
+CREATE TRIGGER `selling_units_after_upd_tr1` AFTER UPDATE ON `selling_units`
+ FOR EACH ROW BEGIN
+	IF (NEW.is_smallest = TRUE  AND OLD.unit_id <> NEW.unit_id) THEN
+    UPDATE `products` a
+    INNER JOIN `selling_units` b ON (a.`id` = b.`product_id`)
+    INNER JOIN `units` c ON (b.`unit_id` = c.id)
+    SET
+    a.smallest_selling_unit = c.`name`
+    WHERE 
+    b.`id` = NEW.id;
+    
+    END IF;
+    
+END
+
+CREATE TRIGGER `transaction_lists_after_ins_tr1` AFTER INSERT ON `transaction_lists`
+ FOR EACH ROW BEGIN
+
+	UPDATE `selling_units` a
+    SET
+    a.`stock` = a.`stock` - NEW.qty
+    WHERE
+    a.`id` = NEW.selling_unit_id;
+    
+END
+
+CREATE TRIGGER `transactions_after_ins_tr1` AFTER INSERT ON `transactions`
+ FOR EACH ROW BEGIN
+	IF (NOT NEW.customer_id IS NULL) THEN
+    
+    UPDATE `customers` a
+    SET
+    a.`point` = a.`point` + ROUND(NEW.total_price / 100)
+    WHERE
+    a.id = NEW.customer_id;
+    END IF;
+END

@@ -36,7 +36,7 @@ export default function DashboardEmployeePage() {
         <div className="bg-white drop-shadow-xl rounded-lg p-5 col-span-3">
           <div className="flex justify-between items-center">
             <h1 className="text-lg font-semibold">Transactions</h1>
-            <PosButton icon={faClockRotateLeft} onClick={() => router.push('/')}>
+            <PosButton icon={faClockRotateLeft} onClick={() => router.push('dashboard/saleshistory')}>
                 Transactions History
             </PosButton>
           </div>

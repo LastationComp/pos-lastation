@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 export async function GET()
 {
-    const prisma = new PrismaClient
+    const prisma = new PrismaClient()
     const getUnits = await prisma.units.findMany()
     
     await prisma.$disconnect()

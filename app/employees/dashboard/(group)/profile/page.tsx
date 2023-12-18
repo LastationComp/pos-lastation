@@ -11,9 +11,9 @@ import useSWR from 'swr';
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function EmployeeProfilePage() {
-  const {data: session, update}: any = useSession();
+  const { data: session, update }: any = useSession();
   const { data, mutate } = useSWR('/api/employee/profile/' + session?.user?.id, fetcher);
-  const router = useRouter()
+  const router = useRouter();
   const [image, setImage] = useState(null);
   const [success, setSuccess] = useState(false);
   const [errMsg, setErrMsg] = useState('');
@@ -39,7 +39,7 @@ export default function EmployeeProfilePage() {
     const formData = new FormData(e.target);
     const res = await fetch(`/api/employee/profile/${session?.user?.id}`, {
       method: 'POST',
-      body: formData
+      body: formData,
     });
     setSuccess(res.ok && res.status === 200);
     setIsLoading(false);
@@ -50,40 +50,43 @@ export default function EmployeeProfilePage() {
     update({
       user: {
         avatar_url: result?.avatar_url,
-        name: formData.get('name') as string
-      }
-    })
-    e.target.reset()
-    if (result?.isWithPassword) return signOut()
+        name: formData.get('name') as string,
+      },
+    });
+    e.target.reset();
+    if (result?.isWithPassword) {
+      await signOut({ redirect: false });
+      return router.push('/');
+    }
   };
 
   const showWarning = (e: BaseSyntheticEvent) => {
     Swal.fire({
-        title: 'Are you sure to save?',
-        html: '<span class="text-black/30">If you change Password, it will be automatically <span class="text-red-500">logout</span></span>',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-        width: 600,
-        showConfirmButton: true
+      title: 'Are you sure to save?',
+      html: '<span class="text-black/30">If you change Password, it will be automatically <span class="text-red-500">logout</span></span>',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      width: 600,
+      showConfirmButton: true,
     }).then((res) => {
-        if (res.isConfirmed) {
-            setTimeout(() => {
-              return handleSubmit(e);
-            }, 500);
-        }
-        if (res.isDismissed) {
-            clearCondition()
-            setIsLoading(false)
-        }
-    })
-  }
+      if (res.isConfirmed) {
+        setTimeout(() => {
+          return handleSubmit(e);
+        }, 500);
+      }
+      if (res.isDismissed) {
+        clearCondition();
+        setIsLoading(false);
+      }
+    });
+  };
   useEffect(() => {
     setName(data?.data?.name ?? '');
     console.log(data?.data?.name);
   }, [data]);
 
-  if (!data) return <LoadingComponent />
+  if (!data) return <LoadingComponent />;
   return (
     <>
       <div className="flex justify-center">
