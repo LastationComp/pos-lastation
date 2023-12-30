@@ -1,7 +1,5 @@
 import { responseError } from '@/app/_lib/PosResponse';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/app/_lib/prisma/client';
 export async function POST(req: Request) {
   const { license_key } = await req.json();
 

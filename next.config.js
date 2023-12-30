@@ -2,6 +2,7 @@
 const nextConfig = {
   experimental: {
     forceSwcTransforms: true,
+    swcMinify: true
   },
 };
 

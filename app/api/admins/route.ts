@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
-import { writeFile } from 'fs/promises';
-import bcrypt from 'bcrypt'
 
+import { prisma } from '@/app/_lib/prisma/client';
+import { writeFile } from 'fs/promises';
 export async function POST(req: Request) {
   const formData = await req.formData();
   if (!formData.has('file')) return Response.json({
@@ -10,9 +9,7 @@ export async function POST(req: Request) {
   const files: File = formData.get('file') as File;
   const publicPath = process.cwd() + '/public/'
   const buffer = Buffer.from(await files.arrayBuffer())
-  console.log(files);
   await writeFile(publicPath + files.name, buffer);
-  const prisma = new PrismaClient();
   
   const getAdmin = await prisma.admins.findMany();
   await prisma.$disconnect();

@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from "@/app/_lib/prisma/client";
 
 export async function GET(req: Request, route: { params: { no_ref: string } }) {
-  const prisma = new PrismaClient();
   const no_ref = route.params.no_ref;
   const getReceipt = await prisma.transactions.findFirst({
     where: {

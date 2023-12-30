@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/app/_lib/prisma/client"
+
 
 export async function GET(req: Request, route:{params:{id:string}})
 {
     const id = route.params.id
-    const prisma = new PrismaClient()
     const getCustomer = await prisma.customers.findFirst({
         where:{
             id:id
@@ -33,7 +33,6 @@ export async function GET(req: Request, route:{params:{id:string}})
 export async function DELETE(req: Request, route:{params:{id:string}})
 {
     const id = route.params.id
-    const prisma = new PrismaClient()
     const deleteCustomer = await prisma.customers.delete({
         where: {
             id: id

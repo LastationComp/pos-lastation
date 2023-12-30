@@ -1,9 +1,6 @@
 import { responseSuccess } from "@/app/_lib/PosResponse"
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "@/app/_lib/prisma/client"
 
-
-
-const prisma = new PrismaClient()
 export async function GET(req: Request) {
     const {id} = await req.json()
 

@@ -14,6 +14,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import LoadingComponent from '@/app/_components/LoadingComponent';
 import { fetcher } from '@/app/_lib/Fetcher';
 import Swal from 'sweetalert2';
+import { faUserCheck, faUserClock, faUserXmark } from '@fortawesome/free-solid-svg-icons';
 export default function Dashboard() {
   const router = useRouter();
   const { data, mutate } = useSWR('/api/superadmin/clients', fetcher, {
@@ -139,7 +140,7 @@ export default function Dashboard() {
       <PosTable fixed headers={['No', 'License Key', 'Client Name', 'Client Code', 'Username', 'Time Expires', 'Client Status', 'Action']}>
         {data &&
           data.map((data: any, i: number) => (
-            <tr key={data.license_key}>
+            <tr key={data.license_key} className="odd:bg-poslight even:bg-slate-200 ">
               <td className="p-3">{i + 1}</td>
               <td className="p-3">
                 {data.license_key}
@@ -152,23 +153,24 @@ export default function Dashboard() {
               <td className="p-3">{data.admin.username}</td>
               <td className="p-3">{data.expires_left}</td>
               <td className="p-3">{data.is_active ? 'Active' : 'Non Active'}</td>
-              <td className="gap-3 ">
+              <td className="flex gap-3 items-center justify-center my-3">
                 {data.is_active ? (
-                  <button onClick={() => handleWarning(data.client_code, data.client_name, true)} className="font-medium text-red-600 dark:text-red-500 hover:underline">
-                    Deactivate
+                  <button onClick={() => handleWarning(data.client_code, data.client_name, true)} className="px-2 py-1 rounded-sm bg-red-600 text-white hover:bg-red-700 transition">
+                    <FontAwesomeIcon icon={faUserXmark} />
                   </button>
                 ) : (
-                  <button onClick={() => handleWarning(data.client_code, data.client_name, false)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                    Activate
+                  <button onClick={() => handleWarning(data.client_code, data.client_name, false)} className="bg-green-600 text-white rounded-sm px-2 py-1 hover:bg-green-700 transition">
+                    <FontAwesomeIcon icon={faUserCheck} />
                   </button>
                 )}
                 <button
-                  className="font-medium text-blue-600 underline items-center my-auto px-3"
+                  className="font-medium bg-blue-600 text-white items-center my-auto px-3 py-1 rounded-sm hover:bg-blue-700 transition"
                   onClick={() => {
                     setClientCode(data.client_code);
                     setOpenUpdateExpires(true);
                   }}
                 >
+                  <FontAwesomeIcon className='mx-1' icon={faUserClock} />
                   Update Expires
                 </button>
               </td>

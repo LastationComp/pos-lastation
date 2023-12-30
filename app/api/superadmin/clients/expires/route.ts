@@ -1,7 +1,7 @@
 import { responseError, responseSuccess } from "@/app/_lib/PosResponse"
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "@/app/_lib/prisma/client"
 
-const prisma = new PrismaClient()
+
 
 export async function POST(req: Request) {
     const {service_days, client_code } = await req.json()

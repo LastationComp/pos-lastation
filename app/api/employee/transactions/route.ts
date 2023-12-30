@@ -1,7 +1,5 @@
 import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/app/_lib/prisma/client';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);

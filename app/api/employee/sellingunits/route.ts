@@ -1,9 +1,8 @@
 import { responseError } from "@/app/_lib/PosResponse";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/app/_lib/prisma/client";
 
 export async function GET()
 {
-    const prisma = new PrismaClient()
     const getSellingUnits = await prisma.sellingUnits.findMany()
 
     await prisma.$disconnect()
@@ -15,7 +14,6 @@ export async function GET()
 export async function POST(req:Request)
 {
     const {stock, price} = await req.json()
-    const prisma = new PrismaClient()
     const createSellingUnit = await prisma.sellingUnits.create({
         data: {
             stock:stock,

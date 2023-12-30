@@ -1,8 +1,5 @@
 import { responseError } from "@/app/_lib/PosResponse";
-import { PrismaClient } from "@prisma/client";
-
-
-const prisma = new PrismaClient()
+import { prisma } from "@/app/_lib/prisma/client";
 export async function POST(req: Request, route:{params: {id:string}}) {
   const {selling_units, dump_unit, id, license_key } = await req.json();
 try {

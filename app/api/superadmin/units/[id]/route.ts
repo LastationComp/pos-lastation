@@ -1,9 +1,8 @@
 import { responseError } from "@/app/_lib/PosResponse"
-import { Prisma, PrismaClient } from "@prisma/client"
+import { prisma } from "@/app/_lib/prisma/client"
 
 export async function GET(req: Request, route:{params:{id:any}})
 {
-    const prisma = new PrismaClient()
     const id = Number(route.params.id)
     const getUnit = await prisma.units.findFirst({
         where:{
@@ -21,7 +20,6 @@ export async function POST(req: Request, route:{params:{id:any}})
 {
     const {name} = await req.json()
     const id = Number(route.params.id)
-    const prisma = new PrismaClient()
     const updateUnit = await prisma.units.update({
         where: {
             id:id
@@ -42,7 +40,6 @@ export async function POST(req: Request, route:{params:{id:any}})
 
 export async function DELETE(req: Request, route:{params:{id:any}})
 {
-    const prisma = new PrismaClient()
     const id = Number(route.params.id)
     const deleteUnit = await prisma.units.delete({
         where:{

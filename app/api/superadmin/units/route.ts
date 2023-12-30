@@ -1,9 +1,8 @@
 import { responseError, responseSuccess } from "@/app/_lib/PosResponse";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/app/_lib/prisma/client";
 
 export async function GET()
 {
-    const prisma = new PrismaClient()
     const getUnits = await prisma.units.findMany()
     
     await prisma.$disconnect()
@@ -15,7 +14,6 @@ export async function GET()
 export async function POST(req: Request)
 {
     const {name} = await req.json()
-    const prisma = new PrismaClient()
     const createUnit = await prisma.units.create({
         data:{
             name:name
