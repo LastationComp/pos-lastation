@@ -1,10 +1,9 @@
-import { PrismaClient } from '@prisma/client';
 import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
+import { prisma } from '@/app/_lib/prisma/client';
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const license_key = url.searchParams.get('license') ?? '';
   const query = url.searchParams.get('q') ?? '';
-  const prisma = new PrismaClient();
   const getAllProduct = await prisma.products.findMany({
     where: {
       OR: [
@@ -49,7 +48,6 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const { product_name, barcode, selling_units, dump_unit, id, license_key } = await req.json();
-  const prisma = new PrismaClient();
 
   try {
     const selUnits: any[] = selling_units;

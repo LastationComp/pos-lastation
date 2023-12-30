@@ -1,8 +1,5 @@
 import { responseSuccess } from "@/app/_lib/PosResponse"
-import { PrismaClient } from "@prisma/client"
-
-
-const prisma = new PrismaClient()
+import { prisma } from "@/app/_lib/prisma/client"
 export async function GET(req: Request) {
     const getUnits = await prisma.units.findMany({
         select: {

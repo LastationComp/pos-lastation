@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/app/_lib/prisma/client';
 
 export async function GET(req: Request, route: { params: { clientCode: string } }) {
   const client_code = route.params.clientCode;
-  const prisma = new PrismaClient();
   const getClient = await prisma.clients.findFirst({
     where: {
       client_code: client_code,
@@ -14,7 +13,6 @@ export async function GET(req: Request, route: { params: { clientCode: string } 
 
 export async function POST(req: Request, route: { params: { clientCode: string } }) {
   const { license_key, is_active, expired_at, super_admin_id } = await req.json();
-  const prisma = new PrismaClient();
   const client_code = route.params.clientCode;
   const updateData = await prisma.clients.update({
     where: {
@@ -36,45 +34,44 @@ export async function POST(req: Request, route: { params: { clientCode: string }
 }
 
 export async function DELETE(req: Request, route: { params: { clientCode: string } }) {
-  const prisma = new PrismaClient();
   const client_code = route.params.clientCode;
   const deactivateClient = await prisma.clients.update({
-    where:{
-      client_code:client_code
+    where: {
+      client_code: client_code,
     },
-    data:{
-      is_active:false
-    }
-  })
+    data: {
+      is_active: false,
+    },
+  });
 
-  await prisma.$disconnect()
-  if(!deactivateClient) return Response.json({
-    message:"Failed to Deactivate this Client"
-  })
+  await prisma.$disconnect();
+  if (!deactivateClient)
+    return Response.json({
+      message: 'Failed to Deactivate this Client',
+    });
 
   return Response.json({
-    message:"Successfully Deactivate this Client!"
-  })
+    message: 'Successfully Deactivate this Client!',
+  });
 }
 
-export async function PUT(req: Request, route:{params:{clientCode:string}})
-{
-  const prisma = new PrismaClient()
-  const client_code = route.params.clientCode
+export async function PUT(req: Request, route: { params: { clientCode: string } }) {
+  const client_code = route.params.clientCode;
   const activateClient = await prisma.clients.update({
-    where:{
-      client_code:client_code
+    where: {
+      client_code: client_code,
     },
-    data:{
-      is_active:true
-    }
-  })
-  await prisma.$disconnect()
-  if(!activateClient) return Response.json({
-    message:"Failed to Activate this Client"
-  })
+    data: {
+      is_active: true,
+    },
+  });
+  await prisma.$disconnect();
+  if (!activateClient)
+    return Response.json({
+      message: 'Failed to Activate this Client',
+    });
 
   return Response.json({
-    message:"Successfully Activate this Client!"
-  })
+    message: 'Successfully Activate this Client!',
+  });
 }

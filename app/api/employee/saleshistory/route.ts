@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from "@/app/_lib/prisma/client";
+
 
 export async function GET(req: Request) {
-  const prisma = new PrismaClient();
   const url = new URL(req.url);
   const license_key = url.searchParams.get('license') ?? '';
   const getSalesHistory = await prisma.transactions.findMany({

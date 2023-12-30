@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
-import { disconnect } from "process";
-import { responseError } from "../employees/route";
+
+import { responseError } from "@/app/_lib/PosResponse";
+import { prisma } from "@/app/_lib/prisma/client";
 
 export async function GET()
 {
-    const prisma = new PrismaClient()
     const getCustomers = await prisma.customers.findMany()
 
     await prisma.$disconnect()
@@ -15,7 +14,6 @@ export async function GET()
 export async function POST(req: Request)
 {
     const {name, email, phone} = await req.json()
-    const prisma = new PrismaClient()
     const createCustomers = await prisma.customers.create({
         data: {
             customer_code : "6677",

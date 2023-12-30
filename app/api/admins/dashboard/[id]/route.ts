@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from "@/app/_lib/prisma/client";
+
 
 export async function GET(req: Request, route: { params: { id: string } }) {
-  const prisma = new PrismaClient();
   const id = route.params.id;
   const getEmployeeActive = await prisma.employees.count({
     where: {
@@ -17,24 +17,6 @@ export async function GET(req: Request, route: { params: { id: string } }) {
     },
   });
 
-  // const transaction = await prisma.transactions.groupBy({
-  //   where: {
-  //     employee: {
-  //       admin: {
-  //         id: id
-  //       }
-  //     },
-
-  //   },
-  //   by: 'employee_id',
-
-  //   _sum: {
-  //     total_price: true
-  //   },
-  //   _count: {
-  //     _all: true
-  //   },
-  // })
   const transaction = await prisma.transactions.findMany({
     where: {
       employee: {

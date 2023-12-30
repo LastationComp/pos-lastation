@@ -1,12 +1,11 @@
 import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../auth/[...nextauth]/route';
+import { prisma } from '@/app/_lib/prisma/client';
 
 export async function GET(req: Request) {
   const session: any = await getServerSession(authOptions);
-  const prisma = new PrismaClient();
   const getEmployees = await prisma.admins.findFirst({
     where: {
       id: session?.user?.id,
@@ -40,7 +39,6 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const { name, id } = await req.json();
   if (!name) return responseError('Please fill Employee Name');
-  const prisma = new PrismaClient();
   const getAllData = await prisma.admins.findFirst({
     where: {
       id: id,

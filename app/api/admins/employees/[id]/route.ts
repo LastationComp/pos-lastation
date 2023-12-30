@@ -1,9 +1,8 @@
 import { responseError } from '@/app/_lib/PosResponse';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/app/_lib/prisma/client';
 import bcrypt from 'bcrypt';
 export async function POST(req: Request, route: { params: { id: any } }) {
   const { name, pin, avatar_url } = await req.json();
-  const prisma = new PrismaClient();
   const hashedPin = await bcrypt.hash(pin, 10);
   const id = route.params.id;
   const updateEmployee = await prisma.employees.update({
@@ -30,7 +29,6 @@ export async function POST(req: Request, route: { params: { id: any } }) {
 }
 
 export async function DELETE(req: Request, route: { params: { id: any } }) {
-  const prisma = new PrismaClient();
   const id = route.params.id;
   try {
     const deleteData = await prisma.employees.update({
@@ -53,7 +51,6 @@ export async function DELETE(req: Request, route: { params: { id: any } }) {
 }
 
 export async function PUT(req: Request, route: { params: { id: any } }) {
-  const prisma = new PrismaClient();
   const id = route.params.id;
   try {
     const deleteData = await prisma.employees.update({

@@ -10,6 +10,7 @@ import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { Products } from '@prisma/client';
 import Swal from 'sweetalert2';
+import { formatNumber, formatRupiah } from '@/app/_lib/RupiahFormat';
 
 export default function TransactionLists({ transactions, setTransaction, session, mutate }: { transactions: any[]; setTransaction: any; session: any; mutate: any }) {
   const router = useRouter();
@@ -123,12 +124,6 @@ export default function TransactionLists({ transactions, setTransaction, session
     return handleCreateTransaction(e);
   };
 
-  const formatRupiah = (number: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-    }).format(number);
-  };
 
   const clearTransactions = () => {
     setMember();
@@ -294,7 +289,7 @@ export default function TransactionLists({ transactions, setTransaction, session
                     value={pay}
                     required
                     onChange={(e) => {
-                      setPay(Number(e.target.value));
+                      setPay(Number(e.target.value.toString().replaceAll('/[,\.]/', '')));
                       setPayBack(Number(e.target.value) - totalPrice);
                     }}
                     placeholder="Input your pay"

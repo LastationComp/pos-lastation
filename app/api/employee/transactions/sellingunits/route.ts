@@ -1,7 +1,5 @@
 import { responseSuccess } from "@/app/_lib/PosResponse";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient()
+import { prisma } from "@/app/_lib/prisma/client";
 export async function POST(req: Request) {
     const {products} = await req.json()
     const getSellingUnits = await prisma.sellingUnits.findMany({

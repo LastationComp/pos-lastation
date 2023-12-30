@@ -1,10 +1,9 @@
 import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/app/_lib/prisma/client';
 import { compareSync, hashSync } from 'bcrypt';
 import { writeFile, unlink } from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 
-const prisma = new PrismaClient();
 export async function GET(req: Request, route: { params: { id: string } }) {
   const getProfile = await prisma.employees.findUnique({
     where: {
