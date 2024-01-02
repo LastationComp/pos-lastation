@@ -75,13 +75,13 @@ export default function AddEmployeePage() {
               />
             </div>
             <div className="flex gap-3 justify-end ">
-              <button className="rounded-full  bg-posblue p-2 px-5 flex justify-center items-center focus:text-white hover:bg-teal-500 focus:bg-teal-500 transition hover:text-white font-semibold" type="submit">
-                <FontAwesomeIcon icon={isLoading ? faSpinner : faPlus} spin={isLoading} />
-                <p className="font-semibold"> &nbsp;Add</p>
-              </button>
               <button type="reset" className="rounded-full px-5 py-2 bg-gray-300 p-2 flex justify-center items-center focus:text-white hover:bg-gray-400 focus:bg-gray-400 transition hover:text-white" onClick={() => router.back()}>
                 <FontAwesomeIcon icon={faCaretLeft} />
                 <p className="font-semibold">Back</p>
+              </button>
+              <button className="rounded-full  bg-posblue p-2 px-5 flex justify-center items-center focus:text-white hover:bg-teal-500 focus:bg-teal-500 transition hover:text-white font-semibold" type="submit">
+                <FontAwesomeIcon icon={isLoading ? faSpinner : faPlus} spin={isLoading} />
+                <p className="font-semibold"> &nbsp;Add</p>
               </button>
             </div>
           </div>

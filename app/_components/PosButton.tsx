@@ -1,5 +1,6 @@
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button } from '@nextui-org/react';
 import React from 'react'
 
 export default function PosButton({
@@ -12,9 +13,8 @@ export default function PosButton({
     onClick: any
 }) {
   return (
-    <button onClick={onClick} className="flex items-center gap-3 px-3 py-2 hover:bg-teal-500 transition hover:text-white rounded-full bg-teal-300 my-3">
-      <FontAwesomeIcon icon={icon} size="lg" />
+    <Button startContent={<FontAwesomeIcon icon={icon}/>} radius='full' onClick={onClick} className="hover:bg-teal-500 hover:text-white bg-teal-300 my-3">
       {children}
-    </button>
+    </Button>
   );
 }

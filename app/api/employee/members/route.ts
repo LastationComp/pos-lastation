@@ -67,8 +67,6 @@ export async function POST(req:Request)
     const number: string = splitCustomerCode[1] ?? 0
     const client_code_final =  Number(number) + 1;
     const customer_code = client_code_second + client_code_final.toString().padStart(4,"0")
-    console.log(customer_code)
-    console.log(email)
     const createPrisma = await prisma.customers.create({
         data:{
             customer_code:customer_code,

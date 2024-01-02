@@ -3,6 +3,7 @@ import LoadingComponent from '@/app/_components/LoadingComponent';
 import { fetcher } from '@/app/_lib/Fetcher';
 import { faCheck, faExclamation, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Switch } from '@nextui-org/react';
 import { useSession } from 'next-auth/react';
 import React, { BaseSyntheticEvent, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
@@ -123,8 +124,7 @@ export default function AdminSettingPage() {
                 <div className="flex items-center gap-3">
                   <div className="rtl">
                     <label className="relative inline-flex items-center me-5 cursor-pointer" htmlFor="chk_emp_can_login">
-                      <input type="checkbox" name="chk_emp_can_login" className="sr-only peer" onChange={(e) => setCanLogin(e.target.checked)} checked={canLogin} id="chk_emp_can_login" />
-                      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                      <Switch isSelected={canLogin} size="sm" color="success" onValueChange={() => setCanLogin(!canLogin)}></Switch>
                       <div className="ms-3 text-sm text-posgray">Employee Can Login</div>
                     </label>
                   </div>
@@ -137,8 +137,7 @@ export default function AdminSettingPage() {
                 <div className="flex items-center gap-3">
                   <div className="rtl">
                     <label className="relative inline-flex items-center me-5 cursor-pointer" htmlFor="chk_emp_can_create">
-                      <input type="checkbox" name="chk_emp_can_create" className="sr-only peer" onChange={(e) => setCanCreate(e.target.checked)} id="chk_emp_can_create" checked={canCreate} />
-                      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                      <Switch isSelected={canCreate} size="sm" color="success" onValueChange={() => setCanCreate(!canCreate)}></Switch>
                       <div className="ms-3 text-sm text-posgray">Employee Can Create Product</div>
                     </label>
                   </div>
@@ -150,8 +149,7 @@ export default function AdminSettingPage() {
               <div className="col-span-2 flex flex-col">
                 <div className="flex items-center gap-3">
                   <label className="relative inline-flex items-center me-5 cursor-pointer" htmlFor="chk_emp_can_update">
-                    <input type="checkbox" name="chk_emp_can_update" className="sr-only peer" onChange={(e) => setCanUpdate(e.target.checked)} id="chk_emp_can_update" checked={canUpdate} />
-                    <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                    <Switch isSelected={canUpdate} size="sm" color="success" onValueChange={() => setCanUpdate(!canUpdate)}></Switch>
                     <div className="ms-3 text-sm text-posgray">Employee Can Update Product</div>
                   </label>
                 </div>
@@ -162,8 +160,7 @@ export default function AdminSettingPage() {
               <div className="col-span-2 flex flex-col">
                 <div className="flex items-center gap-3">
                   <label className="relative inline-flex items-center me-5 cursor-pointer">
-                    <input type="checkbox" name="chk_emp_can_delete" className="sr-only peer" onChange={(e) => setCanDelete(e.target.checked)} id="chk_emp_can_delete" checked={canDelete} />
-                    <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-500"></div>
+                    <Switch isSelected={canDelete} size="sm" color="danger" onValueChange={() => setCanDelete(!canDelete)}></Switch>
                     <label htmlFor="chk_emp_can_delete" className="ms-3 text-sm text-posgray">
                       Employee Can <span className="text-red-600">Delete Product</span>
                     </label>
@@ -189,7 +186,7 @@ export default function AdminSettingPage() {
                     <span className="ml-4">Close Open Time</span>
                   </div>
                 </div>
-                <span className="ml-2 mt-2">
+                <span className="ml-2 mt-2 text-black/40">
                   This option make your shop open time configured, <span className="text-red-600">to restrict employee has login outside open time</span>
                 </span>
               </div>

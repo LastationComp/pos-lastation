@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -18,7 +18,7 @@ model SuperAdmin {
 }
 
 model Clients {
-  id String @id @default(uuid())
+  id String @id @default(cuid())
   license_key String @unique
   client_name String 
   client_code String @unique
@@ -29,10 +29,12 @@ model Clients {
   super_admin_id String
   superAdmin SuperAdmin @relation(fields: [super_admin_id], references: [id], onUpdate: Cascade)
   admin Admins?
+
+  @@map("clients")
 }
 
 model Admins {
-  id String @id @default(uuid())
+  id String @id @default(cuid())
   pin String
   name String
   username String @unique
@@ -42,6 +44,8 @@ model Admins {
   client Clients @relation(fields: [client_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   setting Settings?
   employees Employees[]
+
+  @@map("admins")
 }
 
 model Settings {ce
@@ -56,10 +60,11 @@ model Settings {ce
   updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   admin_id String @unique
   admin Admins @relation(fields: [admin_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  @@map("settings")
 }
 
 model Employees {
-  id String @id @default(uuid())
+  id String @id @default(cuid())
   name String
   pin String
   employee_code String @db.Char(10) @unique
@@ -72,10 +77,11 @@ model Employees {
   customers Customers[]
   products Products[]
   transactions Transactions[]
+  @@map("employees")
 }
 
 model Customers {
-  id String @id @default(uuid())
+  id String @id @default(cuid())
   customer_code String @db.Char(10) @unique
   name String
   email String @unique
@@ -86,6 +92,7 @@ model Customers {
   created_by String?
   employee Employees? @relation(fields: [created_by], references: [id], onUpdate: Cascade, onDelete: SetNull)
   transactions Transactions[]
+  @@map("customers")
 }
 
 model Products {
@@ -98,8 +105,8 @@ model Products {
   created_by String?
   employee Employees? @relation(fields: [created_by], references: [id], onUpdate: Cascade, onDelete: SetNull)
   sellingUnits SellingUnits[]
-  
-  @@fulltext([barcode, product_name])
+
+  @@map("products")
 }
 
 model Units {
@@ -108,6 +115,8 @@ model Units {
   created_at DateTime @db.Timestamp() @default(now())
   updated_at DateTime @db.Timestamp() @updatedAt @default(now())
   sellingUnits SellingUnits[]
+
+  @@map("units")
 }
 
 model SellingUnits {

@@ -9,12 +9,12 @@ export default async function DashboardEmployeeLayout({ children }: { children: 
   const session: any = await getServerSession(authOptions);
   return (
     <>
-      <NavbarEmployee session={session} />
+      <div className="w-screen">
+        <NavbarEmployee session={session} />
+      </div>
       <section className="container mx-auto">
         <Provider session={session}>
-          <Suspense fallback={<h1>Loading...</h1>}>
-            {children}
-            </Suspense>
+          <Suspense fallback={<h1>Loading...</h1>}>{children}</Suspense>
         </Provider>
       </section>
     </>
