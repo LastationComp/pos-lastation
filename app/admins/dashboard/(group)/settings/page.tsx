@@ -123,10 +123,10 @@ export default function AdminSettingPage() {
               <div className="col-span-2 flex flex-col">
                 <div className="flex items-center gap-3">
                   <div className="rtl">
-                    <label className="relative inline-flex items-center me-5 cursor-pointer" htmlFor="chk_emp_can_login">
+                    <div className="relative inline-flex items-center me-5 cursor-pointer">
                       <Switch isSelected={canLogin} size="sm" color="success" onValueChange={() => setCanLogin(!canLogin)}></Switch>
                       <div className="ms-3 text-sm text-posgray">Employee Can Login</div>
-                    </label>
+                    </div>
                   </div>
                 </div>
                 <div>
@@ -136,10 +136,10 @@ export default function AdminSettingPage() {
               <div className="col-span-2 flex flex-col">
                 <div className="flex items-center gap-3">
                   <div className="rtl">
-                    <label className="relative inline-flex items-center me-5 cursor-pointer" htmlFor="chk_emp_can_create">
+                    <div className="relative inline-flex items-center me-5 cursor-pointer">
                       <Switch isSelected={canCreate} size="sm" color="success" onValueChange={() => setCanCreate(!canCreate)}></Switch>
                       <div className="ms-3 text-sm text-posgray">Employee Can Create Product</div>
-                    </label>
+                    </div>
                   </div>
                 </div>
                 <div>
@@ -148,10 +148,10 @@ export default function AdminSettingPage() {
               </div>
               <div className="col-span-2 flex flex-col">
                 <div className="flex items-center gap-3">
-                  <label className="relative inline-flex items-center me-5 cursor-pointer" htmlFor="chk_emp_can_update">
+                  <div className="relative inline-flex items-center me-5 cursor-pointer">
                     <Switch isSelected={canUpdate} size="sm" color="success" onValueChange={() => setCanUpdate(!canUpdate)}></Switch>
                     <div className="ms-3 text-sm text-posgray">Employee Can Update Product</div>
-                  </label>
+                  </div>
                 </div>
                 <div>
                   <p className="text-sm text-black/40 w-full mt-2">This option make your all Employee can Update the product in Your Bussiness</p>
@@ -159,12 +159,12 @@ export default function AdminSettingPage() {
               </div>
               <div className="col-span-2 flex flex-col">
                 <div className="flex items-center gap-3">
-                  <label className="relative inline-flex items-center me-5 cursor-pointer">
+                  <div className="relative inline-flex items-center me-5 cursor-pointer">
                     <Switch isSelected={canDelete} size="sm" color="danger" onValueChange={() => setCanDelete(!canDelete)}></Switch>
-                    <label htmlFor="chk_emp_can_delete" className="ms-3 text-sm text-posgray">
+                    <span className="ms-3 text-sm text-posgray">
                       Employee Can <span className="text-red-600">Delete Product</span>
-                    </label>
-                  </label>
+                    </span>
+                  </div>
                 </div>
                 <div>
                   <p className="text-sm text-black/40 w-full mt-2">

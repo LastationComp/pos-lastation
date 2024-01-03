@@ -4,8 +4,12 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../auth/[...nextauth]/route';
 import { prisma } from '@/app/_lib/prisma/client';
 
+
+
+
 export async function GET(req: Request) {
   const session: any = await getServerSession(authOptions);
+  
   const getEmployees = await prisma.admins.findFirst({
     where: {
       id: session?.user?.id,
@@ -62,7 +66,7 @@ export async function POST(req: Request) {
     },
   });
 
-  if (!getAllData?.name) return responseError('Data Not Found', 404);
+  if (!getAllData?.name) return responseError('Unauthorized', 401);
 
   const employee_code_first = getAllData?.employees[0]?.employee_code ?? getAllData?.client?.client_code;
   const last_employee_code: any[] = employee_code_first.toString().split('_');

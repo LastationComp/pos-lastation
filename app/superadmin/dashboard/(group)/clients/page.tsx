@@ -1,25 +1,21 @@
 'use client';
-import React, { BaseSyntheticEvent, Suspense, useState } from 'react';
-import { signOut, useSession } from 'next-auth/react';
+import React, { BaseSyntheticEvent, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
-import PosTable from '@/app/_components/PosTable';
 import PosButton from '@/app/_components/PosButton';
-import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faServer } from '@fortawesome/free-solid-svg-icons/faServer';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
-// export const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
 import LoadingComponent from '@/app/_components/LoadingComponent';
 import { fetcher } from '@/app/_lib/Fetcher';
 import Swal from 'sweetalert2';
-import { faUserCheck, faUserClock, faUserXmark } from '@fortawesome/free-solid-svg-icons';
+import { faUserCheck, faUserClock, faUserXmark, faSpinner, faServer, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Button, Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from '@nextui-org/react';
 import { generateHeaders } from '@/app/_lib/NextUiPos/GenerateHeaderTable';
+import nProgress from 'nprogress';
 export default function Dashboard() {
   const router = useRouter();
-  const { data, mutate } = useSWR('/api/superadmin/clients', fetcher, {
+  const session: any = useSession();
+  const { data, mutate } = useSWR(`/api/superadmin/clients?superadmin=${session?.data?.user?.id}`, fetcher, {
     revalidateOnMount: true,
   });
 
@@ -39,10 +35,7 @@ export default function Dashboard() {
     }
   };
 
- 
-
-  const columns = generateHeaders(['NO', 'License Key', 'Client Name', 'Client Code', 'Username', 'Expires Time', 'Client Status', 'Action'])
-
+  const columns = generateHeaders(['NO', 'License Key', 'Client Name', 'Client Code', 'Username', 'Expires Time', 'Client Status', 'Action']);
 
   const handleUpdateExpires = async (e: BaseSyntheticEvent) => {
     e.preventDefault();
@@ -114,33 +107,38 @@ export default function Dashboard() {
   if (!data) return <LoadingComponent />;
   return (
     <>
-
-      <Modal backdrop={'opaque'} isOpen={isOpen} onClose={onClose} >
+      <Modal backdrop={'opaque'} isOpen={isOpen} onClose={onClose}>
         <ModalContent>
           {(onClose) => (
-              <form action="" method="post" onSubmit={handleUpdateExpires}>
-                <ModalHeader>Update Expires</ModalHeader>
-                <ModalBody>
-                  <div id="popup-expires" className="bg-white rounded p-3 flex flex-col">
-                    {errMsg && <div className="bg-red-500 p-3 rounded text-white">{errMsg}</div>}
-                    <label htmlFor="expires_days">Service Days</label>
-                    <input type="number" id="expires_days" required name="expires_days" placeholder="Service Days..." className="rounded outline outline-1 outline-posblue shadow-md px-3 py-1" />
-                  </div>
-                </ModalBody>
-                <ModalFooter>
-                  <button type="submit" disabled={isLoading} className="bg-posblue rounded px-3 py-2 my-1 hover:text-white hover:bg-teal-500 transition flex justify-center items-center gap-3">
-                    <FontAwesomeIcon icon={isLoading ? faSpinner : faServer} spin={isLoading} />
-                    {isLoading ? 'Updating...' : 'Update'}
-                  </button>
-                </ModalFooter>
-              </form>
+            <form action="" method="post" onSubmit={handleUpdateExpires}>
+              <ModalHeader>Update Expires</ModalHeader>
+              <ModalBody>
+                <div id="popup-expires" className="bg-white rounded p-3 flex flex-col">
+                  {errMsg && <div className="bg-red-500 p-3 rounded text-white">{errMsg}</div>}
+                  <label htmlFor="expires_days">Service Days</label>
+                  <input type="number" id="expires_days" required name="expires_days" placeholder="Service Days..." className="rounded outline outline-1 outline-posblue shadow-md px-3 py-1" />
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <button type="submit" disabled={isLoading} className="bg-posblue rounded px-3 py-2 my-1 hover:text-white hover:bg-teal-500 transition flex justify-center items-center gap-3">
+                  <FontAwesomeIcon icon={isLoading ? faSpinner : faServer} spin={isLoading} />
+                  {isLoading ? 'Updating...' : 'Update'}
+                </button>
+              </ModalFooter>
+            </form>
           )}
         </ModalContent>
       </Modal>
 
       <div className="text-xl font-semibold">Clients</div>
       <div className="flex justify-end items-center">
-        <PosButton icon={faPlus} onClick={() => router.push('clients/add')}>
+        <PosButton
+          icon={faPlus}
+          onClick={() => {
+            nProgress.start()
+            router.push('clients/add');
+          }}
+        >
           Add Client
         </PosButton>
       </div>
@@ -153,10 +151,7 @@ export default function Dashboard() {
               <TableRow key={data.license_key} className="odd:bg-poslight even:bg-slate-200 ">
                 <TableCell className="p-3">{i + 1}</TableCell>
                 <TableCell className="p-3">
-                  {/* {data.license_key} */}
-                  <Chip variant='flat'>
-                    Hidden
-                  </Chip>
+                  <Chip variant="flat">Hidden</Chip>
                   <button onClick={() => handleCopy(data.license_key)} id={data.license_key} className="rounded bg-gray-600  mx-1 p-1 text-white">
                     Copy
                   </button>

@@ -1,3 +1,4 @@
+import { responseError } from '@/app/_lib/PosResponse';
 import { SuperAdminCreateInput } from '@/app/_lib/ZodValidator';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
@@ -9,8 +10,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const { name, username, password } = await req.json();
+  const { name, username, password, license } = await req.json();
 
+  if (license !== process.env.LICENSE_TOKEN) return responseError('Unauthorized', 401)
   const prisma = new PrismaClient().$extends({
     query: {
       superAdmin: {

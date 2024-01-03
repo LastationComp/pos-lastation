@@ -92,7 +92,7 @@ export default function HomeSuperAdmin() {
                   name="password"
                   type="password"
                   className="h-[35px] rounded-[5px] px-3 outline outline-0 text-black "
-                  placeholder="Input your Username"
+                  placeholder="Input your Password"
                   required
                 />
               </div>

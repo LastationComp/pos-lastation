@@ -3,8 +3,8 @@ import { randomUUID } from 'crypto';
 import bcrypt from 'bcrypt';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/route';
-import { responseError } from '@/app/_lib/PosResponse';
-export async function GET() {
+import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
+export async function GET(req: Request) {
   const prisma = new PrismaClient().$extends({
     result: {
       clients: {
@@ -23,32 +23,40 @@ export async function GET() {
       },
     },
   });
-  const getClient = await prisma.clients.findMany({
-    orderBy: {
-      client_name: 'asc'
+
+  const url = new URL(req.url);
+  const getClient = await prisma.superAdmin.findUnique({
+    where: {
+      id: url.searchParams.get('superadmin') ?? '',
     },
 
     select: {
-      id: true,
-      license_key: true,
-      client_code: true,
-      client_name: true,
-      expires_left: true,
-      is_active: true,
-      admin: {
+      name: true,
+      clients: {
+        orderBy: {
+          client_name: 'asc',
+        },
         select: {
-          username: true,
-          pin: true
-        }
-      }
-    }
-
-    
+          id: true,
+          license_key: true,
+          client_code: true,
+          client_name: true,
+          expires_left: true,
+          is_active: true,
+          admin: {
+            select: {
+              username: true,
+            },
+          },
+        },
+      },
+    },
   });
 
+  if (!getClient?.name) return responseError('Unauthorized', 401);
   await prisma.$disconnect();
 
-  return Response.json(getClient);
+  return responseSuccess(getClient.clients);
 }
 
 export async function POST(req: Request) {
@@ -58,12 +66,26 @@ export async function POST(req: Request) {
   const client_code_first: any[] = string_client_name.trim().toString().split(' ');
   let client_code_final: any = '';
   let super_admin: string;
+  let session: any;
   client_code_first.forEach((data: string) => {
     const firstLetter: any[] = data.split('');
     client_code_final += firstLetter[0];
   });
 
+  super_admin = super_admin_id;
+  if (!super_admin_id) {
+    session = await getServerSession(authOptions);
+    super_admin = session?.user.id;
+  }
   try {
+    const checkSuperAdmin = await prisma.superAdmin.findUnique({
+      where: {
+        id: super_admin,
+      },
+    });
+
+    if (!checkSuperAdmin) return responseError('Unauthorized', 401);
+
     const clients = await prisma.clients.findFirst({
       where: {
         client_name: client_name,
@@ -96,12 +118,6 @@ export async function POST(req: Request) {
       client_code_final += Number(clients_code_final_ova) + 1;
     }
 
-    let session: any;
-    super_admin = super_admin_id;
-    if (!super_admin_id) {
-      session = await getServerSession(authOptions);
-      super_admin = session?.user.id;
-    }
     const admin_username = string_client_name.replace(/\s+/g, '').toLocaleLowerCase();
     const license_key = randomUUID() + Math.abs(Math.floor(Math.random() * 10101010));
     const service_days_number: number = service_days;
@@ -147,9 +163,9 @@ export async function POST(req: Request) {
       message: 'Client successfully added',
     });
   } catch (e: any) {
-    console.log(e)
+    console.log(e);
 
-    return responseError('Database Query Failed!, Please contact web owner')
+    return responseError('Database Query Failed!, Please contact web owner');
   } finally {
     await prisma.$disconnect();
   }

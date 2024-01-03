@@ -2,13 +2,15 @@
 
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDollarSign, faUsersSlash, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faDollarSign, faUsersSlash, faUsers, faEye } from '@fortawesome/free-solid-svg-icons';
 import { useSession } from "next-auth/react";
 import PosTable from "@/app/_components/PosTable";
 import useSWR from "swr";
 import LoadingComponent from "@/app/_components/LoadingComponent";
 import { formatRupiah } from "@/app/_lib/RupiahFormat";
 import { formatDate, formatDateOnly } from "@/app/_lib/DateFormat";
+import PosTableNew from "@/app/_lib/NextUiPos/PosTable";
+import { Button, Tooltip } from "@nextui-org/react";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -27,6 +29,28 @@ export default function AdminDashboardPage() {
 
   const dataDashboard = getDashboard()
   
+  const getSalesHistory = () => {
+    let newData: any[] = []
+
+    dataDashboard?.transactions.forEach((trx: any, i: number) => {
+      newData.push({
+        key: i + 1,
+        no_references: trx.no_ref,
+        date: formatDate(trx.created_at),
+        employee: trx.employee.name,
+        total: formatRupiah(trx.total_price),
+        action: (
+          <Tooltip content={'Detail'} showArrow={true} placement={'left'} color={'default'}>
+            <Button isIconOnly className="bg-posblue" size="sm">
+              <FontAwesomeIcon icon={faEye} />
+            </Button>
+          </Tooltip>
+        ),
+      });
+    })
+
+    return newData
+  }
 
   if(!data) return (
     <LoadingComponent/>
@@ -108,28 +132,9 @@ export default function AdminDashboardPage() {
         <div className="flex justify-start items-center w-full px-5 py-3"></div>
         <div className="flex justify-between items-center w-full p-5">
           <p className="text-2xl font-bold">Sales History</p>
-          {/* <div className="relative flex justify-end items-center">
-            <input type="text" className="rounded-full h-[45px] px-3 py-2 pr-8 outline outline-1 outline-posblue" name="" id="" placeholder="Input no references" />
-            <FontAwesomeIcon icon={faSearch} className="absolute right-5 top-4 " />
-          </div> */}
         </div>
         <div className="w-full justify-beetwen items-center px-5">
-          <PosTable fixed headers={['NO References', 'Date', 'Employee', 'Total']}>
-            {dataDashboard?.transactions &&
-              dataDashboard?.transactions.map((trx: any, i: number) => (
-                <tr key={trx.no_ref} className="odd:bg-poslight even:bg-slate-200 ">
-                  <td className="p-3">{trx.no_ref}</td>
-                  <td className="p-3">{formatDate(trx.created_at)}</td>
-                  <td className="p-3">{trx.employee.name}</td>
-                  <td className="p-3">{formatRupiah(trx.total_price)}</td>
-                  {/* <td className="p-3 flex justify-start gap-3">
-                    <button className="bg-posblue text-white px-2 py-1 rounded">
-                      <FontAwesomeIcon icon={faEye} />
-                    </button>
-                  </td> */}
-                </tr>
-              ))}
-          </PosTable>
+          <PosTableNew data={getSalesHistory()} columns={['NO References', 'Date', 'Employee', 'Total', 'Action']} />
         </div>
       </div>
     </>

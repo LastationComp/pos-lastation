@@ -2,7 +2,7 @@ import { Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, Tabl
 import React, { useMemo, useState } from 'react';
 import { generateHeaders } from './GenerateHeaderTable';
 
-export default function PosTableNew({ columns, data }: { columns: any[]; data: any }) {
+export default function PosTableNew({ columns, data }: { columns: any[]; data: any[] }) {
   const generateColumn = generateHeaders(columns);
 
   const items = React.useMemo(() => {
