@@ -118,7 +118,6 @@ export default function Dashboard() {
       <Modal backdrop={'opaque'} isOpen={isOpen} onClose={onClose} >
         <ModalContent>
           {(onClose) => (
-            <>
               <form action="" method="post" onSubmit={handleUpdateExpires}>
                 <ModalHeader>Update Expires</ModalHeader>
                 <ModalBody>
@@ -135,7 +134,6 @@ export default function Dashboard() {
                   </button>
                 </ModalFooter>
               </form>
-            </>
           )}
         </ModalContent>
       </Modal>

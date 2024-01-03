@@ -53,7 +53,7 @@ const [isLoading, setIsLoading] = useState(false);
           <div className="flex flex-col gap-3">
             <div className="flex flex-col">
               <label htmlFor="name">Name</label>
-              <input type="text" id="name" onChange={(e) => setName(e.target.value)} value={name} className="rounded outline outline-posblue outline-1 px-3 py-1 hover:outline-posgray focus:outline-posgray transition duration-400" required />
+              <input type="text" id="name" autoFocus onChange={(e) => setName(e.target.value)} value={name} className="rounded outline outline-posblue outline-1 px-3 py-1 hover:outline-posgray focus:outline-posgray transition duration-400" required />
             </div>
             <button className="rounded bg-posblue p-2 flex justify-center items-center focus:text-white hover:bg-teal-500 focus:bg-teal-500 transition hover:text-white" type="submit">
               <FontAwesomeIcon icon={isLoading ? faSpinner : faPlus} spin={isLoading} />

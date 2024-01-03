@@ -238,7 +238,7 @@ export default function ProfilePage({
               method="post"
               onSubmit={(e) => showWarning(e)}
             >
-              <div className="flex flex-row w-full gap-3">
+              <div className="flex flex-col md:flex-row w-full gap-3">
                 <div className="flex flex-col basis-1/2">
                   <label className='text-base font-semibold mb-2' htmlFor="admin-new-password">Set New Password</label>
                   <input

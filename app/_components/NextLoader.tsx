@@ -22,7 +22,7 @@ export default function NextLoader() {
   return (
     <>
       <FinishingLoader />
-      <NextTopLoader />
+      <NextTopLoader showSpinner={false} />
     </>
   );
 }
