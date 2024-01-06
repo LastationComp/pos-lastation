@@ -8,6 +8,7 @@ import { signOut, useSession } from 'next-auth/react';
 import ButtonLogout from '../ButtonLogout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons/faRightFromBracket';
+import nProgress from 'nprogress';
 
 const generateLink = (link: string, name: string) => {
   const pathDashboard = '/employees/dashboard';
@@ -15,7 +16,10 @@ const generateLink = (link: string, name: string) => {
   const pathname = usePathname();
   const router = useRouter()
   return (
-    <button onClick={() => router.push(`${realPath}`)} className={'inline-block py-3 px-5 rounded-full ' + (pathname === realPath ? 'bg-posblue text-white' : 'hover:bg-teal-100 hover:text-black transition')}>
+    <button onClick={() => {
+      nProgress.start()
+      router.push(`${realPath}`)
+      }} className={'inline-block py-3 px-5 rounded-full ' + (pathname === realPath ? 'bg-posblue text-white' : 'hover:bg-teal-100 hover:text-black transition')}>
       {name}
     </button>
   );

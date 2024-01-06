@@ -3,8 +3,8 @@ import { randomUUID } from 'crypto';
 import bcrypt from 'bcrypt';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/route';
-import { responseError } from '@/app/_lib/PosResponse';
-export async function GET() {
+import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
+export async function GET(req: Request) {
   const prisma = new PrismaClient().$extends({
     result: {
       clients: {
@@ -23,20 +23,40 @@ export async function GET() {
       },
     },
   });
-  const getClient = await prisma.clients.findMany({
-    include: {
-      admin: {
+
+  const url = new URL(req.url);
+  const getClient = await prisma.superAdmin.findUnique({
+    where: {
+      id: url.searchParams.get('superadmin') ?? '',
+    },
+
+    select: {
+      name: true,
+      clients: {
+        orderBy: {
+          client_name: 'asc',
+        },
         select: {
-          username: true,
-          pin: true,
+          id: true,
+          license_key: true,
+          client_code: true,
+          client_name: true,
+          expires_left: true,
+          is_active: true,
+          admin: {
+            select: {
+              username: true,
+            },
+          },
         },
       },
     },
   });
 
+  if (!getClient?.name) return responseError('Unauthorized', 401);
   await prisma.$disconnect();
 
-  return Response.json(getClient);
+  return responseSuccess(getClient.clients);
 }
 
 export async function POST(req: Request) {
@@ -46,94 +66,107 @@ export async function POST(req: Request) {
   const client_code_first: any[] = string_client_name.trim().toString().split(' ');
   let client_code_final: any = '';
   let super_admin: string;
+  let session: any;
   client_code_first.forEach((data: string) => {
     const firstLetter: any[] = data.split('');
     client_code_final += firstLetter[0];
   });
-  // +firstLetter[Math.abs(Math.round(Math.random() * (firstLetter.length - 1)))];
-  const clients = await prisma.clients.findFirst({
-    where: {
-      client_name: client_name,
-    },
-    select: {
-      client_name: true,
-      client_code: true,
-    },
-    orderBy: {
-      created_at: 'desc',
-    },
-  });
 
-  if (clients)
-    return Response.json(
-      {
-        message: 'Client already exists',
-      },
-      { status: 409 }
-    );
-
-  const checkClients: any[] = await prisma.$queryRaw`SELECT 
-    client_name,
-    client_code
-   FROM clients WHERE client_code REGEXP ${client_code_final + '[0-9]+|' + client_code_final} 
-   ORDER BY client_code DESC LIMIT 1`;
-
-  if (checkClients.length !== 0) {
-    const clients_code_final_ova: string = checkClients[0].client_code.replace(/[a-zA-Z]/g, '');
-    client_code_final += Number(clients_code_final_ova) + 1;
-  }
-
-  let session: any;
   super_admin = super_admin_id;
   if (!super_admin_id) {
     session = await getServerSession(authOptions);
     super_admin = session?.user.id;
   }
-  const admin_username = string_client_name.replace(/\s+/g, '').toLocaleLowerCase();
-  const license_key = randomUUID() + Math.abs(Math.floor(Math.random() * 10101010));
-  const service_days_number: number = service_days;
-  const expired_at = new Date();
-  expired_at.setDate(expired_at.getDate() + Number(service_days_number));
-  const hashedPin = await bcrypt.hash('12345678', 10);
-  const date = new Date();
-  date.setHours(7);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  const openShop = new Date(date);
-  date.setHours(17);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  const closeShop = new Date(date);
-  const createClient = await prisma.clients.create({
-    data: {
-      license_key: license_key,
-      client_name: client_name,
-      client_code: client_code_final.toLocaleUpperCase(),
-      super_admin_id: super_admin,
-      expired_at: expired_at,
-      admin: {
-        create: {
-          pin: hashedPin,
-          name: 'Admin ' + client_name,
-          username: admin_username,
-          setting: {
-            create: {
-              emp_can_login: true,
-              shop_open_hours: new Date(openShop),
-              shop_close_hours: new Date(closeShop),
+  try {
+    const checkSuperAdmin = await prisma.superAdmin.findUnique({
+      where: {
+        id: super_admin,
+      },
+    });
+
+    if (!checkSuperAdmin) return responseError('Unauthorized', 401);
+
+    const clients = await prisma.clients.findFirst({
+      where: {
+        client_name: client_name,
+      },
+      select: {
+        client_name: true,
+        client_code: true,
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+
+    if (clients)
+      return Response.json(
+        {
+          message: 'Client already exists',
+        },
+        { status: 409 }
+      );
+
+    const checkClients: any[] = await prisma.$queryRaw`SELECT 
+    client_name,
+    client_code
+   FROM clients WHERE client_code ~ ${client_code_final + '[0-9]+|' + client_code_final} 
+   ORDER BY client_code DESC LIMIT 1`;
+
+    if (checkClients.length !== 0) {
+      const clients_code_final_ova: string = checkClients[0].client_code.replace(/[a-zA-Z]/g, '');
+      client_code_final += Number(clients_code_final_ova) + 1;
+    }
+
+    const admin_username = string_client_name.replace(/\s+/g, '').toLocaleLowerCase();
+    const license_key = randomUUID() + Math.abs(Math.floor(Math.random() * 10101010));
+    const service_days_number: number = service_days;
+    const expired_at = new Date();
+    expired_at.setDate(expired_at.getDate() + Number(service_days_number));
+    const hashedPin = await bcrypt.hash('12345678', 10);
+    const date = new Date();
+    date.setHours(7);
+    date.setMinutes(0);
+    date.setSeconds(0);
+    const openShop = new Date(date);
+    date.setHours(17);
+    date.setMinutes(0);
+    date.setSeconds(0);
+    const closeShop = new Date(date);
+    const createClient = await prisma.clients.create({
+      data: {
+        license_key: license_key,
+        client_name: client_name,
+        client_code: client_code_final.toLocaleUpperCase(),
+        super_admin_id: super_admin,
+        expired_at: expired_at,
+        admin: {
+          create: {
+            pin: hashedPin,
+            name: 'Admin ' + client_name,
+            username: admin_username,
+            setting: {
+              create: {
+                emp_can_login: true,
+                shop_open_hours: new Date(openShop),
+                shop_close_hours: new Date(closeShop),
+              },
             },
           },
         },
       },
-    },
-  });
+    });
+    if (!createClient) return responseError('Failed to Add Client');
 
-  await prisma.$disconnect();
+    return Response.json({
+      success: true,
+      message: 'Client successfully added',
+    });
+  } catch (e: any) {
+    console.log(e);
 
-  if (!createClient) return responseError('Failed to Add Client');
-
-  return Response.json({
-    success: true,
-    message: 'Client successfully added',
-  });
+    return responseError('Database Query Failed!, Please contact web owner');
+  } finally {
+    await prisma.$disconnect();
+  }
 }

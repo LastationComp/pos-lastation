@@ -37,10 +37,9 @@ export const authOptions: NextAuthOptions = {
         const password = credentials?.password ?? '';
 
         let permission = {};
-        const selectUser: any = await prisma.$queryRaw`SELECT * FROM pos_users WHERE username = BINARY ${username} AND role = ${credentials?.role} `;
+        const selectUser: any = await prisma.$queryRaw`SELECT * FROM pos.pos_users WHERE username = ${username} AND role = ${credentials?.role} `;
 
         if (!selectUser[0].username) return null;
-
         if (!selectUser[0].is_active) return null;
         if (selectUser[0].license_key !== credentials?.license_key && selectUser[0].role !== 'super_admin') return null;
 

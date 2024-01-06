@@ -1,6 +1,7 @@
 'use client';
 
 import PosButton from '@/app/_components/PosButton';
+import { formatNumber } from '@/app/_lib/RupiahFormat';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faBox } from '@fortawesome/free-solid-svg-icons/faBox';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft';

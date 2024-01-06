@@ -10,6 +10,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import nProgress from 'nprogress';
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import useSWR from 'swr';
@@ -20,7 +21,7 @@ export default function ProductsPage() {
   const [query, setQuery] = useState('');
   const [finalQuery, setFinalQuery] = useState('');
   const { data, mutate } = useSWR(`/api/employee/products?license=${session?.data?.user?.license_key}&q=${query}`, fetcher, {
-    keepPreviousData: true
+    keepPreviousData: true,
   });
   const router = useRouter();
 
@@ -107,12 +108,12 @@ export default function ProductsPage() {
             onChange={(e) => {
               setQuery(e.target.value);
             }}
-            placeholder='Type barcode or product name'
+            placeholder="Type barcode or product name"
             className="rounded-full outline outline-1 outline-posblue px-3 py-1 "
           />
         </div>
         <div>
-          <PosButton icon={faPlusCircle} onClick={() => handleAddProduct()}>
+          <PosButton icon={faPlusCircle} onClick={() => {handleAddProduct(); nProgress.start()}}>
             Add Product
           </PosButton>
         </div>
@@ -120,17 +121,23 @@ export default function ProductsPage() {
       <PosTable fixed headers={['NO', 'Barcode', 'Name', 'Smallest Unit', 'Created By', 'Action']}>
         {data &&
           data.products.map((product: any, i: number) => (
-            <tr key={i + 1} className="odd:bg-poslight even:bg-slate-200 ">
+            <tr key={i + 1} className="odd:bg-white even:bg-slate-200 ">
               <td className="p-3">{i + 1}</td>
               <td className="p-3">{product.barcode}</td>
               <td className="p-3">{product.product_name}</td>
               <td className="p-3">{product.smallest_selling_unit}</td>
               <td className="p-3">{product.employee.name}</td>
               <td className="p-3 flex justify-start gap-3">
-                <button className="bg-blue-500 text-white px-2 py-1 rounded" onClick={() => router.push('products/' + product.id + '/detail')}>
+                <button
+                  className="bg-blue-500 text-white px-2 py-1 rounded"
+                  onClick={() => {
+                    router.push('products/' + product.id + '/detail');
+                    nProgress.start();
+                  }}
+                >
                   <FontAwesomeIcon icon={faEye} />
                 </button>
-                <button className="bg-yellow-500 text-white px-2 py-1 rounded" onClick={() => handleEditProduct(product.id)}>
+                <button className="bg-yellow-500 text-white px-2 py-1 rounded" onClick={() => {handleEditProduct(product.id); nProgress.start()}}>
                   <FontAwesomeIcon icon={faPencil} />
                 </button>
                 <button className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => handleDeleteProduct(product.id, product.product_name)}>
