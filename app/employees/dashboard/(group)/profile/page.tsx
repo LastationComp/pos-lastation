@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import React, { BaseSyntheticEvent, ChangeEvent, useEffect, useRef, useState } from 'react';
 import Swal from 'sweetalert2';
 import useSWR from 'swr';
+import defaultProfile from '@/public/employees/default.png';
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -26,8 +27,8 @@ export default function EmployeeProfilePage() {
 
   const generateImage = (url: string) => {
     if (image) return URL.createObjectURL(image ?? new Blob());
-    const realPath = `/employees/${url}`;
-    return realPath;
+    if (!url) return null
+    return url;
   };
 
   const clearCondition = () => {
@@ -83,7 +84,6 @@ export default function EmployeeProfilePage() {
   };
   useEffect(() => {
     setName(data?.data?.name ?? '');
-    console.log(data?.data?.name);
   }, [data]);
 
   if (!data) return <LoadingComponent />;
@@ -106,11 +106,12 @@ export default function EmployeeProfilePage() {
             {success && <div className="bg-green-600 text-white p-3 rounded">Saved Successfully</div>}
             <div className="flex flex-col gap-5 items-center">
               <Image
-                src={generateImage(data?.data?.avatar_url ?? 'default.png')}
+                src={generateImage(data?.data?.avatar_url) ?? defaultProfile}
+                blurDataURL={generateImage(data?.data?.avatar_url) ?? undefined}
                 onClick={() => {
                   profileRef.current.click();
                 }}
-                loading="lazy"
+                priority={true}
                 className="rounded-full border border-1 cursor-pointer border-posgray object-cover max-w-[200px] h-[200px] "
                 width={200}
                 height={200}
