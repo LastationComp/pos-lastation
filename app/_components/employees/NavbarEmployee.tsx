@@ -11,10 +11,10 @@ import nProgress from 'nprogress';
 import { Avatar } from '@nextui-org/react';
 
 const generateLink = (link: string, name: string) => {
-  const pathDashboard = '/employees/dashboard';
-  const realPath = pathDashboard + link;
   const pathname = usePathname();
   const router = useRouter();
+  const pathDashboard = '/employees/dashboard';
+  const realPath = pathDashboard + link;
   return (
     <button
       onClick={() => {
@@ -30,7 +30,7 @@ const generateLink = (link: string, name: string) => {
 
 export default function NavbarEmployee() {
   const router = useRouter();
-  const session: any = useSession()
+  const session: any = useSession();
   const handleLogout = async () => {
     {
       await signOut({ redirect: false });

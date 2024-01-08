@@ -121,7 +121,7 @@ export default function AddSellingUnitsPage({ params }: { params: { id: string }
                 Remove Previous Selling Unit
               </button>
             )}
-            {data?.units?.length === 1 && <span>Can't add because this product reach max unit.</span>}
+            {data?.units?.length === 1 && <span>Can&apos;t add because this product reach max unit.</span>}
           </div>
         </div>
         <div className="gap-5 flex justify-end items-center my-3">
