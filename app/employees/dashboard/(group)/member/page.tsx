@@ -1,6 +1,7 @@
 'use client'
 import PosButton from '@/app/_components/PosButton'
 import PosTable from '@/app/_components/PosTable'
+import { fetcher } from '@/app/_lib/Fetcher'
 import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil'
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
@@ -11,7 +12,6 @@ import React from 'react'
 import Swal from 'sweetalert2'
 import useSWR from 'swr'
 
-export const fetcher = (url:string) => fetch(url).then(res => res.json())
 
 export default function EmployeeMemberPage() {
 
