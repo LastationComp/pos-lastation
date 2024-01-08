@@ -12,7 +12,7 @@ export async function GET(req: Request, route: { params: { id: string } }) {
     select: {
       avatar_url: true,
       name: true,
-      employee_code: true
+      employee_code: true,
     },
   });
 
@@ -35,7 +35,7 @@ export async function POST(req: Request, route: { params: { id: string } }) {
     },
   });
 
-  if (!checkFirst) return responseError('Data tidak ada');
+  if (!checkFirst) return responseError('User Not Found');
 
   const oldPassword = (formData.get('old-password') as string) ?? null;
 
@@ -59,6 +59,7 @@ export async function POST(req: Request, route: { params: { id: string } }) {
     fileName = uuidv4() + '.' + extension;
   }
 
+  const finalFileName = !fileName ? checkFirst.avatar_url : process.env.NEXT_URL + '/api/images/' + route.params.id + '/' + fileName;
   try {
     const UpdateProfile = await prisma.employees.update({
       where: {
@@ -66,30 +67,43 @@ export async function POST(req: Request, route: { params: { id: string } }) {
       },
       data: {
         name: (formData.get('name') as string) ?? checkFirst.name,
-        avatar_url: fileName ?? checkFirst.avatar_url,
+        avatar_url: finalFileName,
         pin: finalPassword ?? checkFirst.pin,
       },
     });
 
-    if (UpdateProfile) return responseSuccess({
-      message: 'Update Profile Successfully',
-      isWithPassword: isWithPassword,
-      avatar_url: fileName ?? checkFirst.avatar_url,
-    });
+    if (UpdateProfile)
+      return responseSuccess({
+        message: 'Update Profile Successfully',
+        isWithPassword: isWithPassword,
+        avatar_url: finalFileName,
+      });
   } catch (e: any) {
     return responseError('Update Profile Failed');
   } finally {
     if (formData.has('avatar') && files.size !== 0) {
-      const publicPath = process.cwd() + '/public/employees/';
       const buffer = Buffer.from(await files.arrayBuffer());
-      if (checkFirst.avatar_url) await unlink(publicPath + checkFirst.avatar_url);
-      await writeFile(publicPath + fileName, buffer);
+      if (checkFirst.avatar_url) {
+        await fetch(checkFirst.avatar_url, {
+          method: 'DELETE',
+        });
+      }
+
+      if (finalFileName) {
+        const blob = new Blob([buffer], {
+          type: files.type,
+        });
+        await fetch(finalFileName, {
+          method: 'POST',
+          body: blob,
+        });
+      }
     }
 
     await prisma.$disconnect();
   }
 
   return responseSuccess({
-    message: 'Success Update'
+    message: 'Success Update',
   });
 }

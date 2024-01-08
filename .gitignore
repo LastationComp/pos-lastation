@@ -15,6 +15,7 @@
 
 # public employee images
 /public/employees
+root.crt
 
 # production
 /build

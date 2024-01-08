@@ -5,30 +5,32 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
-import ButtonLogout from '../ButtonLogout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons/faRightFromBracket';
 import nProgress from 'nprogress';
+import { Avatar } from '@nextui-org/react';
 
 const generateLink = (link: string, name: string) => {
   const pathDashboard = '/employees/dashboard';
   const realPath = pathDashboard + link;
   const pathname = usePathname();
-  const router = useRouter()
+  const router = useRouter();
   return (
-    <button onClick={() => {
-      nProgress.start()
-      router.push(`${realPath}`)
-      }} className={'inline-block py-3 px-5 rounded-full ' + (pathname === realPath ? 'bg-posblue text-white' : 'hover:bg-teal-100 hover:text-black transition')}>
+    <button
+      onClick={() => {
+        nProgress.start();
+        router.push(`${realPath}`);
+      }}
+      className={'inline-block py-3 px-5 rounded-full ' + (pathname === realPath ? 'bg-posblue text-white' : 'hover:bg-teal-100 hover:text-black transition')}
+    >
       {name}
     </button>
   );
 };
 
-
-export default function NavbarEmployee({ session }: { session: any }) {
+export default function NavbarEmployee() {
   const router = useRouter();
-
+  const session: any = useSession()
   const handleLogout = async () => {
     {
       await signOut({ redirect: false });
@@ -36,8 +38,8 @@ export default function NavbarEmployee({ session }: { session: any }) {
     }
   };
   const generateImage = (url: string) => {
-    const realPath = `/employees/${url}`;
-    return realPath;
+    if (!url) return undefined;
+    return url;
   };
   return (
     <nav className="bg-posgray border-gray-900 dark:bg-gray-900">
@@ -46,7 +48,7 @@ export default function NavbarEmployee({ session }: { session: any }) {
           <span className="text-3xl font-bold">
             <Link href="/" className="flex items-center gap-5">
               <Image src={'/iconLastation.png'} blurDataURL={'/iconLastation.png'} className="object-cover max-w-[40px] max-h-[40px]" width={40} height={40} alt="Icon Lastation" />
-              {session?.user?.client_name ?? 'Loading...'}
+              {session?.data?.user?.client_name ?? 'Loading...'}
             </Link>
           </span>
         </div>
@@ -78,17 +80,19 @@ export default function NavbarEmployee({ session }: { session: any }) {
             </div>
           </div> */}
           <div className="rounded-full bg-white flex items-center">
-            <Image
+            {/* <Image
               className="object-cover max-w-auto w-[40px] max-h-auto h-[40px] rounded-full mx-2"
-              loading="eager"
-              blurDataURL={generateImage(session?.user?.avatar_url ?? 'default.png')}
-              src={generateImage(session?.user?.avatar_url ?? 'default.png')}
+              blurDataURL={generateImage(session?.user?.avatar_url)}
+              src={generateImage(session?.user?.avatar_url) ?? defaultProfile}
               alt={session?.data?.user?.name ?? 'Employee'}
+              priority={true}
               width={40}
               height={40}
-            />
+              quality={50}
+            /> */}
+            <Avatar src={generateImage(session?.data?.user?.avatar_url)} className="mr-3" isBordered showFallback />
             <div className="flex flex-col text-black mr-2">
-              <span className="font-semibold">{session?.user?.name}</span>
+              <span className="font-semibold">{session?.data?.user?.name}</span>
               <span className="text-black/60">Employee</span>
             </div>
             <div>
