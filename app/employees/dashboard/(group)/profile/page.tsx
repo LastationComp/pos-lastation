@@ -2,13 +2,13 @@
 import LoadingComponent from '@/app/_components/LoadingComponent';
 import { signOut, useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { BaseSyntheticEvent, ChangeEvent, useEffect, useRef, useState } from 'react';
 import Swal from 'sweetalert2';
 import useSWR from 'swr';
 import defaultProfile from '@/public/employees/default.png';
 import { fetcher } from '@/app/_lib/Fetcher';
+import { Image } from '@nextui-org/react';
 
 export default function EmployeeProfilePage() {
   const { data: session, update }: any = useSession();
@@ -50,7 +50,7 @@ export default function EmployeeProfilePage() {
     update({
       user: {
         avatar_url: result?.avatar_url,
-        name: formData.get('name') as string,
+        name: result?.name,
       },
     });
     e.target.reset();
@@ -105,13 +105,14 @@ export default function EmployeeProfilePage() {
             {success && <div className="bg-green-600 text-white p-3 rounded">Saved Successfully</div>}
             <div className="flex flex-col gap-5 items-center">
               <Image
-                src={generateImage(data?.data?.avatar_url) ?? defaultProfile}
-                blurDataURL={generateImage(data?.data?.avatar_url) ?? undefined}
+                src={generateImage(data?.data?.avatar_url) ?? defaultProfile.src}
                 onClick={() => {
                   profileRef.current.click();
                 }}
-                priority={true}
-                className="rounded-full border border-1 cursor-pointer border-posgray object-cover max-w-[200px] h-[200px] "
+                isZoomed
+                loading='lazy'
+                radius="full"
+                className="border border-1 cursor-pointer border-posgray object-cover max-w-[200px] h-[200px] "
                 width={200}
                 height={200}
                 alt={data?.data?.name ?? 'Employee'}

@@ -80,16 +80,6 @@ export default function NavbarEmployee() {
             </div>
           </div> */}
           <div className="rounded-full bg-white flex items-center">
-            {/* <Image
-              className="object-cover max-w-auto w-[40px] max-h-auto h-[40px] rounded-full mx-2"
-              blurDataURL={generateImage(session?.user?.avatar_url)}
-              src={generateImage(session?.user?.avatar_url) ?? defaultProfile}
-              alt={session?.data?.user?.name ?? 'Employee'}
-              priority={true}
-              width={40}
-              height={40}
-              quality={50}
-            /> */}
             <Avatar src={generateImage(session?.data?.user?.avatar_url)} className="mr-3" isBordered showFallback />
             <div className="flex flex-col text-black mr-2">
               <span className="font-semibold">{session?.data?.user?.name}</span>

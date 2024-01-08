@@ -23,7 +23,6 @@ export async function GET(req: Request, route: { params: { id: string } }) {
 
 export async function POST(req: Request, route: { params: { id: string } }) {
   const formData = await req.formData();
-  console.log(formData.get('new-password') as string);
   const checkFirst = await prisma.employees.findUnique({
     where: {
       id: route.params.id,
@@ -53,57 +52,53 @@ export async function POST(req: Request, route: { params: { id: string } }) {
   }
 
   let fileName = null;
-  let files = (formData.get('avatar') as File) ?? undefined;
+  let files = (formData.get('avatar') as Blob) ?? undefined;
   if (formData.has('avatar') && files.size !== 0) {
     const extension = files.type.split('/')[1];
     fileName = uuidv4() + '.' + extension;
   }
-
-  const finalFileName = !fileName ? checkFirst.avatar_url : process.env.NEXT_URL + '/api/images/' + route.params.id + '/' + fileName;
+  const finalFileName = !fileName ? checkFirst.avatar_url : process.env.NEXT_URL + '/api/images/' + route.params.id + '?callbackUrl=' + fileName;
   try {
-    const UpdateProfile = await prisma.employees.update({
+    await prisma.employees.update({
       where: {
         id: route.params.id,
       },
       data: {
         name: (formData.get('name') as string) ?? checkFirst.name,
-        avatar_url: finalFileName,
         pin: finalPassword ?? checkFirst.pin,
       },
     });
-
-    if (UpdateProfile)
-      return responseSuccess({
-        message: 'Update Profile Successfully',
-        isWithPassword: isWithPassword,
-        avatar_url: finalFileName,
-      });
   } catch (e: any) {
     return responseError('Update Profile Failed');
   } finally {
+    await prisma.$disconnect();
+
     if (formData.has('avatar') && files.size !== 0) {
-      const buffer = Buffer.from(await files.arrayBuffer());
       if (checkFirst.avatar_url) {
         await fetch(checkFirst.avatar_url, {
           method: 'DELETE',
         });
       }
-
       if (finalFileName) {
-        const blob = new Blob([buffer], {
-          type: files.type,
-        });
-        await fetch(finalFileName, {
+
+        const res = await fetch(finalFileName, {
           method: 'POST',
-          body: blob,
+          body: files,
+        }).then((res) => res.json());
+
+        return responseSuccess({
+          message: 'Update Profile Successfully',
+          isWithPassword: isWithPassword,
+          avatar_url: res.message ?? checkFirst.avatar_url,
+          name: formData.get('name') ?? checkFirst.name,
         });
       }
     }
 
-    await prisma.$disconnect();
+    return responseSuccess({
+      message: 'Update Profile Successfully',
+      name: formData.get('name') ?? checkFirst.name,
+      isWithPassword: isWithPassword,
+    });
   }
-
-  return responseSuccess({
-    message: 'Success Update',
-  });
 }

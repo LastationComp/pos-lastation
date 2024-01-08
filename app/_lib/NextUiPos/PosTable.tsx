@@ -11,7 +11,13 @@ export default function PosTableNew({ columns, data }: { columns: any[]; data: a
 
   return (
     <Table aria-label="Table New POS" className="overflow-y-auto min-h-[500px]">
-      <TableHeader columns={generateColumn}>{(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}</TableHeader>
+      <TableHeader columns={generateColumn}>
+        {(column) => (
+          <TableColumn className="bg-posgray text-white" key={column.key}>
+            {column.label}
+          </TableColumn>
+        )}
+      </TableHeader>
       <TableBody emptyContent={'No Data Display'} items={items}>
         {(item: any) => (
           <TableRow key={item.key} className="odd:bg-poslight even:bg-slate-200 ">
