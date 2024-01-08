@@ -10,7 +10,7 @@ import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons/faRightFro
 import nProgress from 'nprogress';
 import { Avatar } from '@nextui-org/react';
 
-const generateLink = (link: string, name: string) => {
+const GenerateLink = (link: string, name: string) => {
   const pathname = usePathname();
   const router = useRouter();
   const pathDashboard = '/employees/dashboard';
@@ -54,11 +54,11 @@ export default function NavbarEmployee() {
         </div>
         <div className="">
           <ul className="inline-flex text-sm font-medium text-center rounded-full bg-white text-black border-b border-black ">
-            <li className="mx-2 my-1 ">{generateLink('', 'Transaction')}</li>
-            <li className="mx-2 my-1">{generateLink('/products', 'Products')}</li>
-            <li className="mx-2 my-1">{generateLink('/member', 'Member')}</li>
+            <li className="mx-2 my-1 ">{GenerateLink('', 'Transaction')}</li>
+            <li className="mx-2 my-1">{GenerateLink('/products', 'Products')}</li>
+            <li className="mx-2 my-1">{GenerateLink('/member', 'Member')}</li>
 
-            <li className="mx-2 my-1">{generateLink('/profile', 'Profile')}</li>
+            <li className="mx-2 my-1">{GenerateLink('/profile', 'Profile')}</li>
           </ul>
         </div>
         <div className="lg:flex md:flex lg:flex-1 items center justify-end font-normal hidden">

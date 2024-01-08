@@ -18,12 +18,12 @@ export default function AdminDashboardPage() {
   const session: any = useSession();
   const { data } = useSWR('/api/employee/products?license=' + session?.data?.user?.license_key, fetcher);
 
-  const getDashboard = () => {
+  const GetDashboard = () => {
     const { data } = useSWR(`/api/admins/dashboard/${session?.data?.user?.id}`, fetcher);
     return data;
   };
 
-  const dataDashboard = getDashboard();
+  const dataDashboard = GetDashboard();
 
   const getSalesHistory = () => {
     let newData: any[] = [];
