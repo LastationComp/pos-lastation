@@ -1,3 +1,4 @@
+import { responseError } from '@/app/_lib/PosResponse';
 import { prisma } from '@/app/_lib/prisma/client';
 
 export async function GET(req: Request, route: { params: { clientCode: string } }) {
@@ -26,7 +27,7 @@ export async function POST(req: Request, route: { params: { clientCode: string }
     },
   });
   await prisma.$disconnect();
-  if (!updateData) return false;
+  if (!updateData) return responseError('Client not found.');
   return Response.json({
     success: true,
     message: 'Data Successfully Update',
