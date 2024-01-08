@@ -7,6 +7,8 @@ export async function middleware(req: NextRequest) {
   const pathAdmin = '/admins';
   const pathEmployee = '/employees';
   const token: any = await getToken({ req: req });
+  const sessionToken = process.env.NODE_ENV !== 'production' ? 'next-auth.session-token' : '__Secure-next-auth.session-token';
+  const callbackUrl = process.env.NODE_ENV !== 'production' ? 'next-auth.callback-url' : '__Secure-next-auth.callback-url';
   const redirect = (pathNow: any) => {
     return Response.redirect(new URL(pathNow, req.url));
   };
@@ -20,13 +22,13 @@ export async function middleware(req: NextRequest) {
     const timeWork = shop_open <= timeNow && timeNow < shop_close
     if (!timeWork) {
       const response = NextResponse.redirect(new URL('/', req.url));
-      response.cookies.delete('next-auth.session-token');
+      response.cookies.delete(sessionToken);
       return response
     }
   }
 
   if (pathname.startsWith(pathSuperAdmin)) {
-    if (token && token?.role !== 'super_admin') return redirect(req.cookies.get('next-auth.callback-url')?.value ?? '/');
+    if (token && token?.role !== 'super_admin') return redirect(req.cookies.get(callbackUrl)?.value ?? '/');
     if (pathname === pathSuperAdmin + '/login' && token?.role === 'super_admin') return redirect(pathSuperAdmin + '/dashboard');
     if (pathname.startsWith(pathSuperAdmin + '/dashboard') && token?.role !== 'super_admin') return redirect(pathSuperAdmin + '/login');
   }
@@ -34,16 +36,16 @@ export async function middleware(req: NextRequest) {
   if (pathname === '/') {
     if (token?.role === 'admin') return redirect(pathAdmin + '/dashboard');
     if (token?.role === 'employee') return redirect(pathEmployee + '/dashboard');
-    if (token && token?.role !== 'admin') return redirect(req.cookies.get('next-auth.callback-url')?.value ?? '/');
-    if (token && token?.role !== 'employee') return redirect(req.cookies.get('next-auth.callback-url')?.value ?? '/');
+    if (token && token?.role !== 'admin') return redirect(req.cookies.get(callbackUrl)?.value ?? '/');
+    if (token && token?.role !== 'employee') return redirect(req.cookies.get(callbackUrl)?.value ?? '/');
   }
 
   if (pathname.startsWith(pathAdmin)) {
-    if (pathname.startsWith(pathAdmin + '/dashboard') && token?.role !== 'admin') return redirect(req.cookies.get('next-auth.callback-url')?.value ?? '/');
+    if (pathname.startsWith(pathAdmin + '/dashboard') && token?.role !== 'admin') return redirect(req.cookies.get(callbackUrl)?.value ?? '/');
   }
 
   if (pathname.startsWith(pathEmployee)) {
-    if (pathname.startsWith(pathEmployee + '/dashboard') && token?.role !== 'employee') return redirect(req.cookies.get('next-auth.callback-url')?.value ?? '/');
+    if (pathname.startsWith(pathEmployee + '/dashboard') && token?.role !== 'employee') return redirect(req.cookies.get(callbackUrl)?.value ?? '/');
     if (pathname.startsWith(pathEmployee + '/dashboard/products/add') && !token?.permissions?.emp_can_create) return redirect(pathEmployee + '/dashboard/products')
     if (pathname.startsWith(pathEmployee + '/dashboard/products') && pathname.endsWith('/edit') && !token?.permissions?.emp_can_update) return redirect(pathEmployee + '/dashboard/products');
   
