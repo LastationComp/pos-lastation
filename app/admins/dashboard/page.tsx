@@ -1,36 +1,32 @@
-"use client";
+'use client';
 
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faUsersSlash, faUsers, faEye } from '@fortawesome/free-solid-svg-icons';
-import { useSession } from "next-auth/react";
-import PosTable from "@/app/_components/PosTable";
-import useSWR from "swr";
-import LoadingComponent from "@/app/_components/LoadingComponent";
-import { formatRupiah } from "@/app/_lib/RupiahFormat";
-import { formatDate, formatDateOnly } from "@/app/_lib/DateFormat";
-import PosTableNew from "@/app/_lib/NextUiPos/PosTable";
-import { Button, Tooltip } from "@nextui-org/react";
+import { useSession } from 'next-auth/react';
+import PosTable from '@/app/_components/PosTable';
+import useSWR from 'swr';
+import LoadingComponent from '@/app/_components/LoadingComponent';
+import { formatRupiah } from '@/app/_lib/RupiahFormat';
+import { formatDate, formatDateOnly } from '@/app/_lib/DateFormat';
+import PosTableNew from '@/app/_lib/NextUiPos/PosTable';
+import { Button, Tooltip } from '@nextui-org/react';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function AdminDashboardPage() {
   const session: any = useSession();
-  const { data } = useSWR(
-    "/api/employee/products?license=" + session?.data?.user?.license_key,
-    fetcher
-  );
+  const { data } = useSWR('/api/employee/products?license=' + session?.data?.user?.license_key, fetcher);
 
   const getDashboard = () => {
-    const id = session?.data?.user?.id
-    const {data} = useSWR(`/api/admins/dashboard/${id}`, fetcher)
-    return data
-  }
+    const { data } = useSWR(`/api/admins/dashboard/${session?.data?.user?.id}`, fetcher);
+    return data;
+  };
 
-  const dataDashboard = getDashboard()
-  
+  const dataDashboard = getDashboard();
+
   const getSalesHistory = () => {
-    let newData: any[] = []
+    let newData: any[] = [];
 
     dataDashboard?.transactions.forEach((trx: any, i: number) => {
       newData.push({
@@ -47,14 +43,12 @@ export default function AdminDashboardPage() {
           </Tooltip>
         ),
       });
-    })
+    });
 
-    return newData
-  }
+    return newData;
+  };
 
-  if(!data) return (
-    <LoadingComponent/>
-  )
+  if (!data) return <LoadingComponent />;
   return (
     <>
       <div className="flex flex-row">

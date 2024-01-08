@@ -73,7 +73,7 @@ export default function PageProductDetail({ params }: { params: { id: string } }
                     Add Selling Units
                   </PosButton>
                 )}
-                {data?.isMaxUnit && <span>Can't Add</span>}
+                {data?.isMaxUnit && <span>Can&apos;t Add</span>}
               </div>
               <PosTable fixed headers={['No', 'Unit', 'Stock', 'Price', 'Action']}>
                 {data?.detail?.sellingUnits &&
