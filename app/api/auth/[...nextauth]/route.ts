@@ -1,10 +1,9 @@
-
 import type { NextAuthOptions } from 'next-auth';
 import NextAuth from 'next-auth/next';
 import bcrypt from 'bcrypt';
 import Credentials from 'next-auth/providers/credentials';
 import { prisma } from '@/app/_lib/prisma/client';
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   // adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({
@@ -62,7 +61,7 @@ export const authOptions: NextAuthOptions = {
                     emp_can_delete: true,
                     emp_can_update: true,
                     shop_close_hours: true,
-                    shop_open_hours: true
+                    shop_open_hours: true,
                   },
                 },
               },
@@ -145,7 +144,7 @@ export const authOptions: NextAuthOptions = {
       session.user.username = token.username;
       session.user.permissions = token.permissions;
       session.user.client_name = token.client_name;
-      session.user.client_code = token.client_code
+      session.user.client_code = token.client_code;
       return session;
     },
   },
