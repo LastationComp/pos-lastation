@@ -1,7 +1,7 @@
 import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
 import bcrypt from 'bcrypt';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import authOptions from '../../auth/authOptions';
 import { prisma } from '@/app/_lib/prisma/client';
 
 
