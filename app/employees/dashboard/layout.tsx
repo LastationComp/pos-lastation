@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import authOptions from '@/app/api/auth/authOptions';
 import Provider from '@/app/_components/Provider';
 import NavbarEmployee from '@/app/_components/employees/NavbarEmployee';
 

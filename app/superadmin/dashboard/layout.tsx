@@ -1,8 +1,8 @@
-import NextAuthProvider from '@/app/_components/NextAuthProvider';
+
 import React, { Suspense } from 'react';
 import { getServerSession } from 'next-auth/next';
 
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import authOptions from '@/app/api/auth/authOptions';
 import ButtonLogout from '@/app/_components/ButtonLogout';
 import NavbarMenu from '@/app/_components/NavbarMenuSuperAdmin';
 import Provider from '@/app/_components/Provider';

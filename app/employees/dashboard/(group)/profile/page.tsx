@@ -8,8 +8,7 @@ import React, { BaseSyntheticEvent, ChangeEvent, useEffect, useRef, useState } f
 import Swal from 'sweetalert2';
 import useSWR from 'swr';
 import defaultProfile from '@/public/employees/default.png';
-
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { fetcher } from '@/app/_lib/Fetcher';
 
 export default function EmployeeProfilePage() {
   const { data: session, update }: any = useSession();
@@ -27,7 +26,7 @@ export default function EmployeeProfilePage() {
 
   const generateImage = (url: string) => {
     if (image) return URL.createObjectURL(image ?? new Blob());
-    if (!url) return null
+    if (!url) return null;
     return url;
   };
 

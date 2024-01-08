@@ -1,11 +1,10 @@
 import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
 import { prisma } from '@/app/_lib/prisma/client';
 import bcrypt from 'bcrypt';
-export const checkPassword = async (value: string) => {
+const checkPassword = async (value: string) => {
   const isMatch = await bcrypt.compare('12345678', value);
   return isMatch;
 };
-
 
 export async function GET(req: Request, route: { params: { username: string } }) {
   const url = new URL(req.url);
@@ -80,8 +79,6 @@ export async function POST(req: Request, route: { params: { username: string } }
   } catch (err: any) {
     return responseError('Internal Server Error');
   } finally {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   }
-
-  
 }
