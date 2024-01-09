@@ -3,6 +3,7 @@ import LoadingComponent from '@/app/_components/LoadingComponent';
 import PosButton from '@/app/_components/PosButton';
 import PosTable from '@/app/_components/PosTable';
 import { fetcher } from '@/app/_lib/Fetcher';
+import PosTableNew from '@/app/_lib/NextUiPos/PosTable';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -50,6 +51,31 @@ export default function PageProductDetail({ params }: { params: { id: string } }
     })
   }
   if (!data) return <LoadingComponent />;
+
+  const productDetailData = () => {
+    let newData: any[] = [];
+    data?.detail?.sellingUnits.map((su: any, i: number) => {
+      newData.push({
+        key: i + 1,
+        no: i + 1,
+        unit: su.unit.name,
+        stock: su.stock,
+        price: su.price,
+        action: <div className="p-3 flex gap-3">
+        <Link href={'/employees/dashboard/products/sellingunits/' + su.id + '/edit'} className="text-yellow-600 underline font-semibold">
+          Edit
+        </Link>
+        {!su.is_smallest && (
+          <button onClick={() => showWarningDelete(su.id, su.unit?.name)} className="text-red-600 underline font-semibold">
+            Delete
+          </button>
+        )}
+      </div>
+      });
+    });
+    return newData;
+  }
+
   return (
     <>
       <div className="text-lg font-semibold">Product detail</div>
@@ -75,7 +101,7 @@ export default function PageProductDetail({ params }: { params: { id: string } }
                 )}
                 {data?.isMaxUnit && <span>Can&apos;t Add</span>}
               </div>
-              <PosTable fixed headers={['No', 'Unit', 'Stock', 'Price', 'Action']}>
+              {/* <PosTable fixed headers={['No', 'Unit', 'Stock', 'Price', 'Action']}>
                 {data?.detail?.sellingUnits &&
                   data?.detail?.sellingUnits.map((su: any, i: number) => (
                     <tr key={i + 1} className="odd:bg-poslight even:bg-slate-200">
@@ -97,7 +123,8 @@ export default function PageProductDetail({ params }: { params: { id: string } }
                       </td>
                     </tr>
                   ))}
-              </PosTable>
+              </PosTable> */}
+              <PosTableNew columns={['Unit', 'Stock', 'Price', 'Action']} data={productDetailData()}/>
             </div>
           </>
         )}
