@@ -2,7 +2,7 @@ import LoadingComponent from '@/app/_components/LoadingComponent';
 import dynamic from 'next/dynamic';
 import React, { Suspense } from 'react';
 
-const DashboardCard = dynamic(() => import('./dashboard-card'));
+const DashboardCard = dynamic(() => import('./dashboard-card'), { ssr: false });
 export default function SuperAdminDashboard() {
   return (
     <>

@@ -1,5 +1,4 @@
 'use client';
-
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -45,7 +44,7 @@ export default function FormLoginSuperadmin() {
         )}
         <div className="flex flex-col w-[400px] h-[160px] gap-6">
           <div className="flex flex-col gap-2">
-            <label htmlFor="username" className="text-medium font-semibold font-['montserrat']">
+            <label htmlFor="username" aria-label="username" className="text-medium font-semibold font-['montserrat']">
               Username
             </label>
             <input id="username" name="username" type="text" className="h-[35px] rounded-[5px] px-3 outline outline-0 shadow-md text-black " placeholder="Input your Username" required autoFocus />

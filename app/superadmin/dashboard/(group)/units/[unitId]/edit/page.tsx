@@ -1,5 +1,8 @@
+import LoadingComponent from '@/app/_components/LoadingComponent';
+import dynamic from 'next/dynamic';
 import React from 'react';
-import FormEdit from './form-edit';
+
+const FormEdit = dynamic(() => import('./form-edit'), { ssr: false, loading: () => <LoadingComponent /> });
 
 export default async function SuperAdminUnitCreate({ params }: { params: { unitId: any } }) {
   return (

@@ -4,7 +4,7 @@ import AddButton from './add-button';
 import SearchUnit from './search-unit';
 import dynamic from 'next/dynamic';
 
-const UnitTable = dynamic(() => import('./unit-table'));
+const UnitTable = dynamic(() => import('./unit-table'), { ssr: false, loading: () => <LoadingComponent /> });
 
 export default function SuperAdminUnitsPage() {
   return (
@@ -17,9 +17,8 @@ export default function SuperAdminUnitsPage() {
           </div>
           <AddButton />
         </div>
-        <Suspense fallback={<LoadingComponent />}>
-          <UnitTable />
-        </Suspense>
+
+        <UnitTable />
       </div>
     </>
   );
