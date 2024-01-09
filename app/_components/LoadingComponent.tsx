@@ -6,7 +6,7 @@ export default function LoadingComponent() {
   return (
     <div className="flex justify-center my-5">
       <div className="flex items-center gap-3">
-        <CircularProgress />
+        <CircularProgress aria-label='loading-progress'  />
         <span>Loading...</span>
       </div>
     </div>
