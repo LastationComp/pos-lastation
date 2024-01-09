@@ -2,13 +2,13 @@ import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
 import { prisma } from '@/app/_lib/prisma/client';
 import { readFileSync } from 'fs';
 import { unlink, writeFile } from 'fs/promises';
-import { put, head, del } from '@vercel/blob';
 import path from 'path';
+import { backendClient } from '@/app/_lib/EdgeStore/edgestore-server';
 
 const production = process.env.NODE_ENV === 'production';
 export async function GET(req: Request, route: { params: { userId: string; avatarUrl: string } }) {
   const url = new URL(req.url);
-  const callbackUrl = url.searchParams.get('callbackUrl');
+  const callbackUrl = url.searchParams.get('callbackUrl') ?? '';
   const checkEmployee = await prisma.employees.findFirst({
     where: {
       id: route.params.userId,
@@ -18,7 +18,7 @@ export async function GET(req: Request, route: { params: { userId: string; avata
       avatar_url: true,
     },
   });
-
+  await prisma.$disconnect();
   if (!checkEmployee?.name) return responseError('Unauthorized', 401);
 
   try {
@@ -28,13 +28,15 @@ export async function GET(req: Request, route: { params: { userId: string; avata
       const blob = new Blob([imageBuffer]);
       return new Response(blob);
     } else {
-      const callbackUrl: string = url.searchParams.get('callbackUrl') ?? '';
-      const blob = await head(callbackUrl, {
-        token: process.env.POS_READ_WRITE_TOKEN,
+      const blob = await backendClient.publicFiles.getFile({
+        url: callbackUrl,
       });
       if (blob.url !== callbackUrl) return responseError('Unauthorized', 401);
-      const responseImage = await fetch(blob.url);
-      return new Response(await responseImage.blob());
+      const responseImage = await fetch(blob.url, {
+        cache: 'no-store',
+      });
+      const blobResult = await responseImage.blob();
+      return new Response(blobResult.stream());
     }
   } catch (err: any) {
     return responseError('Unauthorized', 401);
@@ -44,7 +46,6 @@ export async function GET(req: Request, route: { params: { userId: string; avata
 export async function POST(req: Request, route: { params: { userId: string; avatarUrl: string } }) {
   const body = await req.blob();
   const requestUrl = new URL(req.url);
-  const token = process.env.POS_READ_WRITE_TOKEN;
   const callbackUrl = requestUrl.searchParams.get('callbackUrl') ?? null;
   const getEmployee = await prisma.employees.findFirst({
     where: {
@@ -58,19 +59,31 @@ export async function POST(req: Request, route: { params: { userId: string; avat
 
   if (!getEmployee?.name || !callbackUrl) return responseError('Unauthorized', 401);
 
+  const buffer = Buffer.from(await body.arrayBuffer());
   try {
     if (!production) {
       const publicPath = process.cwd() + '/public/employees/';
       const filePath = publicPath + callbackUrl;
-      const buffer = Buffer.from(await body.arrayBuffer());
+
       await writeFile(filePath, buffer);
     } else {
-      const buffer = Buffer.from(await body.arrayBuffer());
-      const { url } = await put(callbackUrl, buffer, {
-        token: token,
-        access: 'public',
+      const fileEmployee = new Blob([buffer], {
+        type: 'image/*',
       });
-      requestUrl.searchParams.set('callbackUrl', url);
+      const edgestore = await backendClient.publicFiles.upload({
+        content: {
+          blob: fileEmployee,
+          extension: 'webp',
+        },
+        ctx: {
+          userId: route.params.userId,
+          userRole: 'employee',
+        },
+        input: {
+          type: 'employees',
+        },
+      });
+      requestUrl.searchParams.set('callbackUrl', edgestore.url);
     }
     const updateAvatarUrl = await prisma.employees.update({
       where: {
@@ -80,7 +93,7 @@ export async function POST(req: Request, route: { params: { userId: string; avat
         avatar_url: requestUrl.toString(),
       },
     });
-
+    await prisma.$disconnect();
     if (updateAvatarUrl) return responseSuccess(requestUrl.toString());
   } catch (err) {
     console.log(err);
@@ -91,13 +104,22 @@ export async function POST(req: Request, route: { params: { userId: string; avat
 export async function DELETE(req: Request, route: { params: { userId: string; avatarUrl: string } }) {
   const url = new URL(req.url);
   const callbackUrl = url.searchParams.get('callbackUrl') ?? '';
+  const isAuthorized = prisma.employees.findFirst({
+    where: {
+      id: route.params.userId,
+    },
+    select: {
+      name: true,
+    },
+  });
+  if (!isAuthorized) return responseError('Unauthorized', 401);
   try {
     if (!production) {
       const filePath = path.resolve('.', `public/employees/${callbackUrl}`);
       await unlink(filePath);
     } else {
-      await del(callbackUrl, {
-        token: process.env.POS_READ_WRITE_TOKEN,
+      await backendClient.publicFiles.deleteFile({
+        url: callbackUrl,
       });
     }
   } catch (err: any) {

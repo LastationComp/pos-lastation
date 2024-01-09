@@ -10,13 +10,14 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@edgestore/react": "^0.1.6",
+    "@edgestore/server": "^0.1.6",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@next-auth/prisma-adapter": "^0.4.4-canary.81",
     "@nextui-org/react": "^2.2.9",
     "@prisma/client": "^5.6.0",
-    "@vercel/blob": "^0.16.1",
     "bcrypt": "^5.1.1",
     "framer-motion": "^10.16.16",
     "next": "14.0.3",

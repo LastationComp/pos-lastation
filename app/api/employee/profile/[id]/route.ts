@@ -53,6 +53,8 @@ export async function POST(req: Request, route: { params: { id: string } }) {
 
   let fileName = null;
   let files = (formData.get('avatar') as Blob) ?? undefined;
+  const maxFile = 1 * 1024 * 1024;
+  if (maxFile < files.size) return responseError('Max size for profile image is 1 MB');
   if (formData.has('avatar') && files.size !== 0) {
     const extension = files.type.split('/')[1];
     fileName = uuidv4() + '.' + extension;
@@ -80,7 +82,6 @@ export async function POST(req: Request, route: { params: { id: string } }) {
         });
       }
       if (finalFileName) {
-
         const res = await fetch(finalFileName, {
           method: 'POST',
           body: files,
