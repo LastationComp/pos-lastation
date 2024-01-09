@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 import LoadingComponent from '@/app/_components/LoadingComponent';
 import dynamic from 'next/dynamic';
+import FormLoginSuperadmin from './login-superadmin';
 
-const FormLoginSuperadmin = dynamic(() => import('./login-superadmin'));
 export default function HomeSuperAdmin() {
   return (
     <main className="bg-poslight flex justify-center w-screen h-screen static">
