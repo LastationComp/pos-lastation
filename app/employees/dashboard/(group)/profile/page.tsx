@@ -50,7 +50,7 @@ export default function EmployeeProfilePage() {
     update({
       user: {
         avatar_url: result?.avatar_url,
-        name: result?.name,
+        name: formData.get('name') as string,
       },
     });
     e.target.reset();
