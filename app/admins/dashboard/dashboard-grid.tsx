@@ -73,11 +73,11 @@ export default function DashboardGrid({ session }: { session: any }) {
                 <span className="font-bold">
                   <h1 className="py-1">Total Income</h1>
                 </span>
-                <span className="font-bold">{formatRupiah(data?.total_transactions_today.total_price)}</span>
+                <span className="font-bold">{formatRupiah(data?.total_transactions_monthly.total_price)}</span>
               </div>
               <div className="flex justify-between w-full">
                 <span className="text-sm">Total Transactions</span>
-                <span className="text-sm">{data?.total_transactions_today.total_trx}</span>
+                <span className="text-sm">{data?.total_transactions_monthly.total_trx}</span>
               </div>
             </div>
           </CardFooter>
