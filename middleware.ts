@@ -6,24 +6,24 @@ export async function middleware(req: NextRequest) {
   const pathSuperAdmin = '/superadmin';
   const pathAdmin = '/admins';
   const pathEmployee = '/employees';
-  const token: any = await getToken({ req: req });
+  const token: any = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET, cookieName: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token' });
   const sessionToken = process.env.NODE_ENV !== 'production' ? 'next-auth.session-token' : '__Secure-next-auth.session-token';
   const callbackUrl = process.env.NODE_ENV !== 'production' ? 'next-auth.callback-url' : '__Secure-next-auth.callback-url';
   const redirect = (pathNow: any) => {
     return Response.redirect(new URL(pathNow, req.url));
   };
 
-  if(token && token?.role === 'employee') {
-    const dateShopOpen: Date = new Date(token?.permissions?.shop_open_hours)
-    const dateCloseOpen: Date = new Date(token?.permissions?.shop_close_hours)
+  if (token && token?.role === 'employee') {
+    const dateShopOpen: Date = new Date(token?.permissions?.shop_open_hours);
+    const dateCloseOpen: Date = new Date(token?.permissions?.shop_close_hours);
     const shop_open = dateShopOpen.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00');
     const shop_close = dateCloseOpen.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
     const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
-    const timeWork = shop_open <= timeNow && timeNow < shop_close
+    const timeWork = shop_open <= timeNow && timeNow < shop_close;
     if (!timeWork) {
       const response = NextResponse.redirect(new URL('/', req.url));
       response.cookies.delete(sessionToken);
-      return response
+      return response;
     }
   }
 
@@ -46,9 +46,8 @@ export async function middleware(req: NextRequest) {
 
   if (pathname.startsWith(pathEmployee)) {
     if (pathname.startsWith(pathEmployee + '/dashboard') && token?.role !== 'employee') return redirect(req.cookies.get(callbackUrl)?.value ?? '/');
-    if (pathname.startsWith(pathEmployee + '/dashboard/products/add') && !token?.permissions?.emp_can_create) return redirect(pathEmployee + '/dashboard/products')
+    if (pathname.startsWith(pathEmployee + '/dashboard/products/add') && !token?.permissions?.emp_can_create) return redirect(pathEmployee + '/dashboard/products');
     if (pathname.startsWith(pathEmployee + '/dashboard/products') && pathname.endsWith('/edit') && !token?.permissions?.emp_can_update) return redirect(pathEmployee + '/dashboard/products');
-  
   }
 }
 
