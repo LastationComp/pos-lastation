@@ -1,5 +1,4 @@
 import LoadingComponent from '@/app/_components/LoadingComponent';
-import { Suspense } from 'react';
 import AddButton from './add-button';
 import SearchUnit from './search-unit';
 import dynamic from 'next/dynamic';

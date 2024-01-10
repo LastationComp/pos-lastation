@@ -20,7 +20,7 @@ export default function PosTableNew({ columns, data }: { columns: any[]; data: a
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={'No Data Display'} items={items} isLoading={items.length === 0} loadingContent={'Loading data...'}>
+      <TableBody emptyContent={'No Data Display'} items={items} isLoading={!items} loadingContent={'Loading data...'}>
         {(item: any) => (
           <TableRow aria-label={item.key} key={item.key} className="odd:bg-poslight even:bg-slate-200 ">
             {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}

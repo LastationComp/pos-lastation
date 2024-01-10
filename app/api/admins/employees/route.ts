@@ -4,12 +4,9 @@ import { getServerSession } from 'next-auth/next';
 import authOptions from '../../auth/authOptions';
 import { prisma } from '@/app/_lib/prisma/client';
 
-
-
-
 export async function GET(req: Request) {
   const session: any = await getServerSession(authOptions);
-  
+
   const getEmployees = await prisma.admins.findFirst({
     where: {
       id: session?.user?.id,

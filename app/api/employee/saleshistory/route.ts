@@ -1,5 +1,5 @@
-import { prisma } from "@/app/_lib/prisma/client";
-
+import { responseSuccess } from '@/app/_lib/PosResponse';
+import { prisma } from '@/app/_lib/prisma/client';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -33,11 +33,7 @@ export async function GET(req: Request) {
   });
 
   await prisma.$disconnect();
-  if (!getSalesHistory)
-    return Response.json({
-      salesHistory: getSalesHistory,
-    });
-  return Response.json({
-    salesHistory: getSalesHistory,
+  return responseSuccess({
+    sales_history: getSalesHistory,
   });
 }
