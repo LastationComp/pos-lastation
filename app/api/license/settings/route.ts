@@ -25,9 +25,14 @@ export async function POST(req: Request) {
   const shopOpen = checkSetting?.admin?.setting?.shop_open_hours.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
   const shopClose = checkSetting?.admin?.setting?.shop_close_hours.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
   const dateNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00');
-  const notWorkTime = shopOpen <= dateNow && shopClose < dateNow;
-
-  if (!notWorkTime) return responseError("You can't login outside work time");
+  const workTime = shopOpen <= dateNow && dateNow < shopClose;
+  if (!workTime)
+    return responseError({
+      message: "You can't login outside work time",
+      shopOpen: shopOpen,
+      dateNow: dateNow,
+      shopClose: shopClose,
+    });
   if (!checkSetting?.admin?.setting?.emp_can_login) return responseError("You can't login for now, please contact your Admin");
 
   await prisma.$disconnect();
