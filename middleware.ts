@@ -16,9 +16,9 @@ export async function middleware(req: NextRequest) {
   if (token && token?.role === 'employee') {
     const dateShopOpen: Date = new Date(token?.permissions?.shop_open_hours);
     const dateCloseOpen: Date = new Date(token?.permissions?.shop_close_hours);
-    const shop_open = dateShopOpen.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00');
-    const shop_close = dateCloseOpen.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
-    const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
+    const shop_open = dateShopOpen.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00');
+    const shop_close = dateCloseOpen.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
+    const timeNow = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
     const timeWork = shop_open <= timeNow && timeNow < shop_close;
     if (!timeWork) {
       const response = NextResponse.redirect(new URL('/', req.url));
