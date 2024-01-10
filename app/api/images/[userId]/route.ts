@@ -60,6 +60,7 @@ export async function POST(req: Request, route: { params: { userId: string; avat
   if (!getEmployee?.name || !callbackUrl) return responseError('Unauthorized', 401);
 
   const buffer = Buffer.from(await body.arrayBuffer());
+  let newCallBackUrl;
   try {
     if (!production) {
       const publicPath = process.cwd() + '/public/employees/';
@@ -83,18 +84,18 @@ export async function POST(req: Request, route: { params: { userId: string; avat
           type: 'employees',
         },
       });
-      requestUrl.searchParams.set('callbackUrl', edgestore.url);
+      newCallBackUrl = requestUrl.origin + '/api/images/' + route.params.userId + '?callbackUrl=' + edgestore.url
     }
     const updateAvatarUrl = await prisma.employees.update({
       where: {
         id: route.params.userId,
       },
       data: {
-        avatar_url: requestUrl.toString(),
+        avatar_url: newCallBackUrl,
       },
     });
     await prisma.$disconnect();
-    if (updateAvatarUrl) return responseSuccess(requestUrl.toString());
+    if (updateAvatarUrl) return responseSuccess(newCallBackUrl);
   } catch (err) {
     console.log(err);
     return responseError('File not uploaded', 500);
