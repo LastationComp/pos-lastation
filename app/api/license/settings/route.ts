@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
   const shopOpen = checkSetting?.admin?.setting?.shop_open_hours.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
   const shopClose = checkSetting?.admin?.setting?.shop_close_hours.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
-  const dateNow = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00');
+  const dateNow = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' }).replace('24', '00');
   const workTime = shopOpen <= dateNow && dateNow < shopClose;
   if (!workTime)
     return responseError({
