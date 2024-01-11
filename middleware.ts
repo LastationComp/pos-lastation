@@ -18,7 +18,9 @@ export async function middleware(req: NextRequest) {
     const dateCloseOpen: Date = new Date(token?.permissions?.shop_close_hours);
     const shop_open = dateShopOpen.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00');
     const shop_close = dateCloseOpen.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
-    const timeNow = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
+    const production = new Date(new Date().setHours(new Date().getHours() + 7)).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
+    const development = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }).replace('24', '00') ?? '';
+    const timeNow = process.env.NODE_ENV === 'production' ? production : development;
     const timeWork = shop_open <= timeNow && timeNow < shop_close;
     if (!timeWork) {
       const response = NextResponse.redirect(new URL('/', req.url));
