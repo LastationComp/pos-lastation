@@ -84,18 +84,18 @@ export async function POST(req: Request, route: { params: { userId: string; avat
           type: 'employees',
         },
       });
-      newCallBackUrl = process.env.NEXT_URL + '/api/images/' + route.params.userId + '?callbackUrl=' + edgestore.url;
+      requestUrl.searchParams.set('callbackUrl', edgestore.url);
     }
     const updateAvatarUrl = await prisma.employees.update({
       where: {
         id: route.params.userId,
       },
       data: {
-        avatar_url: newCallBackUrl,
+        avatar_url: requestUrl.toString(),
       },
     });
     await prisma.$disconnect();
-    if (updateAvatarUrl) return responseSuccess(newCallBackUrl);
+    if (updateAvatarUrl) return responseSuccess(requestUrl.toString());
   } catch (err) {
     console.log(err);
     return responseError('File not uploaded', 500);
