@@ -84,7 +84,7 @@ export async function POST(req: Request, route: { params: { userId: string; avat
           type: 'employees',
         },
       });
-      newCallBackUrl = requestUrl.origin + '/api/images/' + route.params.userId + '?callbackUrl=' + edgestore.url
+      newCallBackUrl = process.env.NEXT_URL + '/api/images/' + route.params.userId + '?callbackUrl=' + edgestore.url;
     }
     const updateAvatarUrl = await prisma.employees.update({
       where: {
