@@ -43,6 +43,7 @@ export default function FormLogin() {
       license_key: localStorage.getItem('license_key') ?? '',
       role: role,
       redirect: false,
+      callbackUrl: process.env.NEXT_URL,
     });
     if (res?.ok && res.status === 200) {
       if (role === 'admin') return router.push('/admins/dashboard');
@@ -50,7 +51,6 @@ export default function FormLogin() {
     }
     setWrong('Username or Password is Wrong');
     setIsLoading(false);
-    localStorage.setItem('hook', '1');
   };
   return (
     <form

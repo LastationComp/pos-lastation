@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { fetcher } from '@/app/_lib/Fetcher';
 import { Chip } from '@nextui-org/react';
 import PosTableNew from '@/app/_lib/NextUiPos/PosTable';
+import LoadingComponent from '@/app/_components/LoadingComponent';
 
 export default function EmployeeTable() {
   const searchParams = useSearchParams();
@@ -98,5 +99,6 @@ export default function EmployeeTable() {
 
     return newData;
   };
+  if (!data) return <LoadingComponent />;
   return <PosTableNew columns={['Employee Code', 'Name', 'Status', 'Action']} data={employeeData()} />;
 }

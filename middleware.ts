@@ -6,13 +6,18 @@ export async function middleware(req: NextRequest) {
   const pathSuperAdmin = '/superadmin';
   const pathAdmin = '/admins';
   const pathEmployee = '/employees';
-  const token: any = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET, cookieName: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token' });
+  const token: any = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET, cookieName: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token', secureCookie: true });
   const sessionToken = process.env.NODE_ENV !== 'production' ? 'next-auth.session-token' : '__Secure-next-auth.session-token';
   const callbackUrl = process.env.NODE_ENV !== 'production' ? 'next-auth.callback-url' : '__Secure-next-auth.callback-url';
   const redirect = (pathNow: any) => {
     return Response.redirect(new URL(pathNow, req.url));
   };
 
+  if (!callbackUrl) {
+    const response = NextResponse.redirect(new URL('/', req.url));
+    response.cookies.delete(process.env.NODE_ENV !== 'production' ? 'next-auth.session-token' : '__Secure-next-auth.session-token');
+    return response;
+  }
   if (token && token?.role === 'employee') {
     const dateShopOpen: Date = new Date(token?.permissions?.shop_open_hours);
     const dateCloseOpen: Date = new Date(token?.permissions?.shop_close_hours);

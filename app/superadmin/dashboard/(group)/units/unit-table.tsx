@@ -13,8 +13,7 @@ export default function UnitTable() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get('q') ?? '';
-  const [page, setPage] = useState(1);
-  const { data, mutate } = useSWR(`/api/superadmin/units?page=${page}&paginate=10&q=${query}`, fetcher, {
+  const { data, mutate } = useSWR(`/api/superadmin/units?q=${query}`, fetcher, {
     keepPreviousData: true,
   });
 
@@ -36,15 +35,14 @@ export default function UnitTable() {
     });
 
     if (res.ok && res.status == 200) {
-      setPage(1);
       mutate(data);
     }
   };
 
   const getUnitData = () => {
     let dumpData: any[] = [];
-    data?.units.forEach((data: any, i: number) => {
-      dumpData.push({
+    dumpData = data?.units.map((data: any, i: number) => {
+      return {
         key: i + 1,
         no: i + 1,
         name: data.name,
@@ -64,18 +62,13 @@ export default function UnitTable() {
             </button>
           </div>
         ),
-      });
+      };
     });
     return dumpData;
   };
   return (
     <>
       <PosTableNew columns={['NO', 'Name', 'Action']} data={getUnitData()} />
-      {data?.units.length !== 0 && (
-        <div className="flex w-full justify-center">
-          <Pagination aria-label="pagination" isCompact disableAnimation showControls showShadow color="primary" page={page} total={data?.total_page} onChange={(page) => setPage(page)} />
-        </div>
-      )}
     </>
   );
 }
