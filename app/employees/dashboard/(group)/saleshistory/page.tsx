@@ -41,8 +41,8 @@ export default function AdminSalesHistoryPage() {
             </div>
             <div className="mt-3">
               <PosTable fixed headers={['No Reference', 'Date', 'Employee', 'Total', 'Action']}>
-                {data &&
-                  data.salesHistory.map((sales: any, index: number) => (
+                {data?.sales_history &&
+                  data?.sales_history.map((sales: any, index: number) => (
                     <tr key={index + 1}>
                       <td className="p-3">{sales.no_ref}</td>
                       <td className="p-3">{formatDate(sales.created_at)}</td>

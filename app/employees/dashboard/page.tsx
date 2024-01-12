@@ -61,19 +61,6 @@ export default function DashboardEmployeePage() {
                         <FontAwesomeIcon icon={faCheck} />
                       </button>
                     )}
-                    {/* {!checkSelectedProduct(product.id) && (
-                      <button
-                        onClick={() => {
-                          let result = transactionLists.findIndex((res: Products) => res.id === product.id);
-                          let transactions = [...transactionLists];
-                          transactions.splice(result, 1);
-                          setTransactionLists(transactions);
-                        }}
-                        className="bg-red-600 rounded px-2 py-1 text-white"
-                      >
-                        <FontAwesomeIcon icon={faXmark} />
-                      </button>
-                    )} */}
                   </td>
                 </tr>
               ))}

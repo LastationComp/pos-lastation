@@ -9,8 +9,8 @@ export default function ButtonLogout() {
   const handleLogout = async() => {
     nProgress.start();
     setIsLoading(true)
-    await signOut({ redirect: false });
-    return router.push('/')
+    await signOut({ redirect: true });
+    // return router.push('/')
 
   }
   return (

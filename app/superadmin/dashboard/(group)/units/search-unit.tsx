@@ -22,13 +22,14 @@ export default function SearchUnit() {
 
   return (
     <Input
-        aria-label='Search Unit'
+      aria-label="Search Unit"
       radius="full"
       placeholder="Search by Unit"
       onChange={(e) => {
         if (!e.target.value) return router.push(pathname);
         return router.push(pathname + '?' + createQueryString('q', e.target.value));
       }}
+      defaultValue={searchParams.get('q') ?? ''}
       type="search"
       startContent={<FontAwesomeIcon icon={faMagnifyingGlass} />}
     />

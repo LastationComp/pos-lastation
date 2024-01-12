@@ -26,12 +26,6 @@ export async function GET(req: Request, route: { params: { id: string } }) {
       },
     },
     select: {
-      no_ref: true,
-      employee: {
-        select: {
-          name: true
-        }
-      },
       created_at: true,
       total_price: true,
     },

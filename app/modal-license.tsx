@@ -47,7 +47,7 @@ export default function ModalLicense() {
   });
   return (
     <>
-      <Modal isOpen={!hasLicense} placement="bottom-center" size="lg" hideCloseButton backdrop="opaque">
+      <Modal isOpen={!hasLicense} placement="bottom-center" size="lg" isDismissable={false} hideCloseButton backdrop="opaque">
         <ModalContent>
           {(onclose) => (
             <>

@@ -147,6 +147,8 @@ model Transactions {
   customer_id String?
   customer Customers? @relation(fields: [customer_id], references: [id], onUpdate: Cascade, onDelete: SetNull)
   transactionLists TransactionLists[]
+
+  @@map("transactions")
 }
 
 model TransactionLists {
