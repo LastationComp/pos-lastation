@@ -14,6 +14,9 @@ export async function GET(req: Request) {
         },
       },
     },
+    orderBy: {
+      created_at: 'desc',
+    },
     select: {
       id: true,
       no_ref: true,

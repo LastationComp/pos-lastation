@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
@@ -8,20 +8,29 @@ import { signOut, useSession } from 'next-auth/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons/faRightFromBracket';
 import nProgress from 'nprogress';
-import { Avatar } from '@nextui-org/react';
+import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from '@nextui-org/react';
 
 const GenerateLink = (link: string, name: string) => {
   const pathname = usePathname();
   const router = useRouter();
   const pathDashboard = '/employees/dashboard';
   const realPath = pathDashboard + link;
+
+  const getConditionNavbar = () => {
+    if (pathname === '/employees/dashboard' && link === '') return true;
+
+    if (pathname.includes(link) && link !== '') return true;
+
+    return false;
+  };
   return (
     <button
       onClick={() => {
+        if (pathname === realPath) return;
         nProgress.start();
-        router.push(`${realPath}`);
+        router.push(realPath);
       }}
-      className={'inline-block py-3 px-5 rounded-full ' + (pathname === realPath ? 'bg-posblue text-white' : 'hover:bg-teal-100 hover:text-black transition')}
+      className={'inline-block py-3 px-5 rounded-full ' + (getConditionNavbar() ? 'bg-posblue text-white' : 'hover:bg-teal-100 hover:text-black transition')}
     >
       {name}
     </button>
@@ -29,70 +38,73 @@ const GenerateLink = (link: string, name: string) => {
 };
 
 export default function NavbarEmployee() {
-  const router = useRouter();
   const session: any = useSession();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const handleLogout = async () => {
-    {
-      await signOut({ redirect: false });
-      return router.push('/');
-    }
+    await signOut({ redirect: true });
   };
   const generateImage = (url: string) => {
     if (!url) return undefined;
     return url;
   };
   return (
-    <nav className="bg-posgray border-gray-900 dark:bg-gray-900">
-      <div className="h-10vh flex justify-between items-center z-50 gap-3 text-white lg:py-4 px-20">
-        <div className="flex items-center flex-1">
-          <span className="text-3xl font-bold">
-            <Link href="/" className="flex items-center gap-5">
-              <Image src={'/iconLastation.png'} blurDataURL={'/iconLastation.png'} className="object-cover max-w-[40px] max-h-[40px]" width={40} height={40} alt="Icon Lastation" />
-              {session?.data?.user?.client_name ?? 'Loading...'}
-            </Link>
-          </span>
-        </div>
-        <div className="">
-          <ul className="inline-flex text-sm font-medium text-center rounded-full bg-white text-black border-b border-black ">
-            <li className="mx-2 my-1 ">{GenerateLink('', 'Transaction')}</li>
-            <li className="mx-2 my-1">{GenerateLink('/products', 'Products')}</li>
-            <li className="mx-2 my-1">{GenerateLink('/member', 'Member')}</li>
+    <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-posgray" maxWidth={'full'}>
+      <NavbarContent>
+        <NavbarMenuToggle aria-label={isMenuOpen ? 'Close Menu' : 'Open Menu'} className="lg:hidden text-white"></NavbarMenuToggle>
+        <NavbarBrand>
+          <Link href="/" className="flex items-center gap-5 text-white">
+            <Image src={'/iconLastation.png'} blurDataURL={'/iconLastation.png'} className="object-cover max-w-[40px] max-h-[40px]" width={40} height={40} alt="Icon Lastation" />
+            <span className="text-lg font-semibold">{session?.data?.user?.client_name ?? 'Loading...'}</span>
+          </Link>
+        </NavbarBrand>
+      </NavbarContent>
 
-            <li className="mx-2 my-1">{GenerateLink('/profile', 'Profile')}</li>
-          </ul>
+      <NavbarContent justify={'center'}>
+        <div className="inline-flex py-1 text-sm font-medium text-center rounded-full bg-white text-black px-1 max-lg:hidden">
+          <NavbarItem>{GenerateLink('', 'Transactions')}</NavbarItem>
+          <NavbarItem>{GenerateLink('/products', 'Products')}</NavbarItem>
+          <NavbarItem>{GenerateLink('/members', 'Members')}</NavbarItem>
+          <NavbarItem>{GenerateLink('/profile', 'Profile')}</NavbarItem>
         </div>
-        <div className="lg:flex md:flex lg:flex-1 items center justify-end font-normal hidden">
-          {/* <div className="w-[157px] h-[50px] flex-col justify-start items-start gap-2.5 inline-flex">
-            <div className="w-[194px] h-[50px] relative">
-              <div className="w-[194px] h-[50px] left-0 top-0 absolute bg-stone-50 rounded-[30px]" />
-              <div className="w-44 h-[38px] left-[9px] top-[6px] absolute justify-start items-center gap-2.5 inline-flex">
-                <div className="justify-start items-center gap-2 flex">
-                  <Image className="object-cover max-w-[40px] max-h-[40px] rounded-full" loading="lazy" src={generateImage(session?.user?.avatar_url ?? 'default.png')} alt={session?.data?.user?.name ?? 'Employee'} width={40} height={40} />
-                  <div className="flex-col justify-center items-start gap-[8px] inline-flex">
-                    <span className="w-[90px] h-2.5 text-black text-sm font-bold">{session?.user?.name ?? 'Loading...'}</span>
-                    <span className="w-[90px] h-2.5 text-black text-xs font-medium font-['Montserrat']">Employee</span>
-                  </div>
-                </div>
-                <div className="justify-end  relative ">
-                  <button className="bg-red-600 p-3 rounded-[10px]">log</button>
-                </div>
-              </div>
-            </div>
-          </div> */}
-          <div className="rounded-full bg-white flex items-center">
-            <Avatar src={generateImage(session?.data?.user?.avatar_url)} className="mr-3" isBordered showFallback />
-            <div className="flex flex-col text-black mr-2">
-              <span className="font-semibold">{session?.data?.user?.name}</span>
-              <span className="text-black/60">Employee</span>
-            </div>
-            <div>
-              <button className="bg-red-600 p-1 rounded mr-5" onClick={() => handleLogout()}>
-                <FontAwesomeIcon icon={faRightFromBracket} size={'xl'} />
-              </button>
-            </div>
+      </NavbarContent>
+      <NavbarContent justify="end">
+        <div className="rounded-full flex bg-white items-center gap-3 pr-2 max-md:hidden">
+          <Avatar src={generateImage(session?.data?.user?.avatar_url)} className="" isBordered showFallback />
+          <div className="flex flex-col text-black">
+            <span className="font-semibold">{session?.data?.user?.name}</span>
+            <span className="text-black/60">Employee</span>
           </div>
+          <button className="bg-red-600 rounded px-1 py-1" onClick={() => handleLogout()}>
+            <FontAwesomeIcon icon={faRightFromBracket} className="text-white" size={'xl'} />
+          </button>
         </div>
-      </div>
-    </nav>
+        <div className="md:hidden">
+          <Dropdown placement="bottom-end">
+            <DropdownTrigger>
+              <Avatar src={generateImage(session?.data?.user?.avatar_url)} className="" isBordered showFallback />
+            </DropdownTrigger>
+            <DropdownMenu>
+              <DropdownItem>
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-col text-black">
+                    <span className="font-semibold">{session?.data?.user?.name}</span>
+                    <span className="text-black/60">Employee</span>
+                  </div>
+                  <button className="bg-red-600 rounded px-1 py-1" onClick={() => handleLogout()}>
+                    <FontAwesomeIcon icon={faRightFromBracket} className="text-white" size={'xl'} />
+                  </button>
+                </div>
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </NavbarContent>
+      <NavbarMenu>
+        <NavbarMenuItem>{GenerateLink('', 'Transactions')}</NavbarMenuItem>
+        <NavbarMenuItem>{GenerateLink('/products', 'Products')}</NavbarMenuItem>
+        <NavbarMenuItem>{GenerateLink('/members', 'Members')}</NavbarMenuItem>
+        <NavbarMenuItem>{GenerateLink('/profile', 'Profile')}</NavbarMenuItem>
+      </NavbarMenu>
+    </Navbar>
   );
 }

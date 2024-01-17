@@ -10,11 +10,13 @@ export async function GET(req: Request) {
         {
           barcode: {
             contains: query,
+            mode: 'insensitive'
           },
         },
         {
           product_name: {
-            contains: query
+            contains: query,
+            mode: 'insensitive'
           }
         }
       ],
@@ -126,7 +128,6 @@ export async function POST(req: Request) {
       message: 'Product Successfully created!',
     });
   } catch (e: any) {
-    console.log(e);
     return responseError('Create Failed');
   } finally {
     await prisma.$disconnect();

@@ -33,51 +33,45 @@ export default function PosTableNew({ columns = [], data = [] }: PosTable) {
     return setPage(paginated);
   };
   return (
-    <Table
-      removeWrapper
-      aria-labelledby={pathname}
-      bottomContentPlacement={'outside'}
-      isCompact
-      className="sm:overflow-hidden overflow-auto"
-      bottomContent={
-        <div className="flex justify-between sticky">
-          <Dropdown>
-            <DropdownTrigger>
-              <Button variant="bordered">Rows per Page: {rowsPerPage}</Button>
-            </DropdownTrigger>
-            <DropdownMenu aria-label="Static Actions">
-              <DropdownItem key="10" onClick={() => setRowsPerPage(10)}>
-                10
-              </DropdownItem>
-              <DropdownItem key="25" onClick={() => setRowsPerPage(25)}>
-                25
-              </DropdownItem>
-              <DropdownItem key="50" onClick={() => setRowsPerPage(50)}>
-                50
-              </DropdownItem>
-              <DropdownItem key="100" onClick={() => setRowsPerPage(100)}>
-                100
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-          <Pagination aria-label="pagination" isCompact disableAnimation showControls showShadow color="primary" page={page} total={pages} onChange={(page) => handlePagination(page)} />
-        </div>
-      }
-    >
-      <TableHeader aria-label={pathname} columns={generateColumn}>
-        {(column) => (
-          <TableColumn aria-label={column.label} className="bg-posgray text-white" key={column.key}>
-            {column.label}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={'No Data Display'} items={items} isLoading={!items} loadingContent={'Loading data...'}>
-        {(item: any) => (
-          <TableRow aria-label={item.key} key={item.key} className="odd:bg-poslight even:bg-slate-200 ">
-            {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <Table removeWrapper aria-labelledby={pathname} bottomContentPlacement={'outside'} isCompact className="sm:overflow-hidden overflow-auto">
+        <TableHeader aria-label={pathname} columns={generateColumn}>
+          {(column) => (
+            <TableColumn aria-label={column.label} className="bg-posgray text-white" key={column.key}>
+              {column.label}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={'No Data Display'} items={items} isLoading={!items} loadingContent={'Loading data...'}>
+          {(item: any) => (
+            <TableRow aria-label={item.key} key={item.key} className="odd:bg-poslight even:bg-slate-200 ">
+              {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <div className="flex justify-between mt-3">
+        <Dropdown>
+          <DropdownTrigger>
+            <Button variant="bordered">Rows per Page: {rowsPerPage}</Button>
+          </DropdownTrigger>
+          <DropdownMenu aria-label="Static Actions">
+            <DropdownItem key="10" onClick={() => setRowsPerPage(10)}>
+              10
+            </DropdownItem>
+            <DropdownItem key="25" onClick={() => setRowsPerPage(25)}>
+              25
+            </DropdownItem>
+            <DropdownItem key="50" onClick={() => setRowsPerPage(50)}>
+              50
+            </DropdownItem>
+            <DropdownItem key="100" onClick={() => setRowsPerPage(100)}>
+              100
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+        <Pagination aria-label="pagination" isCompact disableAnimation showControls showShadow color="primary" page={page} total={pages} onChange={(page) => handlePagination(page)} />
+      </div>
+    </>
   );
 }
