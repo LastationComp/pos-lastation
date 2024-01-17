@@ -37,7 +37,7 @@ export async function POST(req: Request, route: { params: { id: string } }) {
   if (!checkFirst) return responseError('User Not Found');
 
   const oldPassword = (formData.get('old-password') as string) ?? null;
-
+  const name = (formData.get('name') as string) ?? null;
   let newPassword = (formData.get('new-password') as string) ?? null;
   let rePassword = (formData.get('re-password') as string) ?? null;
   let isWithPassword = false;
@@ -66,7 +66,7 @@ export async function POST(req: Request, route: { params: { id: string } }) {
         id: route.params.id,
       },
       data: {
-        name: (formData.get('name') as string) ?? checkFirst.name,
+        name: name ?? checkFirst.name,
         pin: finalPassword ?? checkFirst.pin,
       },
     });

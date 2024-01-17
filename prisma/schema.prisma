@@ -154,6 +154,7 @@ model Transactions {
 model TransactionLists {
   id String @id @default(uuid())
   qty Int 
+  price_per_qty Decimal @db.Decimal(8,2) @default(0)
   total_price Decimal @db.Decimal(8,2)
   created_at DateTime @db.Timestamp() @default(now())
   updated_at DateTime @db.Timestamp() @updatedAt @default(now())

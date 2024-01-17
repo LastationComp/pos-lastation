@@ -1,4 +1,4 @@
-import { prisma } from "@/app/_lib/prisma/client";
+import { prisma } from '@/app/_lib/prisma/client';
 
 export async function GET(req: Request, route: { params: { no_ref: string } }) {
   const no_ref = route.params.no_ref;
@@ -37,7 +37,7 @@ export async function GET(req: Request, route: { params: { no_ref: string } }) {
           qty: true,
           total_price: true,
           created_at: true,
-
+          price_per_qty: true,
           sellingUnit: {
             select: {
               price: true,
@@ -54,10 +54,6 @@ export async function GET(req: Request, route: { params: { no_ref: string } }) {
   });
 
   await prisma.$disconnect();
-  if (!getReceipt)
-    return Response.json({
-      receiptDetail: getReceipt,
-    });
   return Response.json({
     receiptDetail: getReceipt,
   });

@@ -18,12 +18,15 @@ export async function GET(req: Request, route: { params: { customerCode: string 
 }
 
 export async function POST(req: Request, route: { params: { customerCode: string } }) {
-  const { name, email, phone, point } = await req.json();
+  const { name, email, phone, point, empID } = await req.json();
   const prisma = new PrismaClient();
   const customer_code = route.params.customerCode;
   const updateMembers = await prisma.customers.update({
     where: {
       customer_code: customer_code,
+      employee: {
+        id: empID,
+      },
     },
     data: {
       name: name,
