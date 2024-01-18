@@ -27,7 +27,8 @@ export default function ProductDetail({ id, session }: { id: string; session: an
     if (!res.ok && res.status !== 200)
       return Swal.fire({
         icon: 'error',
-        title: result?.message,
+        title: 'Selling Unit Delete Failed',
+        text: result?.message,
       });
 
     mutate(data);
@@ -54,7 +55,7 @@ export default function ProductDetail({ id, session }: { id: string; session: an
       return {
         key: i + 1,
         no: i + 1,
-        unit: su.unit.name + (su.is_smallest ? '(Smallest Unit)' : ''),
+        unit: (su.unit?.name ?? 'Unit Sudah Dihapus') + (su.is_smallest ? '(Smallest Unit)' : ''),
         stock: su.stock,
         price: formatRupiah(su.price),
         action: (

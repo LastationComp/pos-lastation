@@ -1,5 +1,5 @@
 'use client';
-import React, { BaseSyntheticEvent, ButtonHTMLAttributes, useEffect, useRef, useState } from 'react';
+import React, { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
 import { faRotate } from '@fortawesome/free-solid-svg-icons/faRotate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers } from '@fortawesome/free-solid-svg-icons/faUsers';
@@ -163,7 +163,7 @@ export default function TransactionLists({ transactions, setTransaction, session
   //     return payRef.current?.click();
   //   }
   // };
-  
+
   useEffect(() => {
     calTotalPrice();
   }, [transactions]);
@@ -279,7 +279,6 @@ export default function TransactionLists({ transactions, setTransaction, session
 
       <Modal
         isOpen={openPrint}
-        ref={printRef}
         onLoadedData={handlePrint}
         onOpenChange={(isopen) => {
           setOpenPrint(isopen);

@@ -34,7 +34,7 @@ export default function ProductsTable({ session }: { session: any }) {
 
     return Swal.fire({
       icon: 'error',
-      title: '<span class="font-normal text-md">Error Deleted</span>',
+      title: '<span class="font-normal text-md">Product Error Deleted</span>',
       text: result?.message,
     });
   };

@@ -16,7 +16,7 @@ export default function FormAddProduct({ session }: { session: any }) {
   const [sellingUnits, setSellingUnits] = useState([
     {
       id: uuidv4(),
-      unit_id: 0,
+      unit_id: '',
       is_smallest: true,
       stock: null,
       price: null,
@@ -151,7 +151,9 @@ export default function FormAddProduct({ session }: { session: any }) {
                     })
                   }
                   className="rounded w-full outline outline-1 outline-posblue px-3 py-1"
+                  required
                 >
+                  <option value="">Select Unit</option>
                   {units &&
                     units.map((data: any) => (
                       <option value={data.id} key={data.id}>
@@ -213,7 +215,7 @@ export default function FormAddProduct({ session }: { session: any }) {
                   ...sellingUnits,
                   {
                     id: uuidv4(),
-                    unit_id: 0,
+                    unit_id: '',
                     is_smallest: false,
                     stock: null,
                     price: null,

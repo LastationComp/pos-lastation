@@ -1,7 +1,6 @@
 import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
 import { prisma } from '@/app/_lib/prisma/client';
 
-
 export async function GET(req: Request, route: { params: { id: string } }) {
   const id = route.params.id;
   const getSellingUnits = await prisma.sellingUnits.findFirst({
@@ -115,7 +114,9 @@ export async function DELETE(req: Request, route: { params: { id: string } }) {
     if (!deleteProduct) return responseError('Error Delete Selling Units');
 
     return responseSuccess('Selling Units successfully deleted');
-  } catch (e: any) {
+  } catch (err: any) {
+    // console.log(err?.code);
+    if (err?.code === 'P2003') return responseError('This Selling Unit already use in transactions');
     return responseError('Delete Failed');
   } finally {
     await prisma.$disconnect();

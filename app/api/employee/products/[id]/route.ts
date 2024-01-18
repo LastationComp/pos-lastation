@@ -71,7 +71,9 @@ export async function DELETE(req: Request, route: { params: { id: string } }) {
     if (!deleteProduct) return responseError('Product Error Deleted');
 
     return responseSuccess('Product Successfully Deleted');
-  } catch (e: any) {
+  } catch (err: any) {
+    console.log(err)
+    if (err?.code === 'P2003') return responseError('This Product already use in transactions.')
     return responseError('Delete Failed');
   }
 }

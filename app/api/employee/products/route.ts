@@ -10,15 +10,15 @@ export async function GET(req: Request) {
         {
           barcode: {
             contains: query,
-            mode: 'insensitive'
+            mode: 'insensitive',
           },
         },
         {
           product_name: {
             contains: query,
-            mode: 'insensitive'
-          }
-        }
+            mode: 'insensitive',
+          },
+        },
       ],
       employee: {
         admin: {
@@ -27,6 +27,9 @@ export async function GET(req: Request) {
           },
         },
       },
+    },
+    orderBy: {
+      created_at: 'desc',
     },
     select: {
       id: true,
@@ -55,7 +58,7 @@ export async function POST(req: Request) {
     const selUnits: any[] = selling_units;
     const existsIsSmallest = selUnits.find((data) => data.is_smallest == true);
     if (!existsIsSmallest) return responseError('Please check "Is Smallest" at least one');
-    
+
     const smallest_selling_unit = dump_unit.find((data: any) => data.id == existsIsSmallest?.unit_id);
 
     let checkUnit = {
@@ -75,7 +78,7 @@ export async function POST(req: Request) {
     });
 
     if (checkUnit.duplicated) return responseError(`Unit "${checkUnit.name}" has duplicated, please select different Unit`);
-    
+
     const findEmployee = await prisma.employees.findFirst({
       where: {
         id: id,
