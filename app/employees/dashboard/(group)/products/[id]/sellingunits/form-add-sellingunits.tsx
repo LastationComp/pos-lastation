@@ -21,7 +21,7 @@ export default function FormAddSellingUnits({ id, session }: { id: string; sessi
   const [sellingUnits, setSellingUnits] = useState([
     {
       id: uuidv4(),
-      unit_id: 0,
+      unit_id: '',
       is_smallest: true,
       stock: null,
       price: null,
@@ -51,7 +51,7 @@ export default function FormAddSellingUnits({ id, session }: { id: string; sessi
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    const dataSellingUnits = sellingUnits.map((unit) => {
+    const dataSellingUnits = sellingUnits.map((unit, i) => {
       return {
         unit_id: Number(unit.unit_id),
         is_smallest: false,
@@ -105,34 +105,36 @@ export default function FormAddSellingUnits({ id, session }: { id: string; sessi
         {sellingUnits.map((index, i) => (
           <div key={i + 1} className="flex flex-col col-span-4 md:col-span-2 my-3 justify-center gap-3">
             <div className="flex flex-col w-full">
-              <label htmlFor={'product-name-' + index.id}>Unit</label>
+              <label htmlFor={'product-name-' + i}>Unit</label>
               <Skeleton isLoaded={data?.units} className="rounded-md w-full p-1">
                 <select
-                  name={'unit-id-' + index.id}
+                  onLoadedData={() => console.log('loaded')}
+                  name={'unit-id-' + i}
                   value={index.unit_id}
                   onChange={(e) =>
                     updateSellingUnit(index.id, {
                       unit_id: e.target.value,
                     })
                   }
-                  id={'product-name-' + index.id}
+                  id={'product-name-' + i}
                   className="rounded outline outline-1 outline-posblue px-3 py-1 w-full"
+                  required
                 >
-                  {data &&
-                    data?.units.map((data: Units) => (
-                      <option value={data.id} key={data.id}>
-                        {data.name}
-                      </option>
-                    ))}
+                  <option value="">Select Unit</option>
+                  {data?.units.map((data: Units, i: number) => (
+                    <option value={data.id} key={data.id}>
+                      {data.name}
+                    </option>
+                  ))}
                 </select>
               </Skeleton>
             </div>
 
             <div className="flex flex-col col-span-1">
-              <label htmlFor={'stock-product-' + index.id}>Stock</label>
+              <label htmlFor={'stock-product-' + i}>Stock</label>
               <input
                 type="number"
-                name={'stock-product-' + index.id}
+                name={'stock-product-' + i}
                 value={index.stock ?? ''}
                 onChange={(e) =>
                   updateSellingUnit(index.id, {
@@ -142,14 +144,14 @@ export default function FormAddSellingUnits({ id, session }: { id: string; sessi
                 placeholder="Input your stock"
                 required
                 className="rounded outline outline-1 outline-posblue px-3 py-1"
-                id={'stock-product-' + index.id}
+                id={'stock-product-' + i}
               />
             </div>
             <div className="flex flex-col col-span-2">
-              <label htmlFor={'price-product-' + index.id}>Price</label>
+              <label htmlFor={'price-product-' + i}>Price</label>
               <input
                 type="number"
-                name={'price-product-' + index.id}
+                name={'price-product-' + i}
                 onChange={(e) =>
                   updateSellingUnit(index.id, {
                     price: e.target.value,
@@ -159,7 +161,7 @@ export default function FormAddSellingUnits({ id, session }: { id: string; sessi
                 placeholder="Input your price"
                 required
                 className="rounded outline outline-1 outline-posblue px-3 py-1"
-                id={'price-product-' + index.id}
+                id={'price-product-' + i}
               />
               <span className="text-sm text-black/40">Output : {formatNumber(index.price ?? 0)}</span>
             </div>
@@ -175,7 +177,7 @@ export default function FormAddSellingUnits({ id, session }: { id: string; sessi
                   ...sellingUnits,
                   {
                     id: uuidv4(),
-                    unit_id: 0,
+                    unit_id: '',
                     is_smallest: false,
                     stock: null,
                     price: null,

@@ -34,7 +34,7 @@ export default function PosTableNew({ columns = [], data = [] }: PosTable) {
   };
   return (
     <>
-      <Table removeWrapper aria-labelledby={pathname} bottomContentPlacement={'outside'} isCompact className="sm:overflow-hidden overflow-auto">
+      <Table removeWrapper aria-labelledby={pathname} bottomContentPlacement={'outside'} isCompact className="sm:overflow-x-hidden overflow-auto max-h-full">
         <TableHeader aria-label={pathname} columns={generateColumn}>
           {(column) => (
             <TableColumn aria-label={column.label} className="bg-posgray text-white" key={column.key}>
