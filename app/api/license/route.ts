@@ -1,4 +1,5 @@
-import { responseError } from '@/app/_lib/PosResponse';
+import { formatDateNowWithRegion } from '@/app/_lib/DateFormat';
+import { responseError, responseSuccess } from '@/app/_lib/PosResponse';
 import { prisma } from '@/app/_lib/prisma/client';
 export async function POST(req: Request) {
   const { license_key } = await req.json();
@@ -6,10 +7,6 @@ export async function POST(req: Request) {
   const checkLicenseKey = await prisma.clients.findFirst({
     where: {
       license_key: license_key,
-      created_at: {
-        lte: new Date(),
-      },
-      is_active: true,
     },
     select: {
       license_key: true,
@@ -18,32 +15,18 @@ export async function POST(req: Request) {
       expired_at: true,
     },
   });
-  
+
   if (!checkLicenseKey) return responseError('Incorrect License Key, Please input the correct License Key');
 
-  if (!checkLicenseKey.is_active || (checkLicenseKey.expired_at ?? '') < new Date()) {
-    await prisma.clients.update({
-      where: {
-        license_key: checkLicenseKey.license_key,
-        expired_at: {
-          lt: new Date(),
-        },
-      },
-      data: {
-        is_active: false,
-      },
-    });
-    return Response.json(
-      {
-        message: 'Looks like the License Key is expired, Please contact the Web Owner',
-      },
-      { status: 400 }
-    );
+  if (!checkLicenseKey.is_active) return responseError('The License Key is not activated, Please contact the Web Owner');
+
+  if ((checkLicenseKey.expired_at ?? '') < formatDateNowWithRegion('Asia/Jakarta')) {
+    return responseError('Looks like the License Key is expired, Please contact the Web Owner');
   }
 
   await prisma.$disconnect();
 
-  return Response.json({
+  return responseSuccess({
     message: 'License Key correct',
     client: checkLicenseKey,
   });
