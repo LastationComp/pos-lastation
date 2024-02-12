@@ -23,3 +23,11 @@ export const formatTimeOnly = (value: string) => {
     timeZone: 'Asia/Jakarta',
   });
 };
+
+export const formatDateNowWithRegion = (region: string) => {
+  return new Date(
+    new Date().toLocaleString([], {
+      timeZone: region,
+    })
+  );
+};
