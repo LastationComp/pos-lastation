@@ -1,5 +1,5 @@
 'use client';
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import React from 'react';
@@ -35,7 +35,6 @@ export default function ModalLicense() {
     return;
   };
   const CheckLicenseKey = () => {
-    console.log('tes license callback');
     if (!localStorage.getItem('license_key') || localStorage.getItem('license_key') === '') return setHasLicense(false);
     return handleLicenseKey();
   };
@@ -44,7 +43,7 @@ export default function ModalLicense() {
     CheckLicenseKey();
     window.addEventListener('storage', CheckLicenseKey);
     return () => window.removeEventListener('storage', CheckLicenseKey);
-  });
+  }, []);
   return (
     <>
       <Modal isOpen={!hasLicense} placement="bottom-center" size="lg" isDismissable={false} hideCloseButton backdrop="opaque">
@@ -86,9 +85,15 @@ export default function ModalLicense() {
                   </div>
                 </ModalBody>
                 <ModalFooter>
-                  <button className="justify-center bg-white outline outline-2 outline-posblue rounded-[5px] p-3 hover:bg-posblue transition disabled:bg-green-700 text-posgray font-bold" disabled={isLoading && !isLogin}>
-                    {isLoading && !isLogin ? 'Submitting...' : 'Submit'}
-                  </button>
+                  <Button
+                    isLoading={isLoading && !isLogin}
+                    type="submit"
+                    color={'primary'}
+                    // className="justify-center bg-white outline outline-2 outline-posblue rounded-[5px] p-3 hover:bg-posblue transition disabled:bg-green-700 text-posgray font-bold"
+                    // disabled={isLoading && !isLogin}
+                  >
+                    Submit
+                  </Button>
                 </ModalFooter>
               </form>
             </>
